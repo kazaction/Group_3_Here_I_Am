@@ -1,4 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import logo from './logo.svg';
+import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/navbar';
+import './navbar.css'
+
+
+
+
 
 function App() {
   const [message, setMessage] = useState('');
@@ -11,10 +20,11 @@ function App() {
   }, []);
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h1>React + Flask Demo</h1>
-      <p>{message}</p>
-    </div>
+    <Router>
+      <div>
+        <Navbar />
+      </div>
+     </Router> 
   );
 }
 
