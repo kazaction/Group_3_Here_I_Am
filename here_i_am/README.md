@@ -68,3 +68,13 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+<<<<<<< HEAD
+=======
+
+python -m venv venv
+source venv/bin/activate   # macOS/Linux
+# or venv\Scripts\activate  (Windows)
+
+pip install flask
+pip freeze > requirements.txt
+>>>>>>> kikos
