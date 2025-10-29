@@ -1,0 +1,42 @@
+/* Make the navbar a vertical sidebar */
+.navbar {
+  position: fixed;       /* stays on the side while scrolling */
+  top: 0;
+  left: 0;
+  width: 200px;          /* sidebar width */
+  height: 100vh;         /* full viewport height */
+  background-color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+/* Style the list */
+.nav-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+/* Each list item on its own line */
+.nav-links li {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+/* Make the links full-width and left-aligned */
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 8px;
+}
+
+/* Hover effect */
+.nav-links a:hover {
+  background-color: #555;
+}
