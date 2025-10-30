@@ -10,4 +10,6 @@ CREATE TABLE users (
 );
 
 INSERT INTO users (name, surname, username, email, password, profile_picture)
-VALUES ('John', 'Doe', 'johndoe', 'johndoe@email.com', 'hashed_password_1', 'path/to/profile1.jpg')
+VALUES ('Meowth', 'Meow', 'TR_Meowth', 'meowth@teamrocket.com', 'JessieJamesMeowth', 'path/to/profile1.jpg')
+
+DELETE FROM users;
