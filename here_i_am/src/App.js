@@ -3,14 +3,9 @@ import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-<<<<<<< HEAD
-import Navbar from './components/navbar.jsx';
-import Schedule from './components/schedule.jsx';
-=======
 import Navbar from './components/navbar';
 import Schedule from './components/schedule';
 import Profile from './components/profile';
->>>>>>> origin/markos
 
 
 
