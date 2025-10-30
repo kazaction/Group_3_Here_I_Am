@@ -3,8 +3,14 @@ import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+<<<<<<< HEAD
 import Navbar from './components/navbar.jsx';
 import Schedule from './components/schedule.jsx';
+=======
+import Navbar from './components/navbar';
+import Schedule from './components/schedule';
+import Profile from './components/profile';
+>>>>>>> origin/markos
 
 
 
@@ -26,6 +32,7 @@ function App() {
         <Routes>
           <Route path="/" element={<h1>Welcome to Here I Am</h1>} />
           <Route path="/schedule" element={<Schedule />} />
+          <Route path="/profile" element={<Profile />} />
           {/* Add more routes like: */}
           {/* <Route path="/history" element={<History />} /> */}
           {/* <Route path="/cv" element={<CVGeneration />} /> */}
