@@ -4,6 +4,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/navbar';
 import Schedule from './components/schedule';
+import Profile from './components/profile';
 
 
 
@@ -16,6 +17,7 @@ function App() {
         <Routes>
           <Route path="/" element={<h1>Welcome to Here I Am</h1>} />
           <Route path="/schedule" element={<Schedule />} />
+          <Route path="/profile" element={<Profile />} />
           {/* Add more routes like: */}
           {/* <Route path="/history" element={<History />} /> */}
           {/* <Route path="/cv" element={<CVGeneration />} /> */}

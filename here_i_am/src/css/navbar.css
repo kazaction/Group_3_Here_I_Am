@@ -1,18 +1,52 @@
-/* Make the navbar a vertical sidebar */
+/* Sidebar */
 .navbar {
-  position: fixed;       /* stays on the side while scrolling */
+  position: fixed;
   top: 0;
   left: 0;
-  width: 200px;          /* sidebar width */
-  height: 100vh;         /* full viewport height */
+  width: 220px;
+  height: 100vh;
   background-color: #333;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   padding: 20px;
+  transition: transform 0.3s ease;
+  z-index: 900;
 }
 
-/* Style the list */
+/* Slide out of view when closed */
+.navbar.closed {
+  transform: translateX(-220px);
+}
+
+/* Hamburger icon */
+.hamburger {
+  position: fixed; /* stays visible at all times */
+  top: 20px;
+  left: 20px;
+  width: 20px;
+  height: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  z-index: 1001; /* above the sidebar */
+  transition: left 0.3s ease;
+}
+
+.hamburger.shifted {
+  left: 220px; /* moves slightly right when navbar is open */
+}
+
+.hamburger span {
+  display: block;
+  height: 4px;
+  width: 100%;
+  background-color: white;
+  border-radius: 2px;
+}
+
+/* Links */
 .nav-links {
   list-style: none;
   padding: 0;
@@ -20,13 +54,11 @@
   width: 100%;
 }
 
-/* Each list item on its own line */
 .nav-links li {
-  width: 100%;
+  width: 50%;
   margin-bottom: 15px;
 }
 
-/* Make the links full-width and left-aligned */
 .nav-links a {
   color: white;
   text-decoration: none;
@@ -36,7 +68,6 @@
   border-radius: 8px;
 }
 
-/* Hover effect */
 .nav-links a:hover {
   background-color: #555;
 }
