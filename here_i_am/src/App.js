@@ -1,16 +1,10 @@
+import { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/navbar';
-<<<<<<< HEAD
-import './navbar.css'
-
-
-
-=======
-import Schedule from './components/schedule';
->>>>>>> 5bdfeb2ee32a680c7acb93b3d8a8ac8ce7c10ba8
+import Navbar from './components/navbar.jsx';
+import Schedule from './components/schedule.jsx';
 
 
 
