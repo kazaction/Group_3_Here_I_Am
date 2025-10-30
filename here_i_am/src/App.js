@@ -1,16 +1,30 @@
 import logo from './logo.svg';
 import './App.css';
-
-
-import Hello from './components/hello';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/navbar';
+import Schedule from './components/schedule';
+import Profile from './components/profile';
 
 
 
 function App() {
   return (
-    <div> 
-      <Hello/>
-    </div>
+    <Router>
+      <Navbar />
+
+      <div style={{ marginLeft: '200px', padding: '20px' }}>
+        <Routes>
+          <Route path="/" element={<h1>Welcome to Here I Am</h1>} />
+          <Route path="/schedule" element={<Schedule />} />
+          <Route path="/profile" element={<Profile />} />
+          {/* Add more routes like: */}
+          {/* <Route path="/history" element={<History />} /> */}
+          {/* <Route path="/cv" element={<CVGeneration />} /> */}
+          {/* <Route path="/profile" element={<Profile />} /> */}
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
