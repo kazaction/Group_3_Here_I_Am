@@ -88,3 +88,7 @@
   border-radius: 10px;    /* optional rounded corners */
   transform: translateY(10px);
 }
+
+li{
+  font-weight: bold;
+}
