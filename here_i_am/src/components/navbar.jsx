@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../css/navbar.css";
+import logo from '../assets/logo.png';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -26,7 +27,9 @@ const Navbar = () => {
         </ul>
 
         <ul className="nav-links bottom-links">
-          <li><Link to="/profile">Profile</Link></li>
+          <li className="profile-link">
+            <Link to="/profile"><img src={logo} alt="Log" className="profile-logo"/>Profile</Link>
+          </li>
         </ul>
 
       </nav>

@@ -24,8 +24,8 @@
   position: fixed; /* stays visible at all times */
   top: 20px;
   left: 20px;
-  width: 20px;
-  height: 25px;
+  width: 30px;
+  height: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -70,8 +70,21 @@
 
 .nav-links a:hover {
   background-color: #00BF00;
-}
+} 
 
 .bottom-links {
   margin-top: auto; /* pushes the Profile link to the bottom */
+}
+
+.profile-link a {
+  display: flex;          /* put image and text side by side */
+  align-items: center;    /* vertically center them */
+}
+
+.profile-logo {
+  width: 20px;           /* small size */
+  height: 20px;          /* small size */
+  margin-right: 10px;    /* space between image and text */
+  border-radius: 10px;    /* optional rounded corners */
+  transform: translateY(10px);
 }
