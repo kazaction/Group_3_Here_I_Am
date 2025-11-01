@@ -22,8 +22,13 @@ const Navbar = () => {
           <li><Link to="/schedule">Schedule</Link></li>
           <li><Link to="/history">History</Link></li>
           <li><Link to="/cvGeneration">CV Generation</Link></li>
+          
+        </ul>
+
+        <ul className="nav-links bottom-links">
           <li><Link to="/profile">Profile</Link></li>
         </ul>
+
       </nav>
     </>
   );

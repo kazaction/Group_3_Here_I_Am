@@ -5,7 +5,7 @@
   left: 0;
   width: 220px;
   height: 100vh;
-  background-color: #333;
+  background-color: #00BF00;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -69,5 +69,9 @@
 }
 
 .nav-links a:hover {
-  background-color: #555;
+  background-color: #00BF00;
+}
+
+.bottom-links {
+  margin-top: auto; /* pushes the Profile link to the bottom */
 }
