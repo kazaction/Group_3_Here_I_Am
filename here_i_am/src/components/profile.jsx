@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useHistory} from "react-router-dom";
 import logo from '../assets/logo.png';
 import "../css/profile.css";
 import axios from "axios";//To connect database with react
 
 const Profile = () => {
 
+    
     const [profile, setProfile] = useState({
     name: "",
     surname: "",
