@@ -29,10 +29,30 @@ function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) return;
-    // TODO: replace with real auth call
-    console.log('Mock login', { email });
-    // On success, navigate to a protected page (example: profile)
-    navigate('/profile');
+
+    // Call backend to verify credentials
+    fetch('http://localhost:5000/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
+      .then(async (res) => {
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          setError(body.message || 'Login failed');
+          return;
+        }
+        // success — store a simple flag and user info (replace with real token flow later)
+        if (body.user) {
+          localStorage.setItem('user', JSON.stringify(body.user));
+          localStorage.setItem('auth', 'true');
+        }
+        navigate('/profile');
+      })
+      .catch((err) => {
+        console.error('Login error', err);
+        setError('Unable to contact server');
+      });
   };
 
   return (
