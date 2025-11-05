@@ -1,11 +1,19 @@
 import React from "react";
+import Calendar from "./Calendar.jsx";
 
-const Schedule = () => {
-    return (
-        <div>
-            <h1>Hello</h1>
-        </div>
+function Schedule(){
+
+    return(
+        <main className="main">
+            <header className="page-header">
+                <h1>Schedule</h1>
+            </header>
+
+            <section className="content-grid">
+                <Calendar/>
+            </section>
+        </main>
     );
-};
+}
 
-export default Schedule;
+export default Schedule

@@ -1,0 +1,29 @@
+/* Responsive */
+@media (max-width:980px) {
+  .layout-grid {
+    grid-template-columns:72px 1fr
+  }
+  .nav-label,.sidebar-title {
+    display:none
+  }
+  .content-grid {
+    grid-template-columns:1fr
+  }
+}
+/* --- App shell for fixed navbar --- */
+:root {
+  /* navbar.css defines --spacer and sets the sidebar width to calc(var(--spacer) * 6)
+     and positions it with left: var(--spacer).
+     That’s effectively 7 * spacer from the very left edge.
+     We add +1 spacer for breathing room = 8 * spacer. */
+  --sidebar-offset: calc(var(--spacer) * 8);
+}
+.app-shell {
+  padding-left: var(--sidebar-offset);
+  padding-right: 24px;
+  padding-top: 24px;
+  padding-bottom: 24px;
+  min-height: 100vh;
+  background: transparent;
+  /* keep navbar.css body color */
+}
