@@ -1,5 +1,7 @@
-/* Mini calendar */
+
 .mini-calendar {
+  /*the --line --r-lg and others are css variables for ease
+   of use that i set up in the root: in layout css */
   border:1px solid var(--line);
   border-radius:var(--r-lg);
   padding:12px
@@ -27,6 +29,7 @@
 .mini-cal-grid {
   display:grid;
   grid-template-columns:repeat(7,1fr);
+  /*this makes the grid 7 columns each take 1 part of the space*/
   gap:6px
 }
 .mini-cal-cell {
