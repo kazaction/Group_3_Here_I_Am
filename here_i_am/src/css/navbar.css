@@ -1,42 +1,119 @@
-/* Make the navbar a vertical sidebar */
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap");
+
+body {
+  background: #eaeef6;
+  font-family: "Open Sans", sans-serif;
+}
+
+:root {
+  --border-radius: 10px;
+  --spacer: 1rem;
+  --primary: #00BF00;
+  --text: #6a778e;
+  --link-height: calc(var(--spacer) * 3.5);
+  --timing: 250ms;
+  --transition: var(--timing) ease all;
+}
+
+/* ===== NAVBAR ===== */
 .navbar {
-  position: fixed;       /* stays on the side while scrolling */
-  top: 0;
-  left: 0;
-  width: 200px;          /* sidebar width */
-  height: 100vh;         /* full viewport height */
-  background-color: #333;
+  position: fixed;
+  top: var(--spacer);
+  left: var(--spacer);
+  background: #fff;
+  border-radius: var(--border-radius);
+  padding: var(--spacer) 0;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.03);
+  height: calc(100vh - (var(--spacer) * 4));
+  width: calc(var(--spacer) * 6);
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  padding: 20px;
+  justify-content: space-between; /* pushes top & bottom menus apart */
+  align-items: center;
 }
 
-/* Style the list */
-.nav-links {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.navbar__menu {
+  position: relative;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* Each list item on its own line */
-.nav-links li {
-  width: 100%;
-  margin-bottom: 15px;
+.top-menu {
+  flex-grow: 1;
+  justify-content: flex-start;
 }
 
-/* Make the links full-width and left-aligned */
-.nav-links a {
-  color: white;
+.bottom-menu {
+  margin-top: auto; /* pushes to bottom */
+}
+
+/* Menu items */
+.navbar__item {
+  position: relative;
+}
+
+/* Animated background blob */
+.navbar__item:last-child::before {
+  content: "";
+  position: absolute;
+  opacity: 0;
+  z-index: -1;
+  top: 0;
+  left: var(--spacer);
+  width: var(--link-height);
+  height: var(--link-height);
+  background: var(--primary);
+  border-radius: calc(var(--border-radius) * 1.75);
+  transition: var(--timing) cubic-bezier(1, 0.2, 0.1, 1.2) all;
+}
+
+/* Links */
+.navbar__link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--link-height);
+  width: calc(var(--spacer) * 5.5);
+  color: var(--text);
+  transition: var(--transition);
   text-decoration: none;
-  display: block;
-  width: 100%;
-  padding: 10px 15px;
-  border-radius: 8px;
 }
 
-/* Hover effect */
-.nav-links a:hover {
-  background-color: #555;
+.navbar__link i {
+  width: 22px;
+  height: 22px;
+}
+
+.navbar__link img.profile-logo {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.navbar__link span {
+  position: absolute;
+  left: 100%;
+  transform: translate(calc(-1 * var(--spacer) * 3));
+  margin-left: 1rem;
+  opacity: 0;
+  pointer-events: none;
+  color: var(--primary);
+  background: #fff;
+  padding: calc(var(--spacer) * 0.75);
+  transition: var(--transition);
+  border-radius: calc(var(--border-radius) * 1.75);
+  white-space: nowrap;
+}
+
+.navbar__link:hover {
+  color: #00BF00;
+}
+
+.navbar__link:hover span {
+  opacity: 1;
+  transform: translate(0);
 }
