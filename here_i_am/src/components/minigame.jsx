@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import "../css/minigame.css";
 
 
-const startMiniGame = () => {
+const StartMiniGame = () => {
     return(
         <div>
           <button onClick={() => alert('Button clicked!')}>
@@ -13,4 +13,4 @@ const startMiniGame = () => {
     );
 }
 
-export default startMiniGame;
+export default StartMiniGame;

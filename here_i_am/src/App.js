@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/navbar';
 import Schedule from './components/schedule';
 import Profile from './components/profile';
-import startMiniGame from "./components/minigame";
+import StartMiniGame from "./components/minigame";
 
 
 
@@ -19,7 +19,7 @@ function App() {
           <Route path="/" element={<h1>Welcome to Here I Am</h1>} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/minigame" element={<startMiniGame />} />
+          <Route path="/minigame" element={<StartMiniGame />} />
           {/* Add more routes like: */}
           {/* <Route path="/history" element={<History />} /> */}
           {/* <Route path="/cv" element={<CVGeneration />} /> */}
