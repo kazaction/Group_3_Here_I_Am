@@ -6,7 +6,7 @@ import axios from "axios";//To connect database with react
 
 const Profile = () => {
 
-    const userId = 3; // TEMP: hardcoded until login page exists
+    const userId = 1; // TEMP: hardcoded until login page exists
     const apiBase = `http://localhost:5001/users/${userId}`;
     
     const [profile, setProfile] = useState({
