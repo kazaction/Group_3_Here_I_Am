@@ -61,23 +61,27 @@ function Login() {
         <h2>Login</h2>
         {error && <div className="login-error">{error}</div>}
 
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@example.com"
-        />
+        <div className="field">
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+          />
+        </div>
 
-        <label htmlFor="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-        />
+        <div className="field">
+          <label htmlFor="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+          />
+        </div>
 
         <button type="submit" className="login-btn">Login</button>
 
@@ -85,7 +89,7 @@ function Login() {
           {/* Placeholder links - implement functionality later */}
           <Link to="#" onClick={(e) => e.preventDefault()}>Forgot password?</Link>
           <span className="separator">&nbsp;·&nbsp;</span>
-          <Link to="#" onClick={(e) => e.preventDefault()}>Don't have an account? Register here</Link>
+          <Link to="/register">Don't have an account? Register here</Link>
         </div>
       </form>
     </div>

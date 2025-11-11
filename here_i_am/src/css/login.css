@@ -15,6 +15,7 @@
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
   padding: 24px;
   box-sizing: border-box;
+  text-align: left; /* ensure labels and inputs align to the left */
 }
 
 .login-form h2 {
@@ -27,6 +28,27 @@
   margin-top: 12px;
   font-size: 13px;
   color: #333;
+  text-align: left; /* labels must be left aligned */
+}
+
+/* field wrapper so label and input align reliably */
+.login-form .field {
+  display: block;
+}
+
+.login-form .field label {
+  margin-top: 12px;
+  padding-left: 12px; /* matches input padding-left */
+  text-align: left;
+}
+
+.login-form h2 {
+  text-align: center; /* keep the heading centered */
+  margin-top: 0;
+}
+
+.login-form .field input {
+  margin-top: 6px;
 }
 
 .login-form input {

@@ -5,11 +5,12 @@ import Navbar from './components/navbar';
 import Schedule from './components/schedule';
 import Profile from './components/profile';
 import Login from './components/login';
+import Register from './components/register';
 
 // Render Navbar only on non-login routes
 function NavbarWrapper() {
   const location = useLocation();
-  if (location.pathname === '/') return null;
+  if (location.pathname === '/' || location.pathname === '/register') return null;
   return <Navbar />;
 }
 
@@ -17,12 +18,14 @@ function NavbarWrapper() {
 function MainRoutes() {
   const location = useLocation();
   // remove left margin for login so the login component can center itself
-  const containerStyle = location.pathname === '/' ? { padding: '20px' } : { marginLeft: '200px', padding: '20px' };
+  const isAuthless = location.pathname === '/' || location.pathname === '/register';
+  const containerStyle = isAuthless ? { padding: '20px' } : { marginLeft: '200px', padding: '20px' };
 
   return (
     <div style={containerStyle}>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/schedule" element={<Schedule />} />
         <Route path="/profile" element={<Profile />} />
         {/* Add more routes like: */}
