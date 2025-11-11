@@ -68,5 +68,5 @@ app.put("/users/:username/update-password", (req, res) => {
 });
 
 // ✅ Start server
-const PORT = 5000;
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+const PORT = 3000;
+app.listen(PORT, "0.0.0.0", () => console.log(`✅ Server running on port ${PORT}`));
