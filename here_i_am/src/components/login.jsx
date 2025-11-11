@@ -3,19 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../css/login.css';
 
 function Login() {
-  const [email, setEmail] = useState('');
+  const [credential, setCredential] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const validate = () => {
-    if (!email) {
-      setError('Email is required');
-      return false;
-    }
-    const re = /\S+@\S+\.\S+/;
-    if (!re.test(email)) {
-      setError('Please enter a valid email address');
+    if (!credential) {
+      setError('Username or email is required');
       return false;
     }
     if (!password) {
@@ -31,20 +26,20 @@ function Login() {
     if (!validate()) return;
 
     // Call backend to verify credentials
-    fetch('http://localhost:5000/login', {
+    fetch('http://localhost:5001/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ credential, password }),
     })
       .then(async (res) => {
         const body = await res.json().catch(() => ({}));
         if (!res.ok) {
-          setError(body.message || 'Login failed');
+          setError(body.error || body.message || 'Login failed');
           return;
         }
-        // success — store a simple flag and user info (replace with real token flow later)
-        if (body.user) {
-          localStorage.setItem('user', JSON.stringify(body.user));
+        // success — store user info from Flask response
+        if (body.user_id && body.username) {
+          localStorage.setItem('user', JSON.stringify({ user_id: body.user_id, username: body.username, email: body.email }));
           localStorage.setItem('auth', 'true');
         }
         navigate('/profile');
@@ -62,13 +57,13 @@ function Login() {
         {error && <div className="login-error">{error}</div>}
 
         <div className="field">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="credential">Username or Email</label>
           <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
+            id="credential"
+            type="text"
+            value={credential}
+            onChange={(e) => setCredential(e.target.value)}
+            placeholder="TR_Meowth or meowth@teamrocket.com"
           />
         </div>
 

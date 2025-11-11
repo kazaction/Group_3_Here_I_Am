@@ -16,19 +16,20 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
-#Login function
+#Login function - accept username OR email
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
-    username = data.get("username")
+    credential = data.get("credential")  # can be username or email
     password = data.get("password")
     
-    if not username or not password:
-        return jsonify({"success": False, "error": "Missing username or password"}), 400
+    if not credential or not password:
+        return jsonify({"success": False, "error": "Missing credential or password"}), 400
     
     conn = get_db_connection()
+    # Try to find user by username first, then by email
     user = conn.execute(
-        "SELECT id, username, password FROM users WHERE username = ?", (username,)
+        "SELECT id, username, email, password FROM users WHERE username = ? OR email = ?", (credential, credential)
     ).fetchone()
     conn.close()
     
@@ -36,10 +37,10 @@ def login():
         return jsonify({"success": False, "error": "User not found"}), 404
     
     if user["password"] != password:
-        return jsonify({"success": False, "error": "Incorrect Passowrd"}), 401
+        return jsonify({"success": False, "error": "Incorrect Password"}), 401
     
-    #return user_id from fronend to store
-    return jsonify({"success": True, "user_id": user["id"], "username": user["username"]})
+    #return user_id, username, and email from frontend to store
+    return jsonify({"success": True, "user_id": user["id"], "username": user["username"], "email": user["email"]})
 
 
 #Get user info by id
