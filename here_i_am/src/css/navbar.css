@@ -33,6 +33,9 @@ body {
 }
 
 .navbar__menu {
+  list-style: none;/*To remove the bullet point from <ul>*/
+  padding: 0;/*To fix the text because we remove the bullet points*/
+  margin: 0;/*To fix the text because we remove the bullet points*/
   position: relative;
   width: 100%;
   display: flex;
