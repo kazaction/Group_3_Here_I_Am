@@ -42,7 +42,7 @@ function Login() {
           localStorage.setItem('user', JSON.stringify({ user_id: body.user_id, username: body.username, email: body.email }));
           localStorage.setItem('auth', 'true');
         }
-        navigate('/profile');
+        navigate('/home');
       })
       .catch((err) => {
         console.error('Login error', err);

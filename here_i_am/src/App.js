@@ -6,6 +6,7 @@ import Schedule from './components/schedule';
 import Profile from './components/profile';
 import Login from './components/login';
 import Register from './components/register';
+import Home from './components/home';
 
 // Render Navbar only on non-login routes
 function NavbarWrapper() {
@@ -28,6 +29,7 @@ function MainRoutes() {
         <Route path="/register" element={<Register />} />
         <Route path="/schedule" element={<Schedule />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/home" element={<Home />} />
         {/* Add more routes like: */}
         {/* <Route path="/history" element={<History />} /> */}
         {/* <Route path="/cv" element={<CVGeneration />} /> */}
