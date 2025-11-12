@@ -63,7 +63,7 @@ function Login() {
             type="text"
             value={credential}
             onChange={(e) => setCredential(e.target.value)}
-            placeholder="TR_Meowth or meowth@teamrocket.com"
+            placeholder="Username or Email"
           />
         </div>
 
