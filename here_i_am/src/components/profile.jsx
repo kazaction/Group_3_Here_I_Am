@@ -7,7 +7,7 @@ import axios from "axios";//To connect database with react
 const Profile = () => {
 
     const userId = 1; // TEMP: hardcoded until login page exists
-    const apiBase = `http://localhost:5001/users/${userId}`;
+    const apiBase = `http://localhost:3000/users/${userId}`;
     
     const [profile, setProfile] = useState({
     name: "",
@@ -82,7 +82,7 @@ const Profile = () => {
     <button id="saveNew" disabled>Save New Password</button>
 
     <script>
-      const apiBase = "http://localhost:5001/users/" + ${userId};
+      const apiBase = "http://localhost:3000/users/" + ${userId};
 
       document.getElementById("checkOld").addEventListener("click", async () => {
         const oldPass = document.getElementById("oldPass").value;
