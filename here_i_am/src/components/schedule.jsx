@@ -1,6 +1,6 @@
 import React from "react";
 import Calendar from "./Calendar.jsx";
-
+import EventList from "./EventList.jsx";
 function Schedule(){
 
     return(
@@ -11,6 +11,7 @@ function Schedule(){
 
             <section className="content-grid">
                 <Calendar/>
+                <EventList/>
             </section>
         </main>
     );
