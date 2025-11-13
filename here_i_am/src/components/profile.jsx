@@ -3,8 +3,13 @@ import { useHistory} from "react-router-dom";
 import logo from '../assets/logo.png';
 import "../css/profile.css";
 import axios from "axios";//To connect database with react
+import ChangePasswordPopup from "./openPasswordWindow";
+import { useNavigate } from "react-router-dom";
+import Navbar from "./navbar";
 
 const Profile = () => {
+
+    const navigate = useNavigate(); 
 
     const userId = 1; // TEMP: hardcoded until login page exists
     const apiBase = `http://localhost:3000/users/${userId}`;
@@ -14,7 +19,6 @@ const Profile = () => {
     surname: "",
     username: "",
     email: "",
-    //password: "",
     profile_picture: ""
     });
 
@@ -27,10 +31,6 @@ const Profile = () => {
         setProfile({ ...profile, [name]: value });
     };
 
-    const handleChangePassword = (e) => {
-        const {name, value} = e.target;
-        setProfilePassword({ ...passwordTest, [name]: value });
-    };
 
     const handleSave = () => {
         setIsEditing(false);
@@ -39,94 +39,14 @@ const Profile = () => {
             .catch(err => console.error(err));
     };
 
-    const handleSavePassword = (newPassword) => {
-        setIsEditingPassword(false);
-        axios.put(`${apiBase}/update-password`, { newPassword })
-            .then(res => console.log("Password updated:", res.data))
-            .catch(err => console.error(err));
-    };
+    //initializing that are false
+    const [showPasswordPopup, setShowPasswordPopup] = useState(false);
 
     useEffect(() => {
-        axios.get(apiBase)
-            .then(res => {
-                setProfile(res.data);
-                setProfilePassword({ password: res.data.password || "" });
-            })
-            .catch(err => console.error(err));
+        axios.get(apiBase).then((res) => setProfile(res.data)).catch((err) => console.error(err));
+
     }, []);
 
-    //To open a new window to enter an old passowrd and then the new
-    const openPasswordWindow = () => {
-    const myWindow = window.open("", "Password", "width=400, height=400");
-    myWindow.document.write(`
-<html>
-  <head>
-    <title>Change Password</title>
-    <style>
-      body { font-family: Arial; padding: 20px; }
-      input, button { margin-top: 8px; display: block; }
-      input[disabled] { background-color: #eee; }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  </head>
-  <body>
-    <h3>Change Password</h3>
-
-    <label>Old Password:</label>
-    <input type="password" id="oldPass" />
-
-    <label>New Password:</label>
-    <input type="password" id="newPass" disabled />
-
-    <button id="checkOld">Check Old Password</button>
-    <button id="saveNew" disabled>Save New Password</button>
-
-    <script>
-      const apiBase = "http://localhost:3000/users/" + ${userId};
-
-      document.getElementById("checkOld").addEventListener("click", async () => {
-        const oldPass = document.getElementById("oldPass").value;
-        if (!oldPass) return alert("Please enter your old password!");
-
-        try {
-          const res = await axios.post(apiBase + "/check-password", { password: oldPass });
-          
-          if (res.data.valid) {
-            alert("✅ Old password correct!");
-            document.getElementById("newPass").disabled = false;
-            document.getElementById("saveNew").disabled = false;
-          } else {
-            alert("❌ Incorrect password!");
-          }
-        } catch (err) {
-          console.error(err);
-          alert("Error checking password.");
-        }
-      });
-
-      document.getElementById("saveNew").addEventListener("click", async () => {
-        const newPass = document.getElementById("newPass").value;
-        if (!newPass) return alert("Please enter a new password!");
-
-        try {
-          const res = await axios.put(apiBase + "/update-password", { newPassword: newPass });
-
-          if (res.data.success) {
-            alert("✅ Password updated successfully!");
-            window.close();
-          } else {
-            alert("❌ Failed to update password.");
-          }
-        } catch (err) {
-          console.error(err);
-          alert("Error updating password.");
-        }
-      });
-    </script>
-  </body>
-</html>
-    `);
-};
 
     return (
         <div>
@@ -149,9 +69,6 @@ const Profile = () => {
             <input type = "email" name = "email" value={profile.email} onChange={handleChange} readOnly={!isEditing} />
             <br/>
             
-            {/*<label>Password:</label>
-            <input type = "password" name = "password" value={profile.password} onChange={handleChange} readOnly={!isEditing} />
-            <br/>*/}
 
             {!isEditing ? (
             <button onClick={() => setIsEditing(true)}>Edit</button>
@@ -160,11 +77,8 @@ const Profile = () => {
             )}
             <br/>
 
-            <label>Password:</label>
-            <input type = "password" name = "password" value={passwordTest.password} onChange={handleChangePassword} readOnly={!isEditingPassword} />
-            <br/>
-            
-            <button onClick={openPasswordWindow}>Edit Password</button>
+            <button onClick={() => navigate("/change-password")}>Edit Password</button>
+
         </div>
 
     );
