@@ -1,0 +1,57 @@
+:root {
+  --bg:#f7faf7; /*for background*/
+  --panel:#fff;  /*for white things*/
+  --line:rgba(0,0,0,.06);  /*for the lines */
+  --shadow:0 10px 30px rgba(0,0,0,.06); /*for the shadows*/
+  --accent:#2ecc93; /*for for the key features*/
+  --accent-2:#a9e7cf; /*for secondary coloring*/
+  --text:#0f1720; /*for text*/
+  --muted:#788792; /*for lighter text broders etc*/
+
+  /* you guys can add more so that we can use them as variables 
+  and not try to find the values all the time, this will help with consistency
+  on how things look */
+
+  /* bacically these mean --r stands for radius and the xl = extra large , large and medium u get it */
+  --r-xl:18px; 
+  --r-lg:14px;
+  --r-md:12px;
+
+  /* same goes for these --gap for gap and lg is for a larger gap */
+  --gap:16px;
+  --gap-lg:24px;
+}
+
+/* very helpfull this mean that the width/height/padding
+ are one of the same changes to one another wont affect 
+ the size and display */
+
+* {
+  box-sizing:border-box
+}
+
+html {
+  height:100%
+}
+
+body {
+  height:100%
+}
+
+#root {
+  height:100%
+}
+
+
+body {
+  margin:0;
+  color:var(--text);  /* this is how we use it instead of allways using the color : #0f1720 */
+  background:var(--bg);
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial
+}
+.layout-grid {
+  display:grid;
+  /* means 260px for the sidebar and then the rest of the rest is the other column */
+  grid-template-columns:260px 1fr;
+  height:100vh
+}

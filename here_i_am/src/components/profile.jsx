@@ -12,7 +12,7 @@ const Profile = () => {
     const navigate = useNavigate(); 
 
     const userId = 1; // TEMP: hardcoded until login page exists
-    const apiBase = `http://localhost:3000/users/${userId}`;
+    const apiBase = `http://localhost:3001/users/${userId}`;
     
     const [profile, setProfile] = useState({
     name: "",

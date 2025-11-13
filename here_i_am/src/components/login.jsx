@@ -26,7 +26,7 @@ function Login() {
     if (!validate()) return;
 
     // Call backend to verify credentials
-    fetch('http://localhost:3000/login', {
+    fetch('http://localhost:3001/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ credential, password }),
