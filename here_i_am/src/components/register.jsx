@@ -5,6 +5,7 @@ import '../css/login.css';
 function Register() {
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -40,22 +41,27 @@ function Register() {
         {success && <div style={{ background: '#e6ffea', color: '#006400', padding: '8px', borderRadius: 4, marginBottom: 8 }}>{success}</div>}
 
         <div className="field">
-          <label>Name</label>
+          <label className="koupas">Name</label>
           <input value={name} onChange={(e) => setName(e.target.value)} />
         </div>
 
         <div className="field">
-          <label>Surname</label>
+          <label className="koupas">Surname</label>
           <input value={surname} onChange={(e) => setSurname(e.target.value)} />
         </div>
 
         <div className="field">
-          <label>Email</label>
+          <label className="koupas">Username</label>
+          <input value={username} onChange={(e) => setUsername(e.target.value)} />
+        </div>
+
+        <div className="field">
+          <label className="koupas">Email</label>
           <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" />
         </div>
 
         <div className="field">
-          <label>Password</label>
+          <label className="koupas">Password</label>
           <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" />
         </div>
 
