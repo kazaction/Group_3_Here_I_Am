@@ -1,0 +1,70 @@
+
+.mini-calendar {
+  /*the --line --r-lg and others are css variables for ease
+   of use that i set up in the root: in layout css */
+  border:1px solid var(--line);
+  border-radius:var(--r-lg);
+  padding:12px
+}
+.mini-cal-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:6px
+}
+.month {
+  font-weight:600
+}
+.text-btn {
+  background:none;
+  border:none;
+  cursor:pointer;
+  color:var(--muted)
+}
+.mini-cal-weekdays {
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:6px
+}
+.mini-cal-grid {
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  /*this makes the grid 7 columns each take 1 part of the space*/
+  gap:6px
+}
+.mini-cal-cell {
+  height:36px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  font-size:12px;
+  color:#516069
+}
+
+/* .mini-cal-cell.is-selected {
+  background:rgba(46,204,147,.12);
+  outline:1px solid var(--accent);
+  color:#0e3a2b
+} */
+
+/* if u un-comment the above it will show an example for a selected calendar date*/
+
+.legend {
+  display:flex;
+  gap:16px;
+  margin-top:12px;
+  color:var(--muted);
+  font-size:13px
+}
+.legend-item {
+  display:inline-flex;
+  align-items:center;
+  gap:8px
+}
+.dot {
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  display:inline-block
+}
+

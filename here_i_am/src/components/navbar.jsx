@@ -13,7 +13,7 @@ const Navbar = () => {
     <nav className="navbar">
       <ul className="navbar__menu top-menu">
         <li className="navbar__item">
-          <Link to="/" className="navbar__link">
+          <Link to="/home" className="navbar__link">
             <i data-feather="home"></i>
             <span>Here I Am</span>
           </Link>
