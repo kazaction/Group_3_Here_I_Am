@@ -3,7 +3,7 @@
   --panel:#fff;  /*for white things*/
   --line:rgba(0,0,0,.06);  /*for the lines */
   --shadow:0 10px 30px rgba(0,0,0,.06); /*for the shadows*/
-  --accent:#2ecc93; /*for for the key features*/
+  --accent:#00BF00; /*for for the key features*/
   --accent-2:#a9e7cf; /*for secondary coloring*/
   --text:#0f1720; /*for text*/
   --muted:#788792; /*for lighter text broders etc*/

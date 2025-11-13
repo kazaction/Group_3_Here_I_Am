@@ -5,7 +5,7 @@ import "../css/openPasswordWindow.css";
 
 const ChangePasswordPopup = ({ userId }) => {
   const navigate = useNavigate();
-  const apiBase = `http://localhost:3000/users/${userId}`;
+  const apiBase = `http://localhost:3001/users/${userId}`;
   const [oldPass, setOldPass] = useState("");
   const [newPass, setNewPass] = useState("");
   const [isVerified, setIsVerified] = useState(false);

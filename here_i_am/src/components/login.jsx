@@ -57,7 +57,7 @@ function Login() {
         {error && <div className="login-error">{error}</div>}
 
         <div className="field">
-          <label htmlFor="credential">Username or Email</label>
+          <label className="koupas" htmlFor="credential">Username or Email</label>
           <input
             id="credential"
             type="text"
@@ -68,7 +68,7 @@ function Login() {
         </div>
 
         <div className="field">
-          <label htmlFor="password">Password</label>
+          <label className="koupas" htmlFor="password">Password</label>
           <input
             id="password"
             type="password"
