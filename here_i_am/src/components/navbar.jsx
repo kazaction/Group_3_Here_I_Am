@@ -36,6 +36,12 @@ const Navbar = () => {
             <span>CV Generation</span>
           </Link>
         </li>
+        <li className="navbar__item">
+          <Link to="/minigame" className="navbar__link">
+            <i data-feather="headphones"></i>
+            <span>MiniGame</span>
+          </Link>
+        </li>
       </ul>
 
       {/* Profile pinned to bottom */}
