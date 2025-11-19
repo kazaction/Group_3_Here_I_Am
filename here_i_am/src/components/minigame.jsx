@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "../css/minigame.css";
 
@@ -6,11 +6,13 @@ import "../css/minigame.css";
 const StartMiniGame = () => {
     const canvasRef = useRef(null);
     const [showGame,setShowGame] = React.useState(false);
+    const [score, setScore] = useState(0);
 
     useEffect(() => {
 
         //if the user didnt press start the game
         if(!showGame){
+            setScore(0);
             return;
         }
 
@@ -101,6 +103,8 @@ const StartMiniGame = () => {
             // snake ate apple
             if (cell.x === apple.x && cell.y === apple.y) {
               snake.maxCells++;
+              //get 100 points per apple
+              setScore((prev) => prev + 100);
 
               // canvas is 400x400 which is 25x25 grids
               apple.x = getRandomInt(0, 25) * grid;
@@ -121,6 +125,9 @@ const StartMiniGame = () => {
 
                 apple.x = getRandomInt(0, 25) * grid;
                 apple.y = getRandomInt(0, 25) * grid;
+
+                //reset score
+                setScore(0);
               }
             }
           });
@@ -173,54 +180,22 @@ const StartMiniGame = () => {
               Start
             </button>)
             }
-            {showGame && (
-            <canvas
-                showGame
-                ref={canvasRef}
-                width="400"
-                height="400"
-                id="game"
-                style={{ border: "1px solid black"}}
-            />)
+            {showGame &&
+            (<div>
+                <h1>
+                    Score: {score}
+                    <button onClick={() => setShowGame(false)}>
+                        Stop
+                    </button>
+                </h1>
+                <canvas showGame ref={canvasRef} className="gameCanvas" width="400" height="400" id="game"/>
+
+
+
+            </div>)
             }
         </div>
     );
 }
-
-
-{/*
-const StartMiniGame = () => {
-    return(
-        <div>
-          <button onClick={() => alert('Button clicked!')}>
-              Start
-          </button>
-
-          <div>
-              <h2>
-                 -------------   -------------<br />
-                 |   | e |   | d |   |   |   |<br />
-                 -----------------------------<br />
-                 |   |   |   |   |   |   |   |<br />
-                 -----------------------------<br />
-                 |   |   |   |   |   |   | e |<br />
-                 -----------------------------<br />
-                 |   |   |   |   |   |   |   |<br />
-                 -----------------------------<br />
-                 |   |   |   |   |   |   |   |<br />
-                 -----------------------------<br />
-                 |   |   |   |   |   |   |   |<br />
-                 -----------------------------<br />
-                 |   |   |   | e |   |   |   |<br />
-                 -----------------------------<br />
-                 |   |   |   |   |   |   |   |<br />
-                 -----------------------------<br />
-             </h2>
-           </div>
-
-        </div>
-    );
-}
-*/}
 
 export default StartMiniGame;
