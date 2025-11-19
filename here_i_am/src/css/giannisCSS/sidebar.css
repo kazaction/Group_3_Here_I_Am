@@ -1,0 +1,50 @@
+
+/* main body of calendar*/
+.main {
+  overflow:auto;
+  padding:24px
+}
+.page-header {
+  padding:6px 4px 18px;
+  border-bottom:1px solid var(--line);
+  margin-bottom:18px
+}
+.page-header h1 {
+  margin:0;
+  font-size:22px;
+  font-weight:700
+}
+.content-grid {
+  display:grid;
+  grid-template-columns:360px 1fr;
+  gap:var(--gap-lg)
+}
+
+/*here beging the calendar section card*/
+.card {
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--r-xl);
+  box-shadow:var(--shadow);
+  padding:16px
+}
+.card-head {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:12px
+}
+.card-head h2 {
+  margin:0;
+  font-size:16px;
+  font-weight:700
+}
+.icon-btn {
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:6px;
+  cursor:pointer;
+  margin-left:6px
+}
+
