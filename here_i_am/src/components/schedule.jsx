@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import Calendar from "./Calendar";
 import EventList from "./EventList";
+import AddEvent from "./addEvent";
+
 
 // helper to get today's "YYYY-MM-DD"
 function todayKey() {
@@ -18,12 +20,37 @@ function Schedule() {
 
   const [selectedDate, setSelectedDate] = useState(todayKey());
 
+  const [isAddOpen, setIsAddOpen] = useState(false); //controls window open and close 
+
   const handleAddEventClick = () => {
-    // later: open modal / form and call setEvents(...)
-    console.log("Open add-event form for", selectedDate);
+    setIsAddOpen(true);
   };
 
+  const handleClosedAddEvent = () => {
+    setIsAddOpen(false);
+  }
+
+  const handleSaveEvent = (data) => {
+    const newEvent = {
+        id: crypto.randomUUID ? crypto.randomUUID() : Date.now(),
+        date: selectedDate, 
+        title: data.title,
+        time: data.time,
+        decription: data.description,
+    };
+
+    setEvents((prev)=> [...prev, newEvent]);
+    setIsAddOpen(false);
+  };
+
+
+//   const handleAddEventClick = () => {
+//     // later: open modal / form and call setEvents(...)
+//     console.log("Open add-event form for", selectedDate);
+//   };
+
   return (
+    <>
     <div className="calendar-layout">
       {/* LEFT: calendar */}
       <Calendar
@@ -36,9 +63,16 @@ function Schedule() {
       <EventList
         events={events}
         selectedDate={selectedDate}
-        onAddEventClick={handleAddEventClick}
+        onAddEventClick= {() => setIsAddOpen(true)}
       />
+
+      
     </div>
+
+    {isAddOpen && ( <AddEvent selectedDate={selectedDate} onSave={handleSaveEvent} onClose={() => setIsAddOpen(false)}/>)}
+
+    
+    </>
   );
 }
 
