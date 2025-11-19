@@ -68,3 +68,78 @@
   display:inline-block
 }
 
+
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7 equal columns */
+  text-align: center;
+  font-weight: bold;
+  padding: 8px 0;
+  background: var(--card-bg, #f7f7f7);
+  border-bottom: 1px solid #e2e2e2;
+}
+
+.calendar-weekday {
+  padding: 6px 0;
+}
+
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7 columns */
+  grid-auto-rows: 80px; /* height of each box */
+  gap: 4px;
+  padding: 8px;
+}
+
+.calendar-day {
+  background: white;
+  border: 1px solid #e2e2e2;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 8px;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.calendar-day:hover {
+  background: #f0f0f0;
+}
+
+.calendar-day--outside {
+  color: #a0a0a0; /* faded */
+  background: #fafafa;
+}
+
+.calendar-day--today {
+  border: 2px solid var(--accent, #4b7bff);
+}
+
+.calendar-day--selected {
+  background: var(--accent, #4b7bff);
+  color: white;
+  border-color: var(--accent, #4b7bff);
+}
+
+.calendar-day-number {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  font-weight: bold;
+}
+
+.calendar-day--has-events .calendar-day-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--muted, #788792);
+  border-radius: 50%;
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+}
