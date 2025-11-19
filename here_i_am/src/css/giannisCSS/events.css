@@ -5,14 +5,7 @@
   overflow-y: auto;
   padding-right: 4px;
   gap:12px
-
-} 
-
-.event-list {
-  flex: 1;                /* 🔥 fills leftover height */
-  overflow-y: auto;       /* 🔥 scroll if too many events */
-  padding-right: 4px;
-}
+ }  
 
 .event-item {
   display:grid;

@@ -5,7 +5,7 @@ import EventList from "./EventList";
 import AddEvent from "./addEvent";
 
 
-// helper to get today's "YYYY-MM-DD"
+// This is how we get today's date , so that today's date is displayed to the users initialy 
 function todayKey() {
   const d = new Date();
   const y = d.getFullYear();
@@ -15,28 +15,28 @@ function todayKey() {
 }
 
 function Schedule() {
-  // 👉 will be populated later from a form / backend
-  const [events, setEvents] = useState([]); // ⬅️ EMPTY, no example data
+  
+  const [events, setEvents] = useState([]); 
 
-  const [selectedDate, setSelectedDate] = useState(todayKey());
+  const [selectedDate, setSelectedDate] = useState(todayKey()); //default is the today's date 
 
-  const [isAddOpen, setIsAddOpen] = useState(false); //controls window open and close 
+  const [isAddOpen, setIsAddOpen] = useState(false); //controls window open and close default is closed ofcourse 
 
   const handleAddEventClick = () => {
-    setIsAddOpen(true);
+    setIsAddOpen(true); //updates the isAddOpen variable above to true ( show the window )
   };
 
   const handleClosedAddEvent = () => {
-    setIsAddOpen(false);
+    setIsAddOpen(false); // closes the window when exiting the form used 
   }
 
-  const handleSaveEvent = (data) => {
-    const newEvent = {
-        id: crypto.randomUUID ? crypto.randomUUID() : Date.now(),
-        date: selectedDate, 
-        title: data.title,
-        time: data.time,
-        decription: data.description,
+  const handleSaveEvent = (data) => { // the data contains the variables in the onSave function title time and description
+    const newEvent = { //creating a new event object so that we can use it to ouput events in the eventList 
+        id: crypto.randomUUID ? crypto.randomUUID() : Date.now(), // the crypto.randomUUID creates a unique Id but some browser dont allow it so the Date.now is our plan b 
+        date: selectedDate, //since the way the form is used is in colaboration with the calendar we use the date selected in the calendar using this selectedDate variable 
+        title: data.title, 
+        time: data.time,  
+        description: data.description, 
     };
 
     setEvents((prev)=> [...prev, newEvent]);
