@@ -16,12 +16,12 @@ function Register() {
     e.preventDefault();
     setError('');
     setSuccess('');
-    if (!name || !surname || !email || !password) return setError('All fields required');
+    if (!name || !surname || !username || !email || !password) return setError('All fields required');
 
-    fetch('http://localhost:5000/register', {
+    fetch('http://localhost:3001/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, surname, email, password }),
+      body: JSON.stringify({ name, surname, username, email, password }),
     })
       .then(async (res) => {
         const body = await res.json().catch(() => ({}));

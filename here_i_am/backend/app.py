@@ -42,6 +42,37 @@ def login():
     #return user_id, username, and email from frontend to store
     return jsonify({"success": True, "user_id": user["id"], "username": user["username"], "email": user["email"]})
 
+@app.route("/register", methods=["POST"])
+def register():
+    data = request.get_json() or {}
+    name = (data.get("name") or "").strip()
+    surname = (data.get("surname") or "").strip()
+    username = (data.get("username") or "").strip()
+    email = (data.get("email") or "").strip().lower()
+    password = data.get("password") or ""
+
+    if not all([name, surname, username, email, password]):
+        return jsonify({"message": "All fields required"}), 400
+
+    conn = get_db_connection()
+    try:
+        existing = conn.execute(
+            "SELECT id FROM users WHERE username = ? OR email = ?",
+            (username, email)
+        ).fetchone()
+        if existing:
+            return jsonify({"message": "Username or email already in use"}), 409
+
+        #hashed = generate_password_hash(password)
+        conn.execute(
+            "INSERT INTO users (name, surname, username, email, password) VALUES (?, ?, ?, ?, ?)",
+            (name, surname, username, email, password)
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    return jsonify({"message": "Registered"}), 201
 
 #Get user info by id
 @app.route("/users/<int:user_id>", methods=["GET"])
