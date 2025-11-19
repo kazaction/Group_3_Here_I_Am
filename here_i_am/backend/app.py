@@ -16,19 +16,20 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
-#Login function
+#Login function - accept username OR email
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
-    username = data.get("username")
+    credential = data.get("credential")  # can be username or email
     password = data.get("password")
     
-    if not username or not password:
-        return jsonify({"success": False, "error": "Missing username or password"}), 400
+    if not credential or not password:
+        return jsonify({"success": False, "error": "Missing credential or password"}), 400
     
     conn = get_db_connection()
+    # Try to find user by username first, then by email
     user = conn.execute(
-        "SELECT id, username, password FROM users WHERE username = ?", (username,)
+        "SELECT id, username, email, password FROM users WHERE username = ? OR email = ?", (credential, credential)
     ).fetchone()
     conn.close()
     
@@ -36,11 +37,42 @@ def login():
         return jsonify({"success": False, "error": "User not found"}), 404
     
     if user["password"] != password:
-        return jsonify({"success": False, "error": "Incorrect Passowrd"}), 401
+        return jsonify({"success": False, "error": "Incorrect Password"}), 401
     
-    #return user_id from fronend to store
-    return jsonify({"success": True, "user_id": user["id"], "username": user["username"]})
+    #return user_id, username, and email from frontend to store
+    return jsonify({"success": True, "user_id": user["id"], "username": user["username"], "email": user["email"]})
 
+@app.route("/register", methods=["POST"])
+def register():
+    data = request.get_json() or {}
+    name = (data.get("name") or "").strip()
+    surname = (data.get("surname") or "").strip()
+    username = (data.get("username") or "").strip()
+    email = (data.get("email") or "").strip().lower()
+    password = data.get("password") or ""
+
+    if not all([name, surname, username, email, password]):
+        return jsonify({"message": "All fields required"}), 400
+
+    conn = get_db_connection()
+    try:
+        existing = conn.execute(
+            "SELECT id FROM users WHERE username = ? OR email = ?",
+            (username, email)
+        ).fetchone()
+        if existing:
+            return jsonify({"message": "Username or email already in use"}), 409
+
+        #hashed = generate_password_hash(password)
+        conn.execute(
+            "INSERT INTO users (name, surname, username, email, password) VALUES (?, ?, ?, ?, ?)",
+            (name, surname, username, email, password)
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    return jsonify({"message": "Registered"}), 201
 
 #Get user info by id
 @app.route("/users/<int:user_id>", methods=["GET"])
@@ -113,4 +145,4 @@ def update_password(user_id):
 
 #Run Flask
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=3000)
+    app.run(debug=True, host="0.0.0.0", port=3001)
