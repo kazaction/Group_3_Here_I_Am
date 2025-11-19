@@ -1,20 +1,45 @@
-import React from "react";
-import Calendar from "./Calendar.jsx";
-import EventList from "./EventList.jsx";
-function Schedule(){
+// CalendarWithEvents.jsx  (or whatever name you use)
+import React, { useState } from "react";
+import Calendar from "./Calendar";
+import EventList from "./EventList";
 
-    return(
-        <main className="main">
-            <header className="page-header">
-                <h1>Schedule</h1>
-            </header>
-
-            <section className="content-grid">
-                <Calendar/>
-                <EventList/>
-            </section>
-        </main>
-    );
+// helper to get today's "YYYY-MM-DD"
+function todayKey() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = `${d.getMonth() + 1}`.padStart(2, "0");
+  const day = `${d.getDate()}`.padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }
 
-export default Schedule
+function Schedule() {
+  // 👉 will be populated later from a form / backend
+  const [events, setEvents] = useState([]); // ⬅️ EMPTY, no example data
+
+  const [selectedDate, setSelectedDate] = useState(todayKey());
+
+  const handleAddEventClick = () => {
+    // later: open modal / form and call setEvents(...)
+    console.log("Open add-event form for", selectedDate);
+  };
+
+  return (
+    <div className="calendar-layout">
+      {/* LEFT: calendar */}
+      <Calendar
+        events={events}
+        selectedDate={selectedDate}
+        onDateSelect={setSelectedDate}
+      />
+
+      {/* RIGHT: event list */}
+      <EventList
+        events={events}
+        selectedDate={selectedDate}
+        onAddEventClick={handleAddEventClick}
+      />
+    </div>
+  );
+}
+
+export default Schedule;

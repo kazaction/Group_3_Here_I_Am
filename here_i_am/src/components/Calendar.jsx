@@ -14,18 +14,19 @@ function formatDateKey(date) {
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 function Calendar({
-  events = [],              // [{ id, date: "YYYY-MM-DD", ... }]
-  selectedDate,            // "YYYY-MM-DD" (optional controlled)
-  onDateSelect,            // (dateKey: "YYYY-MM-DD") => void
+  events = [],
+  selectedDate,             // ✅ NEW: selected date comes from parent
+  onDateSelect,             // ✅ NEW: callback to tell parent which day was clicked
 }) {
-  // internal selected state, used if parent doesn't control selection
+  // ✅ NEW: internal fallback selected date (used if parent doesn't control it)
   const [internalSelected, setInternalSelected] = useState(
     selectedDate || formatDateKey(new Date())
   );
 
+  // ✅ NEW: this is the date we consider "selected" in the UI
   const effectiveSelected = selectedDate || internalSelected;
 
-  // Which month is currently visible
+  // visible month
   const [visibleMonth, setVisibleMonth] = useState(() => {
     return selectedDate ? new Date(selectedDate) : new Date();
   });
@@ -35,42 +36,40 @@ function Calendar({
     const map = {};
     events.forEach((e) => {
       if (!e.date) return;
-      const key = e.date.slice(0, 10); // assume "YYYY-MM-DD" or ISO
+      const key = e.date.slice(0, 10);
       if (!map[key]) map[key] = [];
       map[key].push(e);
     });
     return map;
   }, [events]);
 
-  // Derived info for the month grid
   const year = visibleMonth.getFullYear();
-  const month = visibleMonth.getMonth(); // 0–11
+  const month = visibleMonth.getMonth();
 
   const firstOfMonth = new Date(year, month, 1);
-  const firstDayOfWeek = firstOfMonth.getDay(); // 0–6 (Sun–Sat)
+  const firstDayOfWeek = firstOfMonth.getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // We’ll render a simple 6x7 grid (up to 42 cells)
   const cells = useMemo(() => {
     const arr = [];
 
-    // Days from previous month to pad the grid
-    const prevMonthDays = firstDayOfWeek; // number of leading blanks
-    const prevMonthDate = new Date(year, month, 0).getDate(); // last day of previous month
+    const prevMonthDays = firstDayOfWeek;
+    const prevMonthDate = new Date(year, month, 0).getDate();
 
+    // leading days (previous month)
     for (let i = prevMonthDays - 1; i >= 0; i--) {
       const dayNum = prevMonthDate - i;
       const dateObj = new Date(year, month - 1, dayNum);
       arr.push({ date: dateObj, inCurrentMonth: false });
     }
 
-    // Days in current month
+    // current month days
     for (let d = 1; d <= daysInMonth; d++) {
       const dateObj = new Date(year, month, d);
       arr.push({ date: dateObj, inCurrentMonth: true });
     }
 
-    // Fill the rest with next month days
+    // trailing days (next month)
     while (arr.length < 42) {
       const last = arr[arr.length - 1].date;
       const next = new Date(last);
@@ -99,10 +98,11 @@ function Calendar({
     });
   };
 
+  // ✅ NEW: when a day is clicked, update internal selection AND notify parent
   const handleDayClick = (date) => {
     const key = formatDateKey(date);
-    setInternalSelected(key);
-    if (onDateSelect) onDateSelect(key);
+    setInternalSelected(key);     // internal
+    if (onDateSelect) onDateSelect(key);  // 🔴 send selected date to parent
   };
 
   const legend = [
@@ -159,7 +159,10 @@ function Calendar({
           {cells.map(({ date, inCurrentMonth }) => {
             const key = formatDateKey(date);
             const isToday = key === todayKey;
+
+            // ✅ UPDATED: use effectiveSelected (which can come from parent)
             const isSelected = key === effectiveSelected;
+
             const hasEvents = !!eventsByDate[key];
 
             const cellClasses = [
@@ -178,7 +181,7 @@ function Calendar({
                 key={key}
                 type="button"
                 className={cellClasses}
-                onClick={() => handleDayClick(date)}
+                onClick={() => handleDayClick(date)}   // ✅ UPDATED: calls new handler
               >
                 <span className="calendar-day-number">{date.getDate()}</span>
                 {hasEvents && <span className="calendar-day-dot" />}

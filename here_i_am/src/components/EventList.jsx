@@ -2,7 +2,7 @@
 import React, { useMemo } from "react";
 import { LuClock3, LuMapPin, LuPlus } from "react-icons/lu";
 
-// Helper: Date | string -> "YYYY-MM-DD"
+// (optional) helper, reused if you want
 function formatDateKey(date) {
   if (!(date instanceof Date)) date = new Date(date);
   const y = date.getFullYear();
@@ -12,11 +12,13 @@ function formatDateKey(date) {
 }
 
 function EventList({
-  selectedDate,         // "YYYY-MM-DD"
-  events = [],          // [{ id, date: "YYYY-MM-DD", title, time, location, note }]
-  onAddEventClick,      // optional: () => void (open form/modal)
+  selectedDate,          // ✅ NEW: this comes from the parent (same value Calendar sends)
+  events = [],
+  onAddEventClick,
 }) {
+  // ✅ NEW: use selectedDate to build a pretty header
   const dateObj = selectedDate ? new Date(selectedDate) : new Date();
+
   const headerLabel = dateObj.toLocaleDateString(undefined, {
     weekday: "long",
     month: "long",
@@ -24,17 +26,23 @@ function EventList({
     year: "numeric",
   });
 
-  const selectedKey = formatDateKey(dateObj);
+  const selectedKey = selectedDate || formatDateKey(dateObj); // small safety
 
+  // ✅ NEW: filter only the events that belong to the selected day
   const eventsForDay = useMemo(
-    () => events.filter((e) => e.date && e.date.slice(0, 10) === selectedKey),
+    () =>
+      events.filter(
+        (e) => e.date && e.date.slice(0, 10) === selectedKey
+      ),
     [events, selectedKey]
   );
 
   return (
     <div className="card">
       <div className="card-head">
+        {/* ✅ UPDATED: the title now reflects the selected date */}
         <h2>{headerLabel}</h2>
+
         <button
           type="button"
           className="pill-btn"
@@ -47,6 +55,7 @@ function EventList({
 
       <div className="event-list">
         {eventsForDay.length === 0 && (
+          // ✅ NEW: message when no events on that day
           <div className="event-empty">
             No events for this day yet.
           </div>
