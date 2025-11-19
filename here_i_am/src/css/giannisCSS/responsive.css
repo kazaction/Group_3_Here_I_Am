@@ -1,0 +1,37 @@
+/* Responsive */
+@media (max-width:980px) {
+  /* when the screen is narrower than 980px which is a common practice
+   in case we view it in a tablet or phone */
+
+  .layout-grid {
+    grid-template-columns:72px 1fr
+    /* 1fr means fractional unit and takes the remaining space */
+  }
+  .nav-label{
+    display:none
+  }
+
+  .sidebar-title {
+    display:none
+  }
+  
+  .content-grid {
+    grid-template-columns:1fr
+  }
+}
+
+:root {
+
+  --sidebar-offset: calc(var(--spacer) * 8);
+  /* whatever spacer multiplied by 8 */
+}
+
+.app-shell {
+  padding-left: var(--sidebar-offset);
+  padding-right: 24px;
+  padding-top: 24px;
+  padding-bottom: 24px;
+  min-height: 100vh;
+  background: transparent;
+  
+}
