@@ -62,3 +62,21 @@
     font-weight: bold;
     margin: 0;  
 }
+
+.submit-btn:hover {
+    background-color: lightgrey;
+    transition: .2s;
+    transition-property: background-color;
+}
+
+.submit-btn:active {
+    background-color: grey;
+    color: white;
+}
+
+.submit-btn:focus {
+    outline-color: grey;
+    box-shadow: grey;
+    transition: .1s;
+    transition-property: box-shadow;
+}

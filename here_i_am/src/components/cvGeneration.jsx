@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "../css/cvGeneration.css";
 
 const QUESTIONS = [
-  { field: "name",         question: "What is your full name?" },
+  { field: "name",         question: "What is your first name?" },
   { field: "surname",      question: "What is your surname?" },
   { field: "birthdate",    question: "What is your birthdate (DD/MM/YYYY)?" },
   { field: "degree",       question: "What degree do you have?" },
