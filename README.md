@@ -1,8 +1,8 @@
 # Team3_Here_I_Am
 ### npm install react-router-dom
-added sqlite extension from the VS code extensions
-npm install axios
-pip3 install flask flask-cors
+### added sqlite extension from the VS code extensions
+### npm install axios
+### pip3 install flask flask-cors
 
 
 # How to run the web app 19-11-2025
