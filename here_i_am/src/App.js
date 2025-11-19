@@ -9,6 +9,7 @@ import Register from './components/register';
 import Home from './components/home';
 import ChangePasswordPopup from './components/openPasswordWindow';
 import StartMiniGame from './components/minigame';
+import AddEvent from './components/addEvent';
 
 // Render Navbar only on non-login routes
 function NavbarWrapper() {
