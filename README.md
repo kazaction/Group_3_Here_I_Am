@@ -6,3 +6,5 @@ npm install axios
 pip3 install flask flask-cors
 email: hereiamteam3@gmail.com
 pass: Hereiam3Group!
+Reference url for gmailAPI:https://developers.google.com/workspace/gmail/api/quickstart/python/?authuser=3#enable_the_api
+pip for gmail: pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
