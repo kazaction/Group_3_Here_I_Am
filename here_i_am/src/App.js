@@ -9,8 +9,7 @@ import Register from './components/register';
 import ForgotPage from './components/ForgotPage';
 import Home from './components/home';
 import ChangePasswordPopup from './components/openPasswordWindow';
-import Minigame from "./components/minigame";
-
+import StartMiniGame from './components/minigame';
 
 // Render Navbar only on non-login routes
 function NavbarWrapper() {
@@ -33,10 +32,10 @@ function MainRoutes() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot" element={<ForgotPage />} />
         <Route path="/schedule" element={<Schedule />} />
-        <Route path="/minigame" element={<Minigame />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/home" element={<Home />} />
         <Route path="/change-password" element={<ChangePasswordPopup userId={1}/>} />
+        <Route path="/minigame" element={<StartMiniGame />} />
         {/* Add more routes like: */}
         {/* <Route path="/history" element={<History />} /> */}
         {/* <Route path="/cv" element={<CVGeneration />} /> */}
