@@ -82,7 +82,7 @@ function Login() {
 
         <div className="login-links">
           {/* Placeholder links - implement functionality later */}
-          <Link to="#" onClick={(e) => e.preventDefault()}>Forgot password?</Link>
+          <Link to="/forgot">Forgot password?</Link>
           <span className="separator">&nbsp;·&nbsp;</span>
           <Link to="/register">Don't have an account? Register here</Link>
         </div>
