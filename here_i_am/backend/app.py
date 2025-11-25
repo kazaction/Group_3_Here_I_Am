@@ -2,19 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sqlite3
 import os
-import re
-
-
-from cvprogram import (
-    validate_name,
-    validate_birthdate,
-    validate_phone,
-    validate_nonempty,
-    validate_job_count,
-    validate_skill_count,
-    validate_email,)
-
-
+from cv_routes import cv_bp
 
 app = Flask(__name__)
 #allow rewuests from Rreact frontend
@@ -155,6 +143,7 @@ def update_password(user_id):
         return jsonify({"success": False})
     return jsonify({"success": True})
 
+<<<<<<< HEAD
 # CV Generation Validation
 VALIDATORS = {
     "name": validate_name,
@@ -262,6 +251,10 @@ def list_events_for_day():
 
 
 
+=======
+# Register the blueprint for CV routes
+app.register_blueprint(cv_bp)
+>>>>>>> 12c21e4656f14ffc11fc4d7beb0982ff60fef40f
 
 #Run Flask
 if __name__ == "__main__":
