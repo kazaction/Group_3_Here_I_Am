@@ -143,35 +143,9 @@ def update_password(user_id):
         return jsonify({"success": False})
     return jsonify({"success": True})
 
-<<<<<<< HEAD
-# CV Generation Validation
-VALIDATORS = {
-    "name": validate_name,
-    "surname": validate_name,
-    "birthdate": validate_birthdate,
-    "degree": validate_nonempty,
-    "job_count": validate_job_count,
-    "phone": validate_phone,
-    "email": validate_email,
-    "picture_path": validate_nonempty,
-    "skill_count": validate_skill_count,
-}
+# Register the blueprint for CV routes
+app.register_blueprint(cv_bp)
 
-@app.route("/validate", methods=["POST"])
-def validate_field():
-    data = request.get_json(force=True)
-    field = data.get("field")
-    value = data.get("value", "")
-
-    if field not in VALIDATORS:
-        return jsonify({"ok": False, "error": f"unknown field: {field}"}), 400
-
-    result = VALIDATORS[field](value)
-
-    if isinstance(result, str) and result.startswith("error"):
-        return jsonify({"ok": False, "error": result})
-    else:
-        return jsonify({"ok": True, "value": result})
 
 #for eventlist 
 
@@ -248,13 +222,6 @@ def list_events_for_day():
     conn.close()
 
     return jsonify([dict(r) for r in rows])
-
-
-
-=======
-# Register the blueprint for CV routes
-app.register_blueprint(cv_bp)
->>>>>>> 12c21e4656f14ffc11fc4d7beb0982ff60fef40f
 
 #Run Flask
 if __name__ == "__main__":
