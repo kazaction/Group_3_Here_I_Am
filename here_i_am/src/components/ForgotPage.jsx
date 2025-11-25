@@ -28,16 +28,27 @@ function ForgotPage() {
       return;
     }
 
-    // Email is valid
-    setMessage('If the email is correct, a new password was sent to your email.');
-    setMessageType('success');
-    
-    // Reset form after 2 seconds
-    setTimeout(() => {
-      setEmail('');
-      setMessage('');
-      setMessageType('');
-    }, 2000);
+    // Email is valid -> call backend to trigger reset email
+    fetch('http://localhost:3001/forgot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    })
+    .then(async (res) => {
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setMessage(data.message || 'If the email is correct, a new password was sent to your email.');
+        setMessageType('success');
+        setEmail('');
+      } else {
+        setMessage(data.error || 'An error occurred. Please try again.');
+        setMessageType('error');
+      }
+    })
+    .catch(() => {
+      setMessage('Could not contact the server.');
+      setMessageType('error');
+    });
   };
 
   const handleCancel = () => {
