@@ -10,7 +10,6 @@ import Home from './components/home';
 import ChangePasswordPopup from './components/openPasswordWindow';
 import StartMiniGame from './components/minigame';
 import AddEvent from './components/addEvent';
-import CVGeneration from './components/cvGeneration';
 
 // Render Navbar only on non-login routes
 function NavbarWrapper() {
@@ -38,7 +37,7 @@ function MainRoutes() {
         <Route path="/minigame" element={<StartMiniGame />} />
         {/* Add more routes like: */}
         {/* <Route path="/history" element={<History />} /> */}
-        <Route path="/cvGeneration" element={<CVGeneration />} /> 
+        {/* <Route path="/cv" element={<CVGeneration />} /> */}
       </Routes>
     </div>
   );
