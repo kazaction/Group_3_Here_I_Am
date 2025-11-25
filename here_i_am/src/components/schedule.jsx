@@ -34,13 +34,15 @@ function Schedule() {
     const newEvent = { //creating a new event object so that we can use it to ouput events in the eventList 
         id: crypto.randomUUID ? crypto.randomUUID() : Date.now(), // the crypto.randomUUID creates a unique Id but some browser dont allow it so the Date.now is our plan b 
         date: selectedDate, //since the way the form is used is in colaboration with the calendar we use the date selected in the calendar using this selectedDate variable 
-        title: data.title, 
-        time: data.time,  
-        description: data.description, 
+        title: data.title, // -------------\
+        time: data.time,  //------------------> these variable come directly from the form 
+        description: data.description, //--/
     };
 
-    setEvents((prev)=> [...prev, newEvent]);
-    setIsAddOpen(false);
+    setEvents((prev)=> [...prev, newEvent]); // ...prev is the array of events previously(none when no events are dded) 
+                                             // and copies all the events of the previous array to the new one (need to add some filtering so that time of events )
+                                             //time of events matter in how they are displayed but thats for latter on ...
+    setIsAddOpen(false); //close the pop up
   };
 
 
@@ -54,22 +56,24 @@ function Schedule() {
     <div className="calendar-layout">
       {/* LEFT: calendar */}
       <Calendar
-        events={events}
-        selectedDate={selectedDate}
-        onDateSelect={setSelectedDate}
+        events={events} // all datre in the webapp , used to show the dots in the calendar 
+        selectedDate={selectedDate} // the selected date --------------- > these help re-render the event list with that date 
+        onDateSelect={setSelectedDate} //update to selected date ---/
       />
 
       {/* RIGHT: event list */}
       <EventList
-        events={events}
-        selectedDate={selectedDate}
-        onAddEventClick= {() => setIsAddOpen(true)}
+        events={events} // all the events , will be needed below 
+        selectedDate={selectedDate} // so it can filter that days events only and not output the entirety of the events in the webapp
+        onAddEventClick= {() => setIsAddOpen(true)} // this is for the add event button ,
+                                                    //  change the dfault value of it to true so the add form is displayed
       />
 
       
     </div>
 
-    {isAddOpen && ( <AddEvent selectedDate={selectedDate} onSave={handleSaveEvent} onClose={() => setIsAddOpen(false)}/>)}
+    {isAddOpen && ( <AddEvent selectedDate={selectedDate} onSave={handleSaveEvent} onClose={() => setIsAddOpen(false)}/>)} 
+      {/*this how you create popup windows in react , the variables are used to know the date for the form and close the popup*/}
 
     
     </>
