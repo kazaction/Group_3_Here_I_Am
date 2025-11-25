@@ -7,7 +7,7 @@ TEST_DB = Path(__file__).resolve().parent / "test_database.db"
 
 def setup_module(module):
     """
-    Runs once before all tests:
+    Runs once before all tests: 
     - creates a fresh test DB
     - creates users + events tables
     - inserts Meowth user
@@ -30,12 +30,16 @@ def setup_module(module):
     # create events table
     cur.execute("""
     CREATE TABLE events (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        title TEXT NOT NULL,
-        FOREIGN KEY(user_id) REFERENCES users(id)
-    )
-    """)
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    start_time_utc DATETIME,
+    end_time_utc DATETIME,
+    importance INTEGER,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+)
+""")
 
     conn.commit()
     conn.close()
