@@ -1,6 +1,8 @@
 // AddEvent.jsx
 import React, { useState } from "react";
 
+
+
 ////////////////////////////////////////////////////////////////////
 function AddEvent({ selectedDate, onSave, onClose }) {
   const [title, setTitle] = useState(""); //these store the date the user types into the form 
@@ -27,6 +29,13 @@ function AddEvent({ selectedDate, onSave, onClose }) {
       time: time.trim(),
       description: description.trim()
     });
+
+      fetch('http://localhost:3001/schedule' , {
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({title,time,description})
+  })
+
   };
 
   return (
