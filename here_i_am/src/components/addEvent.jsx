@@ -17,12 +17,14 @@ function AddEvent({ selectedDate, onSave, onClose }) {
     year: "numeric",
   });
 
-  ////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////
   const handleSubmit = (e) => { // function declaration for the e. = event our button guys 
     e.preventDefault();         // the arrow functions have bvecome a standard in react ,
                                 //  previous methods were not working correctly 
 
     if (!title.trim()) return;
+
+   
 
     onSave({ //On save is declared in schedule.jsx ,when save trim the spaces from starting and end points 
       title: title.trim(),
@@ -30,10 +32,10 @@ function AddEvent({ selectedDate, onSave, onClose }) {
       description: description.trim()
     });
 
-      fetch('http://localhost:3001/schedule' , {
-  method:'POST',
-  headers:{'Content-Type':'application/json'},
-  body:JSON.stringify({title,time,description})
+    fetch('http://localhost:3001/schedule' , {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({title,time,description})
   })
 
   };
