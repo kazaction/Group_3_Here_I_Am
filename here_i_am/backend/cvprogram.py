@@ -59,11 +59,41 @@ def validate_skill_count(value):
     return stripped_value
 
 def validate_email(email):
-    regex = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
     email = email.strip()
+
     if not email:
         return "error: email can't be empty"
-    if re.fullmatch(regex, email):
-        return email
-    else:
+
+    if email.count("@") != 1:
         return "error: Invalid Email"
+
+    local, domain = email.split("@")
+
+    if not local:
+        return "error: Invalid Email"
+
+    if not domain:
+        return "error: Invalid Email"
+
+    if " " in email:
+        return "error: Invalid Email"
+
+    if ".." in email:
+        return "error: Invalid Email"
+
+    local_regex = r'^[A-Za-z0-9._%+-]+$'
+    if not re.fullmatch(local_regex, local):
+        return "error: Invalid Email"
+
+    if "." not in domain:
+        return "error: Invalid Email"
+
+    if domain[0] in ".-" or domain[-1] in ".-":
+        return "error: Invalid Email"
+
+    domain_regex = r'^[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+    if not re.fullmatch(domain_regex, domain):
+        return "error: Invalid Email"
+
+    return email
+

@@ -2,59 +2,92 @@ import React, { useState } from "react";
 import "../css/cvGeneration.css";
 
 const QUESTIONS = [
-  { field: "name",         question: "What is your first name?" },
-  { field: "surname",      question: "What is your surname?" },
-  { field: "birthdate",    question: "What is your birthdate (DD/MM/YYYY)?" },
-  { field: "degree",       question: "What degree do you have?" },
-  { field: "job_count",    question: "How many jobs have you had?" },
-  { field: "phone",        question: "What is your phone number?" },
-  { field: "email",        question: "What is your email?" },
-  { field: "picture_path", question: "Please provide a path to a picture of yourself" },
-  { field: "skill_count",  question: "How many skills do you have?" },
+  { field: "name", question: "What is your first name?" },
+  { field: "surname", question: "What is your surname?" },
+  { field: "birthdate", question: "What is your birthdate (DD/MM/YYYY)?" },
+  { field: "degree", question: "What degree do you have?" },
+  { field: "job_count", question: "How many jobs have you had?" },
+  { field: "phone", question: "What is your phone number?" },
+  { field: "email", question: "What is your email?" },
+  { field: "picture_path", question: "Please upload a picture of yourself" },
+  { field: "skill_count", question: "How many skills do you have?" },
 ];
 
 const CvGeneration = () => {
-  const [step, setStep] = useState(0);           // which question we are on
-  const [input, setInput] = useState("");        // current input value
-  const [error, setError] = useState("");        // error from backend
-  const [answers, setAnswers] = useState({});    // collected data
-  const [loading, setLoading] = useState(false); // optional
+ 
+  const [step, setStep] = useState(0); 
+  const [input, setInput] = useState(""); 
+  const [file, setFile] = useState(null); 
+  const [error, setError] = useState("");
+  const [answers, setAnswers] = useState({}); 
+  const [loading, setLoading] = useState(false);
 
   const current = QUESTIONS[step];
 
-  const handleSubmit = async (e) => {
+  const handleNextStep = async (e) => {
     e.preventDefault();
-    if (!current) return; // no more questions
+    if (!current) return;
 
     setLoading(true);
     setError("");
 
     try {
-      const res = await fetch("http://127.0.0.1:3001/validate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          field: current.field,
-          value: input,
-        }),
-      });
+      
+      if (current.field === "picture_path") {
+        if (!file) {
+          setError("Please choose an image first");
+          setLoading(false);
+          return;
+        }
 
-      const data = await res.json();
+        const formData = new FormData();
+        formData.append("file", file);
 
-      if (!data.ok) {
-        // backend validation failed
-        setError(data.error || "Unknown error");
+        const res = await fetch("http://127.0.0.1:3001/upload-picture", {
+          method: "POST",
+          body: formData, 
+        });
+
+        const data = await res.json();
+
+        if (!data.ok) {
+          setError(data.error || "Upload failed");
+        } else {
+          setAnswers((prev) => ({
+            ...prev,
+            
+            picture_path: `/uploads/${file.name}`,
+          }));
+          setFile(null);
+          setError("");
+          setStep((prev) => prev + 1);
+        }
       } else {
-        // validation passed, save answer and go next
-        setAnswers((prev) => ({
-          ...prev,
-          [current.field]: data.value,
-        }));
-        setInput("");
-        setError("");
-        setStep((prev) => prev + 1);
+        
+        const res = await fetch("http://127.0.0.1:3001/validate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            field: current.field,
+            value: input,
+          }),
+        });
+
+        const data = await res.json();
+
+        if (!data.ok) {
+          setError(data.error || "Unknown error");
+        } else {
+          setAnswers((prev) => ({
+            ...prev,
+            [current.field]: data.value,
+          }));
+          setInput("");
+          setError("");
+          setStep((prev) => prev + 1);
+        }
       }
     } catch (err) {
       console.error(err);
@@ -64,13 +97,45 @@ const CvGeneration = () => {
     }
   };
 
-  // All questions done
+  
+  const handleDownloadCv = async () => {
+    try {
+      const res = await fetch("http://127.0.0.1:3001/generate-cv", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(answers),
+      });
+
+      if (!res.ok) {
+        console.error("Failed to generate CV");
+        return;
+      }
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "cv.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  
   if (step >= QUESTIONS.length) {
     return (
       <div className="cv-container">
         <h1>CV Generation</h1>
-        <p>All questions completed. Here is your data:</p>
-        <pre>{JSON.stringify(answers, null, 2)}</pre>
+        <p>All questions completed. You can now download your CV.</p>
+        <button className="primary-btn" onClick={handleDownloadCv}>
+          Download CV as PDF
+        </button>
       </div>
     );
   }
@@ -80,26 +145,47 @@ const CvGeneration = () => {
       <h1>CV Generation</h1>
 
       <div className="text-bar">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleNextStep}>
           <p>{current.question}</p>
 
-        <div className="input-row">
-    <input
-    placeholder="Enter your answer here"
-    className="input"
-    name={current.field}
-    type="text"
-    value={input}
-    onChange={(e) => setInput(e.target.value)}
-  />
+          {current.field === "picture_path" ? (
+            <div className="input-row">
+              <input
+                id="file-input"
+                type="file"
+                accept="image/*"
+                className="file-input-hidden"
+                onChange={(e) => {
+                  setFile(e.target.files[0] || null);
+                  setError("");
+                }}
+              />
+              <label htmlFor="file-input" className="choose-file-btn">
+                {file ? file.name : "Choose Picture"}
+              </label>
+              <button type="submit" disabled={loading} className="submit-btn">
+                {loading ? "..." : "Upload"}
+              </button>
+            </div>
+          ) : (
+            <div className="input-row">
+              <input
+                placeholder="Enter your answer here"
+                className="input"
+                name={current.field}
+                type="text"
+                autoFocus
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+              />
 
-  <button type="submit" disabled={loading} className="submit-btn">
-    {loading ? "..." : "Enter"}
-  </button>
-</div>
+              <button type="submit" disabled={loading} className="submit-btn">
+                {loading ? "..." : "Enter"}
+              </button>
+            </div>
+          )}
 
-{error && <p className="error">{error}</p>}
-
+          {error && <p className="error">{error}</p>}
         </form>
       </div>
     </div>
