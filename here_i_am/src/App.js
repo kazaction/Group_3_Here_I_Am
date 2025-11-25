@@ -6,6 +6,7 @@ import Schedule from './components/schedule';
 import Profile from './components/profile';
 import Login from './components/login';
 import Register from './components/register';
+import ForgotPage from './components/ForgotPage';
 import Home from './components/home';
 import ChangePasswordPopup from './components/openPasswordWindow';
 import Minigame from "./components/minigame";
@@ -14,7 +15,7 @@ import Minigame from "./components/minigame";
 // Render Navbar only on non-login routes
 function NavbarWrapper() {
   const location = useLocation();
-  if (location.pathname === '/' || location.pathname === '/register') return null;
+  if (location.pathname === '/' || location.pathname === '/register' || location.pathname === '/forgot') return null;
   return <Navbar />;
 }
 
@@ -22,7 +23,7 @@ function NavbarWrapper() {
 function MainRoutes() {
   const location = useLocation();
   // remove left margin for login so the login component can center itself
-  const isAuthless = location.pathname === '/' || location.pathname === '/register';
+  const isAuthless = location.pathname === '/' || location.pathname === '/register' || location.pathname === '/forgot';
   const containerStyle = isAuthless ? { padding: '20px' } : { marginLeft: '200px', padding: '20px' };
 
   return (
@@ -30,6 +31,7 @@ function MainRoutes() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot" element={<ForgotPage />} />
         <Route path="/schedule" element={<Schedule />} />
         <Route path="/minigame" element={<Minigame />} />
         <Route path="/profile" element={<Profile />} />

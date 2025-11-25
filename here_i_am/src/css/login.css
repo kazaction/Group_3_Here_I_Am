@@ -96,6 +96,14 @@
   margin-bottom: 8px;
 }
 
+.forgot-success {
+  background: #e6ffea;
+  color: #006400;
+  padding: 8px 10px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
 .koupas{
   margin-left: 0px;
 }
