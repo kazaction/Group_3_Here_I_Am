@@ -22,5 +22,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-#ignore venv
-backend/venv/*
+#credentials .json
+backend/credentials.json
+backend/token.json
