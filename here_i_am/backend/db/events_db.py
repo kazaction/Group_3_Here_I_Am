@@ -1,7 +1,7 @@
 import sqlite3
 from pathlib import Path
 
-db_path = Path(__file__).resolve().parent / "database_events.db"
+db_path = Path(__file__).resolve().parent / "database.db"
 
 print(f"Initializing database at: {db_path}")
 
