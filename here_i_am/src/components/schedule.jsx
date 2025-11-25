@@ -1,8 +1,9 @@
 // CalendarWithEvents.jsx  (or whatever name you use)
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Calendar from "./Calendar";
 import EventList from "./EventList";
 import AddEvent from "./addEvent";
+
 
 
 // This is how we get today's date , so that today's date is displayed to the users initialy 

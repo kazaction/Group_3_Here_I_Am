@@ -18,26 +18,43 @@ function AddEvent({ selectedDate, onSave, onClose }) {
   });
 
   //////////////////////////////////////////////////////////////////
-  const handleSubmit = (e) => { // function declaration for the e. = event our button guys 
+  const handleSubmit = async (e) => { // function declaration for the e. = event our button guys 
     e.preventDefault();         // the arrow functions have bvecome a standard in react ,
                                 //  previous methods were not working correctly 
+
+                                
+    const trimmedTitle = title.trim();
+    const trimmedTime = time.trim();
+    const trimmedDescription = description.trim();
 
     if (!title.trim()) return;
 
    
 
     onSave({ //On save is declared in schedule.jsx ,when save trim the spaces from starting and end points 
-      title: title.trim(),
-      time: time.trim(),
-      description: description.trim()
+      title: trimmedTitle,
+      time: trimmedTime,
+      description: trimmedDescription,
     });
 
-    fetch('http://localhost:3001/schedule' , {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({title,time,description})
-  })
+    try {
+      const res = await fetch("http://localhost:3001/schedule", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: trimmedTitle,
+          time: trimmedTime,
+          description: trimmedDescription,
+          date: selectedDate, // important: tell backend which day this is for
+        }),
+      });
 
+      if (!res.ok) {
+        console.error("Failed to save event:", await res.text());
+      }
+    } catch (err) {
+      console.error("Error calling backend:", err);
+    }
   };
 
   return (
