@@ -3,9 +3,9 @@ from flask_cors import CORS
 import sqlite3
 import os
 import re
-
-from email_services import forgot_password
+from cv_routes import cv_bp
 from email_services import sign_up
+from email_services import forgot_password
 
 app = Flask(__name__)
 #allow rewuests from Rreact frontend
@@ -72,9 +72,8 @@ def register():
             "INSERT INTO users (name, surname, username, email, password) VALUES (?, ?, ?, ?, ?)",
             (name, surname, username, email, password)
         )
-        conn.commit()
         sign_up(email)
-
+        conn.commit()
     finally:
         conn.close()
 
@@ -148,28 +147,9 @@ def update_password(user_id):
         return jsonify({"success": False})
     return jsonify({"success": True})
 
-@app.route("/forgot", methods=["POST"])
-def reset_password():
-    data = request.get_json() or {}
-    email = (data.get("email") or "").strip().lower()
+# Register the blueprint for CV routes
+app.register_blueprint(cv_bp)
 
-    # basic email format validation
-    if not email or not re.match(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
-        return jsonify({"success": False, "error": "Invalid email format"}), 400
-
-    conn = get_db_connection()
-    try:
-        user = conn.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
-        # If user exists, generate and send new password and update DB
-        if user:
-            new_password = forgot_password(email)
-            conn.execute("UPDATE users SET password = ? WHERE email = ?", (new_password, email))
-            conn.commit()
-    finally:
-        conn.close()
-
-    # Always return a generic success message when format is valid
-    return jsonify({"success": True, "message": "If the email is correct, a new password was sent to your email."})
 
 #for eventlist 
 
@@ -246,6 +226,30 @@ def list_events_for_day():
     conn.close()
 
     return jsonify([dict(r) for r in rows])
+
+@app.route("/forgot", methods=["POST"])
+def reset_password():
+    data = request.get_json() or {}
+    email = (data.get("email") or "").strip().lower()
+
+    # basic email format validation
+    if not email or not re.match(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+        return jsonify({"success": False, "error": "Invalid email format"}), 400
+
+    conn = get_db_connection()
+    try:
+        user = conn.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
+        # If user exists, generate and send new password and update DB
+        if user:
+            new_password = forgot_password(email)
+            conn.execute("UPDATE users SET password = ? WHERE email = ?", (new_password, email))
+            conn.commit()
+    finally:
+        conn.close()
+
+    # Always return a generic success message when format is valid
+    return jsonify({"success": True, "message": "If the email is correct, a new password was sent to your email."})
+
 
 #Run Flask
 if __name__ == "__main__":

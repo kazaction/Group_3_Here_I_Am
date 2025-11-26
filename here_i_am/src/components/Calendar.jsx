@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from "react";
 import { LuCalendar, LuChevronLeft, LuChevronRight } from "react-icons/lu";
 
-//explained previously as well ... 
+// Helper: turn Date -> "YYYY-MM-DD"
 function formatDateKey(date) {
   if (!(date instanceof Date)) date = new Date(date);
   const y = date.getFullYear();
@@ -11,28 +11,27 @@ function formatDateKey(date) {
   return `${y}-${m}-${d}`;
 }
 
-const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]; //variable to how the weekdays 
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 function Calendar({
   events = [],
-  selectedDate,             
-  onDateSelect,       
+  selectedDate,             // ✅ NEW: selected date comes from parent
+  onDateSelect,             // ✅ NEW: callback to tell parent which day was clicked
 }) {
-  
-  //below is a falback in case the schedule isnt working to get the date localy
-  const [internalSelected, setInternalSelected] = useState( 
+  // ✅ NEW: internal fallback selected date (used if parent doesn't control it)
+  const [internalSelected, setInternalSelected] = useState(
     selectedDate || formatDateKey(new Date())
   );
 
-  // this is used to set the selected date , either the one used in the parent or the fallback 
+  // ✅ NEW: this is the date we consider "selected" in the UI
   const effectiveSelected = selectedDate || internalSelected;
 
-  // the currently selected month in the calendar 
+  // visible month
   const [visibleMonth, setVisibleMonth] = useState(() => {
     return selectedDate ? new Date(selectedDate) : new Date();
   });
 
-  // Map events by date 
+  // Map events by date for quick lookup
   const eventsByDate = useMemo(() => {
     const map = {};
     events.forEach((e) => {
@@ -99,14 +98,13 @@ function Calendar({
     });
   };
 
-  //when user interact with the calendar update the internalselected and notify the schedule, event 
+  // when a day is clicked, update internal selection AND notify parent
   const handleDayClick = (date) => {
     const key = formatDateKey(date);
     setInternalSelected(key);     // internal
-    if (onDateSelect) onDateSelect(key);  // send selected date to parent folder aka schedule and events sometimes 
+    if (onDateSelect) onDateSelect(key);  
   };
 
-  //to show the dots with the color and tell the meaning oif them 
   const legend = [
     { color: "var(--accent)", label: "Selected" },
     { color: "var(--accent-2)", label: "Today" },
@@ -129,8 +127,6 @@ function Calendar({
             aria-label="Previous month"
             onClick={handlePrevMonth}
           >
-
-            {/**buttons to change months back and forth  */}
             <LuChevronLeft />
           </button>
           <button
@@ -149,7 +145,7 @@ function Calendar({
       </div>
 
       <div className="calendar-body">
-        {/* header that shows the weeksdays  */}
+        {/* Weekday header */}
         <div className="calendar-row calendar-weekdays">
           {WEEKDAYS.map((day) => (
             <div key={day} className="calendar-cell calendar-weekday">
@@ -164,7 +160,7 @@ function Calendar({
             const key = formatDateKey(date);
             const isToday = key === todayKey;
 
-
+            // ✅ UPDATED: use effectiveSelected (which can come from parent)
             const isSelected = key === effectiveSelected;
 
             const hasEvents = !!eventsByDate[key];

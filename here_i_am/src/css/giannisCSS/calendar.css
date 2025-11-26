@@ -47,10 +47,14 @@
   color:#0e3a2b
 } */
 
+<<<<<<< HEAD
 /* if u un-comment the above it will show an example for a selected calendar date
 
   will need to remove this since we  implemented it another way that react to the browser's date and time 
 */
+=======
+/* if u un-comment the above it will show an example for a selected calendar date*/
+>>>>>>> origin
 
 .legend {
   display:flex;

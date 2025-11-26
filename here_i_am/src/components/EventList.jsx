@@ -1,8 +1,9 @@
-// EventList.jsx
-import React, { useMemo } from "react"; 
-import { LuClock3, LuMapPin, LuPlus } from "react-icons/lu"; //some icons 
 
-//explained in schedule.jsx , basicaly how we get the date 
+import React, { useMemo } from "react";
+import AddEvent from "./addEvent";
+import { LuClock3, LuMapPin, LuPlus } from "react-icons/lu";
+
+// (optional) helper, reused if you want
 function formatDateKey(date) {
   if (!(date instanceof Date)) date = new Date(date);
   const y = date.getFullYear();
@@ -12,31 +13,27 @@ function formatDateKey(date) {
 }
 
 function EventList({
-  selectedDate,   //this is used in the calendar to know the current date 
+  selectedDate,          // ✅ NEW: this comes from the parent (same value Calendar sends)
   events = [],
   onAddEventClick,
 }) {
-  
-  const dateObj = selectedDate ? new Date(selectedDate) : new Date(); //used to create the header 
+  // ✅ NEW: use selectedDate to build a pretty header
+  const dateObj = selectedDate ? new Date(selectedDate) : new Date();
 
-  const headerLabel = dateObj.toLocaleDateString(undefined, {     // IMPORTANT !!!: Undefined sets the users browser language 
-                                                                  // we need to add them to other features as well
+  const headerLabel = dateObj.toLocaleDateString(undefined, {
     weekday: "long",
     month: "long",
     day: "numeric",
     year: "numeric",
   });
 
-  const selectedKey = selectedDate || formatDateKey(dateObj); // this is a safeguard in case the date from string
-                                                              // isnt correct and so it used the formatdatekey function to make it a date 
+  const selectedKey = selectedDate || formatDateKey(dateObj); // small safety
 
-  
-  const eventsForDay = useMemo( // function to view/filter the events of the date selected 
+  // ✅ NEW: filter only the events that belong to the selected day
+  const eventsForDay = useMemo(
     () =>
-      events.filter( //filter function to show the events of that day 
-        (e) => e.date && e.date.slice(0, 10) === selectedKey //slice function removes the last ten charactes so that in case the 
-                                                             // date function uses hours minutes and seconds it will ignore them 
-                                                             //e.date compare the time without the 
+      events.filter(
+        (e) => e.date && e.date.slice(0, 10) === selectedKey
       ),
     [events, selectedKey]
   );
@@ -44,10 +41,10 @@ function EventList({
   return (
     <div className="card">
       <div className="card-head">
-        {/*the title now is the selected date */}
+        {/* ✅ UPDATED: the title now reflects the selected date */}
         <h2>{headerLabel}</h2>
 
-        <button //add event button 
+        <button
           type="button"
           className="pill-btn"
           onClick={onAddEventClick}
@@ -57,21 +54,21 @@ function EventList({
         </button>
       </div>
 
-      <div className="event-list"> {/* this the list , there is a placeholder for when no events are placed */}
+      <div className="event-list">
         {eventsForDay.length === 0 && (
-          
-          <div className="event-empty"> 
-            No events for this day yet. 
+          // ✅ NEW: message when no events on that day
+          <div className="event-empty">
+            No events for this day yet.
           </div>
         )}
 
-        {eventsForDay.map((e) => ( //for when there are events so that it displays the events 
+        {eventsForDay.map((e) => (
           <div key={e.id} className="event-item">
             <div className="event-icon">
               <div className="icon-circle" />
             </div>
             <div className="event-content">
-              <div className="event-title">{e.title}</div> {/*gets the title from the form input , this and description and time will change later , they will be grabbed from the database events table */}
+              <div className="event-title">{e.title}</div>
               <div className="event-meta">
                 {e.time && (
                   <span className="meta">
@@ -80,7 +77,7 @@ function EventList({
                 )}
                 {e.location && (
                   <span className="meta">
-                    <LuMapPin size={14} /> {e.location} {/** we might ad location as well later on but for now the location isnt displaeyed  */}
+                    <LuMapPin size={14} /> {e.location}
                   </span>
                 )}
               </div>

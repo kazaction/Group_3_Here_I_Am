@@ -14,6 +14,7 @@
     "feather-icons": "^4.29.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-icons": "^5.5.0",
     "react-router-dom": "^7.9.5",
     "react-scripts": "5.0.1",
     "sqlite3": "^5.1.7",
@@ -41,7 +42,6 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
-    ],
-    "proxy": "http://127.0.0.1:5000"
+    ]
   }
 }

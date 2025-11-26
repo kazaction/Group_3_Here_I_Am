@@ -1,7 +1,6 @@
 import sqlite3
 from pathlib import Path
 
-# ✅ Use same location Flask expects
 db_path = Path(__file__).resolve().parent / "database.db"
 
 print(f"Initializing database at: {db_path}")

@@ -57,7 +57,7 @@ function Schedule() {
   const [selectedDate, setSelectedDate] = useState(todayKey());
   const [isAddOpen, setIsAddOpen] = useState(false);
 
-  // 🔁 Load events from backend whenever the selected day changes
+  //Load events from backend whenever the selected day changes
   useEffect(() => {
     async function fetchEventsForDay() {
       try {
@@ -92,14 +92,14 @@ function Schedule() {
     fetchEventsForDay();
   }, [selectedDate]);
 
-  // 💾 Called when AddEvent form is submitted
+  // Called when form is submitted
   const handleSaveEvent = async (data) => {
-    // data = { title, time, description } from AddEvent
+    
     const payload = {
       title: data.title,
       time: data.time,
       description: data.description,
-      date: selectedDate,     // "YYYY-MM-DD"
+      date: selectedDate,    
     };
 
     try {
@@ -122,7 +122,7 @@ function Schedule() {
         date: saved.start_time_utc,
         time: saved.start_time_utc?.slice(11, 16),
         note: saved.description,
-        importance: saved.importance,
+        importance: saved.importance, //hasnt been added to the from yet 
       };
 
       // Update list instantly so user sees it without changing day
@@ -132,16 +132,6 @@ function Schedule() {
       console.error("Error saving event:", err);
     }
   };
-
-
-//  const handleAddEventClick = () => {
-//     setIsAddOpen(true); //updates the isAddOpen variable above to true ( show the window )
-//   };
-
-//   const handleClosedAddEvent = () => {
-//     setIsAddOpen(false); // closes the window when exiting the form used 
-//   }
-
 
 //connect to db 
 
