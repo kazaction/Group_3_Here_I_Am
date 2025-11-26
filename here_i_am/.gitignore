@@ -25,3 +25,4 @@ yarn-error.log*
 #credentials .json
 backend/credentials.json
 backend/token.json
+backend/__pycache__
