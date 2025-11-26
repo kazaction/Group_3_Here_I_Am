@@ -1,0 +1,82 @@
+.input {
+    background-color: white;
+    width: 400px;
+    height: 40px;
+    padding: 10px;
+    border: 2px solid black;
+    border-radius: 10px 0 0 10px;  
+    margin: 0;
+}
+
+.input:focus {
+    color: black;
+    background-color: white;
+    outline-color: grey;
+    box-shadow: grey;
+    transition: .1s;
+    transition-property: box-shadow;
+}
+
+.text-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60vh;
+    width: 100%;
+}
+
+.cv-container {
+    position: fixed;
+    top: 0;
+    left: 200px;
+    right: 0;
+    bottom: 0;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 40px;
+}
+
+.error {
+    color: red;
+    margin-top: 8px;
+    font-size: 0.9rem;
+}
+
+.input-row {
+    display: flex;
+    align-items: center;
+}
+
+
+.submit-btn {
+     height: 40px;
+    padding: 0 18px;
+    border-radius: 0 10px 10px 0;  
+    border: 2px solid black;
+    border-left: none;             
+    background: white;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 0;  
+}
+
+.submit-btn:hover {
+    background-color: lightgrey;
+    transition: .2s;
+    transition-property: background-color;
+}
+
+.submit-btn:active {
+    background-color: grey;
+    color: white;
+}
+
+.submit-btn:focus {
+    outline-color: grey;
+    box-shadow: grey;
+    transition: .1s;
+    transition-property: box-shadow;
+}

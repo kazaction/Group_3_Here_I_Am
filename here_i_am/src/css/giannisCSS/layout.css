@@ -3,7 +3,7 @@
   --panel:#fff;  /*for white things*/
   --line:rgba(0,0,0,.06);  /*for the lines */
   --shadow:0 10px 30px rgba(0,0,0,.06); /*for the shadows*/
-  --accent:#00BF00; /*for for the key features*/
+  --accent:#2ecc93; /*for for the key features*/
   --accent-2:#a9e7cf; /*for secondary coloring*/
   --text:#0f1720; /*for text*/
   --muted:#788792; /*for lighter text broders etc*/
@@ -54,4 +54,28 @@ body {
   /* means 260px for the sidebar and then the rest of the rest is the other column */
   grid-template-columns:260px 1fr;
   height:100vh
+}
+
+
+/* test the new css*/
+
+.calendar-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: stretch;
+  width: 100%;
+  
+}
+
+.calendar-layout .card {
+  width: 100%;
+  box-sizing: border-box;
+
+}
+
+@media (max-width: 900px) {
+  .calendar-layout {
+    grid-template-columns: 1fr;
+  }
 }

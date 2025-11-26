@@ -1,33 +1,84 @@
-
-import React from "react";
+// EventList.jsx
+import React, { useMemo } from "react";
 import { LuClock3, LuMapPin, LuPlus } from "react-icons/lu";
 
-const sample = [
-  { id: 1, title: "Team Meeting", time: "9:00 AM – 10:00 AM", location: "Conference Room A", note: "Weekly project status update" },
-  { id: 2, title: "Lunch Break",  time: "12:00 PM – 1:00 PM", location: "", note: "" },
-  { id: 3, title: "Client Call",  time: "2:30 PM – 3:30 PM",  location: "", note: "Discuss new requirements" },
-];
+// (optional) helper, reused if you want
+function formatDateKey(date) {
+  if (!(date instanceof Date)) date = new Date(date);
+  const y = date.getFullYear();
+  const m = `${date.getMonth() + 1}`.padStart(2, "0");
+  const d = `${date.getDate()}`.padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
 
-function EventList() {
+function EventList({
+  selectedDate,          // ✅ NEW: this comes from the parent (same value Calendar sends)
+  events = [],
+  onAddEventClick,
+}) {
+  // ✅ NEW: use selectedDate to build a pretty header
+  const dateObj = selectedDate ? new Date(selectedDate) : new Date();
+
+  const headerLabel = dateObj.toLocaleDateString(undefined, {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  const selectedKey = selectedDate || formatDateKey(dateObj); // small safety
+
+  // ✅ NEW: filter only the events that belong to the selected day
+  const eventsForDay = useMemo(
+    () =>
+      events.filter(
+        (e) => e.date && e.date.slice(0, 10) === selectedKey
+      ),
+    [events, selectedKey]
+  );
+
   return (
     <div className="card">
       <div className="card-head">
-        <h2>Friday, May 16, 2025</h2>
-        <button className="pill-btn">
+        {/* ✅ UPDATED: the title now reflects the selected date */}
+        <h2>{headerLabel}</h2>
+
+        <button
+          type="button"
+          className="pill-btn"
+          onClick={onAddEventClick}
+        >
           <LuPlus size={16} />
           <span>Add Event</span>
         </button>
       </div>
 
       <div className="event-list">
-        {sample.map((e) => (
+        {eventsForDay.length === 0 && (
+          // ✅ NEW: message when no events on that day
+          <div className="event-empty">
+            No events for this day yet.
+          </div>
+        )}
+
+        {eventsForDay.map((e) => (
           <div key={e.id} className="event-item">
-            <div className="event-index">{e.id}</div>
-            <div className="event-body">
+            <div className="event-icon">
+              <div className="icon-circle" />
+            </div>
+            <div className="event-content">
               <div className="event-title">{e.title}</div>
               <div className="event-meta">
-                <span className="meta"><LuClock3 size={14} /> {e.time}</span>
-                {e.location && <span className="meta"><LuMapPin size={14} /> {e.location}</span>}
+                {e.time && (
+                  <span className="meta">
+                    <LuClock3 size={14} /> {e.time}
+                  </span>
+                )}
+                {e.location && (
+                  <span className="meta">
+                    <LuMapPin size={14} /> {e.location}
+                  </span>
+                )}
               </div>
               {e.note && <div className="event-note">{e.note}</div>}
             </div>
@@ -38,4 +89,4 @@ function EventList() {
   );
 }
 
-export default EventList
+export default EventList;

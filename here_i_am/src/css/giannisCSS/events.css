@@ -1,9 +1,12 @@
 
 
-.event-list {
-  display:grid;
+ .event-list {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
   gap:12px
-}
+ }  
+
 .event-item {
   display:grid;
   grid-template-columns:32px 1fr;
