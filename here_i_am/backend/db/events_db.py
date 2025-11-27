@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS events (
     description TEXT NOT NULL,
     start_time_utc DATETIME,
     end_time_utc DATETIME,
+    scheduled_to_send DATETIME,
     importance INTEGER,
     FOREIGN KEY(user_id) REFERENCES users(id)
 )
