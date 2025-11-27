@@ -33,11 +33,11 @@ button{
     font-size: 16px;
     border: none;
     border-radius: 6px;
-    background-color: lightgreen;
+    background-color: var(--accent-2);
     cursor: #007bff;
     color: black;
 }
 
 button:hover{
-    background-color: #00BF00;
+    background-color: var(--accent);
 }
