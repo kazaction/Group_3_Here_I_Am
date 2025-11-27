@@ -2,7 +2,10 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sqlite3
 import os
+import re
 from cv_routes import cv_bp
+from email_services import sign_up
+from email_services import forgot_password
 
 app = Flask(__name__)
 #allow rewuests from Rreact frontend
@@ -69,6 +72,7 @@ def register():
             "INSERT INTO users (name, surname, username, email, password) VALUES (?, ?, ?, ?, ?)",
             (name, surname, username, email, password)
         )
+        sign_up(email)
         conn.commit()
     finally:
         conn.close()
@@ -145,6 +149,107 @@ def update_password(user_id):
 
 # Register the blueprint for CV routes
 app.register_blueprint(cv_bp)
+
+
+#for eventlist 
+
+
+#notes here !!!!!!
+@app.route("/events", methods=["POST"])
+def create_event():
+    data = request.get_json() or {}
+
+    title = (data.get("title") or "").strip()
+    description = (data.get("description") or "").strip()
+    date = data.get("date")      # expected "YYYY-MM-DD"
+    time = data.get("time") or ""  # expected "HH:MM" or ""
+
+
+    if not title or not date:
+        return jsonify({"error": "title and date are required"}), 400
+
+    # store date and time 
+    if time:
+        start_dt = f"{date}T{time}:00"
+    else:
+        start_dt = f"{date}T00:00:00"
+
+    end_dt = start_dt  # later change this to show duration
+
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+    #notes !!!!!!
+    cur.execute(
+        """
+        INSERT INTO events (user_id, event_id, title, description,
+                            start_time_utc, end_time_utc, importance)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            data.get("user_id"),   # set it to be none for now 
+            None,                  # event_id 
+            title,
+            description,
+            start_dt,
+            end_dt,
+            data.get("importance", 0),
+        ),
+    )
+    conn.commit()
+    event_id = cur.lastrowid
+    row = conn.execute("SELECT * FROM events WHERE id = ?", (event_id,)).fetchone()
+    conn.close()
+
+    return jsonify(dict(row)) , 201
+
+
+@app.route("/events", methods=["GET"])
+def list_events_for_day():
+    
+    date = request.args.get("date")
+    if not date:
+        return jsonify({"error": "missing date parameter"}), 400
+
+    start_dt = f"{date}T00:00:00"
+    end_dt   = f"{date}T23:59:59"
+
+    conn = get_db_connection()
+    rows = conn.execute(
+        """
+        SELECT * FROM events
+        WHERE start_time_utc BETWEEN ? AND ?
+        ORDER BY start_time_utc
+        """,
+        (start_dt, end_dt),
+    ).fetchall()
+    conn.close()
+
+    return jsonify([dict(r) for r in rows])
+
+@app.route("/forgot", methods=["POST"])
+def reset_password():
+    data = request.get_json() or {}
+    email = (data.get("email") or "").strip().lower()
+
+    # basic email format validation
+    if not email or not re.match(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+        return jsonify({"success": False, "error": "Invalid email format"}), 400
+
+    conn = get_db_connection()
+    try:
+        user = conn.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
+        # If user exists, generate and send new password and update DB
+        if user:
+            new_password = forgot_password(email)
+            conn.execute("UPDATE users SET password = ? WHERE email = ?", (new_password, email))
+            conn.commit()
+    finally:
+        conn.close()
+
+    # Always return a generic success message when format is valid
+    return jsonify({"success": True, "message": "If the email is correct, a new password was sent to your email."})
+
 
 #Run Flask
 if __name__ == "__main__":
