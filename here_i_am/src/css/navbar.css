@@ -120,3 +120,84 @@ body {
   opacity: 1;
   transform: translate(0);
 }
+
+/* Logout button */
+.logout-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: "Open Sans", sans-serif;
+  padding: 0;
+}
+
+/* Logout overlay - covers entire screen */
+.logout-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+/* Logout dialog box */
+.logout-dialog {
+  background: white;
+  padding: 30px 40px;
+  border-radius: 10px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  max-width: 400px;
+}
+
+.logout-dialog h3 {
+  margin: 0 0 25px 0;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.logout-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.logout-actions button {
+  padding: 10px 30px;
+  border: none;
+  border-radius: 5px;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-yes {
+  background: #00BF00;
+  color: white;
+}
+
+.btn-yes:hover {
+  background: #00a300;
+}
+
+.btn-no {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.btn-no:hover {
+  background: #d0d0d0;
+}
+
+.logout-modal-btn-no:hover {
+  background: #e0e0e0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
