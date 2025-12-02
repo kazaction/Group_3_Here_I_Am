@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 cur.execute("""
 INSERT OR IGNORE INTO users (name, surname, username, email, password, profile_picture)
-VALUES ('Meowth', 'Meow', 'TR_Meowth', 'meowth@teamrocket.com', 'JessieJamesMeowth', 'path/to/profile1.jpg')
+VALUES ('Meowth', 'Meow', 'TR_Meowth', 'meowth@teamrocket.com', 'JessieJamesMeowth', '/Users/markosmavroudi/Group_3_Here_I_Am/here_i_am/backend/Pictures/user_1.png')
 """)
 
 conn.commit()
