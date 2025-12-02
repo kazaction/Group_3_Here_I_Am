@@ -1,3 +1,5 @@
+/* ===== Global styles ===== */
+
 img {
     width: 100px;
     height: auto;
@@ -5,12 +7,12 @@ img {
     margin-bottom: 20px;
 }
 
-div{
+div {
     text-align: center;
     margin-top: 30px;
 }
 
-input{
+input {
     width: 250px;
     padding: 8px 10px;
     margin: 8px 0;
@@ -19,7 +21,120 @@ input{
     font-size: 16px;
 }
 
-label{
+label {
+    display: inline-block;
+    text-align: right;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+button {
+    margin-top: 15px;
+    padding: 8px 16px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    background-color: lightgreen;
+    cursor: pointer; /* ✅ fixed from #007bff */
+    color: black;
+}
+
+button:hover {
+    background-color: #00BF00;
+}
+
+/* ===== Profile layout ===== */
+
+.profile-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+}
+
+/* Main profile container (card) */
+.profile-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;  /* picture on top, form below */
+    align-items: center;     /* center picture + form horizontally */
+}
+
+/* Logo at the top */
+.profile-logo {
+    width: 100px;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+/* ===== Profile picture + pencil ===== */
+
+.profile-picture-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+/* Actual profile picture */
+.profile-picture {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ccc;
+}
+
+/* Placeholder circle when there is no picture */
+.profile-picture.placeholder {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    border: 2px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    font-size: 14px;
+}
+
+/* Little pencil button */
+.edit-profile-icon {
+    position: absolute;
+    bottom: 2px;   /* closer to the edge */
+    right: 2px;    /* closer to the edge */
+    cursor: pointer;
+
+    /* only the pencil, no big circle */
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-size: 16px;
+    line-height: 1;
+
+    /* override global label styles */
+    margin: 0;
+    width: auto;
+    font-weight: normal;
+}
+
+/* ===== Form fields (name, surname, etc.) ===== */
+
+.profile-form {
+    margin-top: 10px;
+    text-align: left;
+    display: inline-block; /* keeps form centered under the picture */
+}
+
+/* One line: label + input */
+.profile-field {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+/* Labels next to inputs inside the form */
+.profile-field label {
     display: inline-block;
     width: 120px;
     text-align: right;
@@ -27,17 +142,20 @@ label{
     font-weight: bold;
 }
 
-button{
-    margin-top: 15px;
-    padding: 8px 16px;
-    font-size: 16px;
-    border: none;
+/* Inputs inside the form */
+.profile-field input {
+    width: 250px;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
     border-radius: 6px;
-    background-color: lightgreen;
-    cursor: #007bff;
-    color: black;
+    font-size: 16px;
 }
 
-button:hover{
-    background-color: #00BF00;
+/* ===== Buttons container ===== */
+
+.profile-buttons {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
 }
