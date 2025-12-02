@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "../css/minigame.css";
-import  FileUpload from "./fileUpload"
 
 const StartMiniGame = () => {
     const canvasRef = useRef(null);
@@ -195,7 +194,6 @@ const StartMiniGame = () => {
             </div>)
             }
 
-            <FileUpload />
         </div>
     );
 }
