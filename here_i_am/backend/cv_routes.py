@@ -27,18 +27,13 @@ VALIDATORS = {
     "job_count": validate_job_count,
     "phone": validate_phone,
     "email": validate_email,
-    "picture_path": validate_nonempty,
     "skill_count": validate_skill_count,
 }
 
 
 @cv_bp.route("/validate", methods=["POST"])
 def validate_field():
-    """
-    Validate a single field coming from the React form.
-    Body: { "field": "...", "value": "..." }
-    Response: { ok: bool, error?: string, value?: string }
-    """
+   
     data = request.get_json(force=True) or {}
     field = data.get("field")
     value = data.get("value", "")
@@ -93,6 +88,7 @@ def upload_picture():
 def generate_cv():
     from reportlab.lib.pagesizes import A4
     from reportlab.lib import colors
+    from reportlab.lib.utils import ImageReader
     import os  
 
     data = request.get_json(force=True) or {}
@@ -168,37 +164,86 @@ def generate_cv():
     c.drawString(margin_left, y, f"Degree: {degree}")
     y -= 16
 
-  
-
-    picture_path = data.get("picture_path")
+    picture_path = data.get("picture_path", "")
     avatar_center_x = right_col_x + 80
     avatar_center_y = right_y - 10
-    avatar_size = 80  
+
+    circle_radius = 40
+    diameter = circle_radius * 2
 
     if picture_path and os.path.exists(picture_path):
         try:
             c.saveState()
+
+           
+            p = c.beginPath()
+            p.circle(avatar_center_x, avatar_center_y, circle_radius)
+            c.clipPath(p, stroke=0, fill=0)
+
+          
+            img = ImageReader(picture_path)
+            img_w, img_h = img.getSize()
+            aspect = img_h / float(img_w)
+
+            if img_w < img_h:  
+                new_w = diameter
+                new_h = diameter * aspect
+            else:  
+                new_h = diameter
+                new_w = diameter / aspect
+
+           
             c.drawImage(
                 picture_path,
-                avatar_center_x - avatar_size / 2,
-                avatar_center_y - avatar_size / 2,
-                width=avatar_size,
-                height=avatar_size,
-                preserveAspectRatio=True,
+                avatar_center_x - new_w / 2,
+                avatar_center_y - new_h / 2,
+                width=new_w,
+                height=new_h,
                 mask="auto",
             )
+
             c.restoreState()
+
+           
+            c.setStrokeColorRGB(0.7, 0.7, 0.7)
+            c.setLineWidth(2)
+            c.circle(avatar_center_x, avatar_center_y, circle_radius, stroke=1, fill=0)
+
         except Exception as e:
             print("Error drawing image:", e)
-            c.setStrokeColorRGB(0.85, 0.85, 0.85)
-            c.circle(avatar_center_x, avatar_center_y, 35, stroke=1, fill=0)
+            c.setStrokeColorRGB(0.7, 0.7, 0.7)
+            c.setLineWidth(2)
+            c.circle(avatar_center_x, avatar_center_y, circle_radius, stroke=1, fill=0)
             c.setStrokeColor(colors.black)
     else:
-        c.setStrokeColorRGB(0.85, 0.85, 0.85)
-        c.circle(avatar_center_x, avatar_center_y, 35, stroke=1, fill=0)
-        c.setStrokeColor(colors.black)
+        # If no image, draw a placeholder with user's initials
+        name = data.get("name", "").strip()
+        surname = data.get("surname", "").strip()
+        initials = ""
+        if name:
+            initials += name[0].upper()
+        if surname:
+            initials += surname[0].upper()
+
+        # Draw a colored circle
+        c.setFillColorRGB(0.85, 0.85, 0.85)  # Light grey background
+        c.circle(avatar_center_x, avatar_center_y, circle_radius, stroke=0, fill=1)
+
+        if initials:
+            # Draw the initials in the center
+            c.setFillColor(colors.white)
+            c.setFont("Helvetica-Bold", 24)
+            c.drawCentredString(avatar_center_x, avatar_center_y - 8, initials)
+
+        # Draw the border
+        c.setStrokeColorRGB(0.7, 0.7, 0.7)
+        c.setLineWidth(2)
+        c.circle(avatar_center_x, avatar_center_y, circle_radius, stroke=1, fill=0)
+
 
     right_y -= 80
+    c.setFillColor(colors.black)  # ensure text is black
+
 
     c.setFont("Helvetica", 10)
     email = data.get("email", "")
@@ -211,7 +256,7 @@ def generate_cv():
     if email:
         c.setFont(value_font, 10)
         c.drawString(right_col_x, right_y, "email: ")
-    
+
         c.setFont(label_font, 10)
         c.drawString(right_col_x + 32, right_y, email)
 
@@ -220,7 +265,7 @@ def generate_cv():
     if phone:
         c.setFont(value_font, 10)
         c.drawString(right_col_x, right_y, "phone: ")
-    
+
         c.setFont(label_font, 10)
         c.drawString(right_col_x + 37, right_y, phone)
 
@@ -229,7 +274,7 @@ def generate_cv():
     if birthdate:
         c.setFont(value_font, 10)
         c.drawString(right_col_x, right_y, "Birthdate: ")
-    
+
         c.setFont(label_font, 10)
         c.drawString(right_col_x + 50, right_y, birthdate)
 

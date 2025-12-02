@@ -75,38 +75,34 @@ const CvGeneration = () => {
         validated[field] = data.value;
       }
 
-      // upload picture
-      if (!file) {
-        setErrors((prev) => ({
-          ...prev,
-          picture_path: "Please choose a profile picture",
-        }));
-        setLoading(false);
-        return;
-      }
 
-      const fd = new FormData();
-      fd.append("file", file);
+     
+if (file) {
+  const fd = new FormData();
+  fd.append("file", file);
 
-      const uploadRes = await fetch("http://localhost:3001/upload-picture", {
-        method: "POST",
-        body: fd,
-      });
+  const uploadRes = await fetch("http://localhost:3001/upload-picture", {
+    method: "POST",
+    body: fd,
+  });
 
-      const uploadData = await uploadRes.json();
+  const uploadData = await uploadRes.json();
 
-      if (!uploadData.ok) {
-        setErrors((prev) => ({
-          ...prev,
-          picture_path: uploadData.error || "Upload failed",
-        }));
-        setLoading(false);
-        return;
-      }
+  if (!uploadData.ok) {
+    setErrors((prev) => ({
+      ...prev,
+      picture_path: uploadData.error || "Upload failed",
+    }));
+    setLoading(false);
+    return;
+  }
 
-      validated.picture_path = uploadData.path;
+  validated.picture_path = uploadData.path;
+} else {
+  validated.picture_path = ""; 
+}
 
-      // generate CV
+
       const cvRes = await fetch("http://localhost:3001/generate-cv", {
         method: "POST",
         headers: {
