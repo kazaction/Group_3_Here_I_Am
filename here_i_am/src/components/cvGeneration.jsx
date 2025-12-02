@@ -18,6 +18,7 @@ const CvGeneration = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,6 +27,23 @@ const CvGeneration = () => {
       [name]: value,
     }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0] || null;
+    setFile(selectedFile);
+    setErrors((prev) => ({ ...prev, picture_path: "" }));
+
+    // Clean up previous preview URL to prevent memory leaks
+    if (imagePreviewUrl) {
+      URL.revokeObjectURL(imagePreviewUrl);
+    }
+
+    if (selectedFile) {
+      setImagePreviewUrl(URL.createObjectURL(selectedFile));
+    } else {
+      setImagePreviewUrl(null);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -250,10 +268,7 @@ if (file) {
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => {
-                setFile(e.target.files[0] || null);
-                setErrors((prev) => ({ ...prev, picture_path: "" }));
-              }}
+              onChange={handleFileChange}
             />
             {errors.picture_path && (
               <p className="error">{errors.picture_path}</p>
@@ -272,8 +287,28 @@ if (file) {
         </form>
 
        
-        <div className="cv-preview">
-          <div className="cv-preview-header">
+        <div
+          className="cv-preview"
+          style={{ position: "sticky", top: "20px" }}
+        >
+          <div
+            className="cv-preview-header"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "15px",
+            }}
+          >
+            {imagePreviewUrl && (
+              <div className="cv-preview-picture">
+                <img
+                  src={imagePreviewUrl}
+                  alt="Profile Preview"
+                  className="profile-pic-preview"
+                />
+              </div>
+            )}
             <h2>
               {form.name} {form.surname}
             </h2>

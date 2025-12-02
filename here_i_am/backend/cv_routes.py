@@ -216,7 +216,7 @@ def generate_cv():
             c.circle(avatar_center_x, avatar_center_y, circle_radius, stroke=1, fill=0)
             c.setStrokeColor(colors.black)
     else:
-        # If no image, draw a placeholder with user's initials
+        
         name = data.get("name", "").strip()
         surname = data.get("surname", "").strip()
         initials = ""
@@ -225,24 +225,24 @@ def generate_cv():
         if surname:
             initials += surname[0].upper()
 
-        # Draw a colored circle
-        c.setFillColorRGB(0.85, 0.85, 0.85)  # Light grey background
+        
+        c.setFillColorRGB(0.85, 0.85, 0.85) 
         c.circle(avatar_center_x, avatar_center_y, circle_radius, stroke=0, fill=1)
 
         if initials:
-            # Draw the initials in the center
+           
             c.setFillColor(colors.white)
             c.setFont("Helvetica-Bold", 24)
             c.drawCentredString(avatar_center_x, avatar_center_y - 8, initials)
 
-        # Draw the border
+        
         c.setStrokeColorRGB(0.7, 0.7, 0.7)
         c.setLineWidth(2)
         c.circle(avatar_center_x, avatar_center_y, circle_radius, stroke=1, fill=0)
 
 
     right_y -= 80
-    c.setFillColor(colors.black)  # ensure text is black
+    c.setFillColor(colors.black)  
 
 
     c.setFont("Helvetica", 10)
