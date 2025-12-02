@@ -1,82 +1,85 @@
-.input {
-    background-color: white;
-    width: 400px;
-    height: 40px;
-    padding: 10px;
-    border: 2px solid black;
-    border-radius: 10px 0 0 10px;  
-    margin: 0;
-}
-
-.input:focus {
-    color: black;
-    background-color: white;
-    outline-color: grey;
-    box-shadow: grey;
-    transition: .1s;
-    transition-property: box-shadow;
-}
-
-.text-bar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 60vh;
-    width: 100%;
-}
-
 .cv-container {
-    position: fixed;
-    top: 0;
-    left: 200px;
-    right: 0;
-    bottom: 0;
-    color: black;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding-top: 40px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.cv-layout {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.cv-form {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.cv-form h2 {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+.form-row label {
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+.form-row input {
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: 1px solid #d0d0d0;
 }
 
 .error {
-    color: red;
-    margin-top: 8px;
-    font-size: 0.9rem;
+  color: #c62828;
+  font-size: 0.8rem;
+  margin-top: 4px;
 }
 
-.input-row {
-    display: flex;
-    align-items: center;
+.primary-btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  background: var(--accent);
+  color: white;
 }
 
-
-.submit-btn {
-     height: 40px;
-    padding: 0 18px;
-    border-radius: 0 10px 10px 0;  
-    border: 2px solid black;
-    border-left: none;             
-    background: white;
-    cursor: pointer;
-    font-weight: bold;
-    margin: 0;  
+.primary-btn:disabled {
+  opacity: 0.7;
+  cursor: default;
 }
 
-.submit-btn:hover {
-    background-color: lightgrey;
-    transition: .2s;
-    transition-property: background-color;
+.cv-preview {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 20px;
 }
 
-.submit-btn:active {
-    background-color: grey;
-    color: white;
+.cv-preview-header {
+  background: var(--accent);
+  color: white;
+  padding: 16px;
+  border-radius: 8px 8px 0 0;
+  margin: -20px -20px 16px -20px;
 }
 
-.submit-btn:focus {
-    outline-color: grey;
-    box-shadow: grey;
-    transition: .1s;
-    transition-property: box-shadow;
+.cv-preview-body p {
+  margin: 6px 0;
 }
+
+.info-text {
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+

@@ -1,106 +1,340 @@
 import React, { useState } from "react";
 import "../css/cvGeneration.css";
 
-const QUESTIONS = [
-  { field: "name",         question: "What is your first name?" },
-  { field: "surname",      question: "What is your surname?" },
-  { field: "birthdate",    question: "What is your birthdate (DD/MM/YYYY)?" },
-  { field: "degree",       question: "What degree do you have?" },
-  { field: "job_count",    question: "How many jobs have you had?" },
-  { field: "phone",        question: "What is your phone number?" },
-  { field: "email",        question: "What is your email?" },
-  { field: "picture_path", question: "Please provide a path to a picture of yourself" },
-  { field: "skill_count",  question: "How many skills do you have?" },
-];
 
 const CvGeneration = () => {
-  const [step, setStep] = useState(0);           // which question we are on
-  const [input, setInput] = useState("");        // current input value
-  const [error, setError] = useState("");        // error from backend
-  const [answers, setAnswers] = useState({});    // collected data
-  const [loading, setLoading] = useState(false); // optional
+  const [form, setForm] = useState({
+    name: "",
+    surname: "",
+    birthdate: "",
+    degree: "",
+    job_count: "",
+    phone: "",
+    email: "",
+    skill_count: "",
+  });
 
-  const current = QUESTIONS[step];
+  const [file, setFile] = useState(null);
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0] || null;
+    setFile(selectedFile);
+    setErrors((prev) => ({ ...prev, picture_path: "" }));
+
+    // Clean up previous preview URL to prevent memory leaks
+    if (imagePreviewUrl) {
+      URL.revokeObjectURL(imagePreviewUrl);
+    }
+
+    if (selectedFile) {
+      setImagePreviewUrl(URL.createObjectURL(selectedFile));
+    } else {
+      setImagePreviewUrl(null);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!current) return; // no more questions
-
     setLoading(true);
-    setError("");
+    setErrors({});
+    setMessage("");
 
     try {
-      const res = await fetch("http://127.0.0.1:3001/validate", {
+      const validated = {};
+
+      
+      const fieldsToCheck = [
+        "name",
+        "surname",
+        "birthdate",
+        "degree",
+        "job_count",
+        "phone",
+        "email",
+        "skill_count",
+      ];
+
+      for (const field of fieldsToCheck) {
+        const res = await fetch("http://localhost:3001/validate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            field,
+            value: form[field],
+          }),
+        });
+
+        const data = await res.json();
+
+        if (!data.ok) {
+          setErrors((prev) => ({
+            ...prev,
+            [field]: data.error || "Invalid value",
+          }));
+          setLoading(false);
+          return; 
+        }
+
+        validated[field] = data.value;
+      }
+
+
+     
+if (file) {
+  const fd = new FormData();
+  fd.append("file", file);
+
+  const uploadRes = await fetch("http://localhost:3001/upload-picture", {
+    method: "POST",
+    body: fd,
+  });
+
+  const uploadData = await uploadRes.json();
+
+  if (!uploadData.ok) {
+    setErrors((prev) => ({
+      ...prev,
+      picture_path: uploadData.error || "Upload failed",
+    }));
+    setLoading(false);
+    return;
+  }
+
+  validated.picture_path = uploadData.path;
+} else {
+  validated.picture_path = ""; 
+}
+
+
+      const cvRes = await fetch("http://localhost:3001/generate-cv", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          field: current.field,
-          value: input,
-        }),
+        body: JSON.stringify(validated),
       });
 
-      const data = await res.json();
-
-      if (!data.ok) {
-        // backend validation failed
-        setError(data.error || "Unknown error");
-      } else {
-        // validation passed, save answer and go next
-        setAnswers((prev) => ({
-          ...prev,
-          [current.field]: data.value,
-        }));
-        setInput("");
-        setError("");
-        setStep((prev) => prev + 1);
+      if (!cvRes.ok) {
+        setMessage("Failed to generate CV");
+        setLoading(false);
+        return;
       }
+
+      const blob = await cvRes.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "cv.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+      setMessage("CV downloaded successfully.");
     } catch (err) {
       console.error(err);
-      setError("Server error. Is Flask running on port 3001?");
+      setMessage("Server error. Is Flask running on port 3001?");
     } finally {
       setLoading(false);
     }
   };
 
-  // All questions done
-  if (step >= QUESTIONS.length) {
-    return (
-      <div className="cv-container">
-        <h1>CV Generation</h1>
-        <p>All questions completed. Here is your data:</p>
-        <pre>{JSON.stringify(answers, null, 2)}</pre>
-      </div>
-    );
-  }
-
   return (
     <div className="cv-container">
       <h1>CV Generation</h1>
 
-      <div className="text-bar">
-        <form onSubmit={handleSubmit}>
-          <p>{current.question}</p>
+      <div className="cv-layout">
+        
+        <form className="cv-form" onSubmit={handleSubmit}>
+          <h2>Personal details</h2>
 
-        <div className="input-row">
-    <input
-    placeholder="Enter your answer here"
-    className="input"
-    name={current.field}
-    type="text"
-    value={input}
-    onChange={(e) => setInput(e.target.value)}
-  />
+          <div className="form-row">
+            <label>First name</label>
+            <input
+              type="text"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              placeholder="George"
+            />
+            {errors.name && <p className="error">{errors.name}</p>}
+          </div>
 
-  <button type="submit" disabled={loading} className="submit-btn">
-    {loading ? "..." : "Enter"}
-  </button>
-</div>
+          <div className="form-row">
+            <label>Surname</label>
+            <input
+              type="text"
+              name="surname"
+              value={form.surname}
+              onChange={handleChange}
+              placeholder="Jordan"
+            />
+            {errors.surname && <p className="error">{errors.surname}</p>}
+          </div>
 
-{error && <p className="error">{error}</p>}
+          <div className="form-row">
+            <label>Birthdate</label>
+            <input
+              type="text"
+              name="birthdate"
+              value={form.birthdate}
+              onChange={handleChange}
+              placeholder="DD/MM/YYYY"
+            />
+            {errors.birthdate && <p className="error">{errors.birthdate}</p>}
+          </div>
 
+          <div className="form-row">
+            <label>Degree</label>
+            <input
+              type="text"
+              name="degree"
+              value={form.degree}
+              onChange={handleChange}
+              placeholder="BSc Computer Science"
+            />
+            {errors.degree && <p className="error">{errors.degree}</p>}
+          </div>
+
+          <div className="form-row">
+            <label>Number of jobs</label>
+            <input
+              type="number"
+              name="job_count"
+              value={form.job_count}
+              onChange={handleChange}
+              min="0"
+              max="10"
+              placeholder="0-10"
+            />
+            {errors.job_count && <p className="error">{errors.job_count}</p>}
+          </div>
+
+          <div className="form-row">
+            <label>Phone number</label>
+            <input
+              type="text"
+              name="phone"
+              value={form.phone}
+              onChange={handleChange}
+              placeholder="+357..."
+            />
+            {errors.phone && <p className="error">{errors.phone}</p>}
+          </div>
+
+          <div className="form-row">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              placeholder="example@email.com"
+            />
+            {errors.email && <p className="error">{errors.email}</p>}
+          </div>
+
+          <div className="form-row">
+            <label>Number of skills</label>
+            <input
+              type="number"
+              name="skill_count"
+              value={form.skill_count}
+              onChange={handleChange}
+              min ="0"
+              max="20"
+              placeholder="0-20"
+            />
+            {errors.skill_count && <p className="error">{errors.skill_count}</p>}
+          </div>
+
+          <div className="form-row">
+            <label>Profile picture</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+            {errors.picture_path && (
+              <p className="error">{errors.picture_path}</p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="primary-btn submit-btn"
+          >
+            {loading ? "Generating..." : "Generate CV"}
+          </button>
+
+          {message && <p className="info-text">{message}</p>}
         </form>
+
+       
+        <div
+          className="cv-preview"
+          style={{ position: "sticky", top: "20px" }}
+        >
+          <div
+            className="cv-preview-header"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "15px",
+            }}
+          >
+            {imagePreviewUrl && (
+              <div className="cv-preview-picture">
+                <img
+                  src={imagePreviewUrl}
+                  alt="Profile Preview"
+                  className="profile-pic-preview"
+                />
+              </div>
+            )}
+            <h2>
+              {form.name} {form.surname}
+            </h2>
+          </div>
+          <div className="cv-preview-body">
+            <p>
+              <strong>Email:</strong> {form.email || "example@email.com"}
+            </p>
+            <p>
+              <strong>Phone:</strong> {form.phone || "+357 ..."}
+            </p>
+            <p>
+              <strong>Degree:</strong> {form.degree || "Your degree here"}
+            </p>
+            <p>
+              <strong>Birthdate:</strong>{" "}
+              {form.birthdate || "DD/MM/YYYY"}
+            </p>
+            <p>
+              <strong>Jobs:</strong> {form.job_count || "0"}
+            </p>
+            <p>
+              <strong>Skills count:</strong> {form.skill_count || "0"}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
