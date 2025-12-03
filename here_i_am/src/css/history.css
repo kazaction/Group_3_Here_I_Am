@@ -1,7 +1,8 @@
 .history-wrapper {
     display: flex;
-    height: 100vh;
+    height: 100%;
     background: #f5f5f5;
+
 }
 
 /* -------- Sidebar -------- */
@@ -10,6 +11,7 @@
     width: 260px;
     background: #fff;
     padding: 0px;
+    padding-bottom: 80px;
     border-right: 1px solid #ddd;
 }
 

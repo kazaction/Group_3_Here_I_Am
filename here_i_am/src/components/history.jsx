@@ -31,10 +31,17 @@ const History = () => {
 
 
     useEffect(() => {
-        const userId = localStorage.getItem("user_id");
+        const userObj = localStorage.getItem("user");
+        const userId = userObj.user_id;
+
+        if (!userId) {
+            console.error("User ID missing!");
+            return;
+        }
+
 
         axios
-        .get("http://localhost:5000/history", {params: { user_id: userId },})
+        .get(`http://localhost:3001/users/${userId}/history`)
         .then((res) => setEvents(res.data))
         .catch((err) => console.error(err));
     }, []);
@@ -149,24 +156,26 @@ const History = () => {
                 </div>
             </aside>
 
-            {/* ---------------- EVENT LIST ---------------- */}
-            <main className="event-list">
-                <h1>Event History</h1>
+            <grid>
+                {/* ---------------- EVENT LIST ---------------- */}
+                <main className="event-list">
+                    <h1>Event History</h1>
 
-                {filteredEvents.length === 0 ? (
-                    <p>No events found.</p>
-                    ) : (
-                        filteredEvents.map((event) => (
-                            <div className="event-row" key={event.id}>
-                                <div className="event-title">{event.title}</div>
-                                <div>{event.importance.toUpperCase()}</div>
-                                <div>{event.date}</div>
-                                <div>{event.start_time} → {event.end_time}</div>
-                            </div>
+                    {filteredEvents.length === 0 ? (
+                        <p>No events found.</p>
+                        ) : (
+                            filteredEvents.map((event) => (
+                                <div className="event-row" key={event.id}>
+                                    <div className="event-title">{event.title}</div>
+                                    <div>{event.importance.toUpperCase()}</div>
+                                    <div>{event.date}</div>
+                                    <div>{event.start_time} → {event.end_time}</div>
+                                </div>
+                            )
                         )
-                    )
-                )}
-            </main>
+                    )}
+                </grid>
+            </div>
         </div>
     );
 };
