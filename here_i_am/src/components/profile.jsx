@@ -38,8 +38,6 @@ const Profile = () => {
         name: profile.name,
         surname: profile.surname,
         email: profile.email,
-        // ⚠️ username is UNIQUE; only send if your backend allows changing it
-        // username: profile.username,
       })
       .then((res) => console.log("Profile updated:", res.data))
       .catch((err) => console.error(err));
@@ -56,7 +54,7 @@ const Profile = () => {
       return;
     }
 
-    // Optional: instant preview while uploading
+    //instant preview while uploading
     const previewUrl = URL.createObjectURL(file);
     setProfile((prev) => ({
       ...prev,
