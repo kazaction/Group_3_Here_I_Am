@@ -360,41 +360,6 @@ def reset_password():
     # Always return a generic success message when format is valid
     return jsonify({"success": True, "message": "If the email is correct, a new password was sent to your email."})
 
-#for the pictures
-@app.route("/pictures/<filename>")
-def get_picture(filename):
-    return send_from_directory(PICTURES_FOLDER, filename)
-#fore the pictrures
-@app.route("/users/<int:user_id>/profile-picture", methods=["POST"])
-def upload_profile_picture(user_id):
-    if "profile_picture" not in request.files:
-        return jsonify({"error": "No file part"}), 400
-
-    file = request.files["profile_picture"]
-
-    if file.filename == "":
-        return jsonify({"error": "No selected file"}), 400
-
-    if not allowed_file(file.filename):
-        return jsonify({"error": "Invalid file type. Only .jpg, .jpeg, .png allowed."}), 400
-
-    ext = file.filename.rsplit(".", 1)[1].lower()
-    filename = secure_filename(f"user_{user_id}.{ext}")
-    save_path = os.path.join(PICTURES_FOLDER, filename)
-    file.save(save_path)
-
-    # Save filename in DB
-    conn = get_db_connection()
-    conn.execute(
-        "UPDATE users SET profile_picture = ? WHERE id = ?",
-        (filename, user_id)
-    )
-    conn.commit()
-    conn.close()
-
-    url = f"http://localhost:3001/pictures/{filename}"
-    return jsonify({"profile_picture": url}), 200
-
 # Run Flask
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=3001)
