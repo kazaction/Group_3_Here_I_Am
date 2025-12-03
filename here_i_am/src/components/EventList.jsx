@@ -3,6 +3,15 @@ import React, { useMemo } from "react";
 import AddEvent from "./addEvent";
 import { LuClock3, LuMapPin, LuPlus } from "react-icons/lu";
 
+// to check if an event is in the past 
+  function isEventInPast(event) {
+  if (!event.date) return false;
+  const dateTimeStr = event.date; // e.g. "2025-11-25T10:00:00"
+  const eventTime = new Date(dateTimeStr);
+  const now = new Date();
+  return eventTime < now;
+}
+
 // (optional) helper, reused if you want
 function formatDateKey(date) {
   if (!(date instanceof Date)) date = new Date(date);
@@ -30,13 +39,16 @@ function EventList({
   const selectedKey = selectedDate || formatDateKey(dateObj); // small safety
 
   // ✅ NEW: filter only the events that belong to the selected day
-  const eventsForDay = useMemo(
-    () =>
-      events.filter(
-        (e) => e.date && e.date.slice(0, 10) === selectedKey
-      ),
-    [events, selectedKey]
-  );
+   const eventsForDay = events; //useMemo(
+  //   () =>
+  //     events.filter(
+  //       (e) => e.date && e.date.slice(0, 10) === selectedKey
+  //     ),
+  //   [events, selectedKey]
+  // );
+
+
+
 
   return (
     <div className="card">
@@ -56,35 +68,59 @@ function EventList({
 
       <div className="event-list">
         {eventsForDay.length === 0 && (
-          // ✅ NEW: message when no events on that day
+          
           <div className="event-empty">
             No events for this day yet.
           </div>
         )}
 
-        {eventsForDay.map((e) => (
-          <div key={e.id} className="event-item">
-            <div className="event-icon">
-              <div className="icon-circle" />
-            </div>
-            <div className="event-content">
-              <div className="event-title">{e.title}</div>
-              <div className="event-meta">
-                {e.time && (
-                  <span className="meta">
-                    <LuClock3 size={14} /> {e.time}
-                  </span>
-                )}
-                {e.location && (
-                  <span className="meta">
-                    <LuMapPin size={14} /> {e.location}
-                  </span>
-                )}
-              </div>
-              {e.note && <div className="event-note">{e.note}</div>}
-            </div>
-          </div>
-        ))}
+       
+
+    
+          
+      {eventsForDay.map((e) => {
+              const past = isEventInPast(e);
+
+              return (
+                <div
+                  key={e.id}
+                  className={`event-item ${past ? "event-item-past" : "event-item-future"}`}
+                >
+                  <div className="event-icon">
+                    <div
+                      className={`icon-circle ${
+                        past ? "icon-circle-past" : "icon-circle-future"
+                      }`}
+                    />
+                  </div>
+                  <div className="event-content">
+                    <div className="event-title">{e.title}</div>
+                    <div className="event-meta">
+                      {e.time && (
+                        <span className="meta">
+                          <LuClock3 size={14} /> {e.time}
+                        </span>
+                      )}
+                      {e.location && (
+                        <span className="meta">
+                          <LuMapPin size={14} /> {e.location}
+                        </span>
+                      )}
+                    </div>
+                    {e.note && <div className="event-note">{e.note}</div>}
+
+                    <div className="event-importance">
+                          Importance: {e.importance === "high"
+                            ? "High"
+                            : e.importance === "low"
+                            ? "Low"
+                            : "Normal"}
+                    </div>
+
+                  </div>
+                </div>
+              );
+            })}
       </div>
     </div>
   );

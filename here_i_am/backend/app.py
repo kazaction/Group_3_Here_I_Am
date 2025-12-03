@@ -8,43 +8,49 @@ from email_services import sign_up
 from email_services import forgot_password
 
 app = Flask(__name__)
-#allow rewuests from Rreact frontend
+# allow rewuests from Rreact frontend
 CORS(app)
 
-#path to database
+# path to database
 DB_PATH = os.path.join(os.path.dirname(__file__), "db", "database.db")
 
-#function to connect
+# function to connect
+
+
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
-#Login function - accept username OR email
+# Login function - accept username OR email
+
+
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
     credential = data.get("credential")  # can be username or email
     password = data.get("password")
-    
+
     if not credential or not password:
         return jsonify({"success": False, "error": "Missing credential or password"}), 400
-    
+
     conn = get_db_connection()
     # Try to find user by username first, then by email
     user = conn.execute(
-        "SELECT id, username, email, password FROM users WHERE username = ? OR email = ?", (credential, credential)
+        "SELECT id, username, email, password FROM users WHERE username = ? OR email = ?", (
+            credential, credential)
     ).fetchone()
     conn.close()
-    
+
     if not user:
         return jsonify({"success": False, "error": "User not found"}), 404
-    
+
     if user["password"] != password:
         return jsonify({"success": False, "error": "Incorrect Password"}), 401
-    
-    #return user_id, username, and email from frontend to store
+
+    # return user_id, username, and email from frontend to store
     return jsonify({"success": True, "user_id": user["id"], "username": user["username"], "email": user["email"]})
+
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -67,7 +73,7 @@ def register():
         if existing:
             return jsonify({"message": "Username or email already in use"}), 409
 
-        #hashed = generate_password_hash(password)
+        # hashed = generate_password_hash(password)
         conn.execute(
             "INSERT INTO users (name, surname, username, email, password) VALUES (?, ?, ?, ?, ?)",
             (name, surname, username, email, password)
@@ -79,19 +85,22 @@ def register():
 
     return jsonify({"message": "Registered"}), 201
 
-#Get user info by id
+# Get user info by id
+
+
 @app.route("/users/<int:user_id>", methods=["GET"])
 def get_user(user_id):
     conn = get_db_connection()
-    user = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+    user = conn.execute("SELECT * FROM users WHERE id = ?",
+                        (user_id,)).fetchone()
     conn.close()
-    
+
     if user is None:
         return jsonify({"error": "User not found"}), 404
     return jsonify(dict(user))
 
 
-#Update user info
+# Update user info
 @app.route("/users/<int:user_id>", methods=["PUT"])
 def update_user(user_id):
     data = request.get_json()
@@ -105,7 +114,8 @@ def update_user(user_id):
 
     conn = get_db_connection()
     conn.execute(
-        f"UPDATE users SET {', '.join(updates)} WHERE id = ?", (*values, user_id)
+        f"UPDATE users SET {', '.join(updates)} WHERE id = ?", (*
+                                                                values, user_id)
     )
     conn.commit()
     conn.close()
@@ -113,14 +123,15 @@ def update_user(user_id):
     return jsonify({"message": "User updated successfully"})
 
 
-#Check password
+# Check password
 @app.route("/users/<int:user_id>/check-password", methods=["POST"])
 def check_password(user_id):
     data = request.get_json()
     password = data.get("password")
 
     conn = get_db_connection()
-    user = conn.execute("SELECT password FROM users WHERE id = ?", (user_id,)).fetchone()
+    user = conn.execute(
+        "SELECT password FROM users WHERE id = ?", (user_id,)).fetchone()
     conn.close()
 
     if user and user["password"] == password:
@@ -128,7 +139,7 @@ def check_password(user_id):
     return jsonify({"valid": False})
 
 
-#update passowrd
+# update passowrd
 @app.route("/users/<int:user_id>/update-password", methods=["PUT"])
 def update_password(user_id):
     data = request.get_json()
@@ -138,7 +149,8 @@ def update_password(user_id):
         return jsonify({"error": "Missing new password"}), 400
 
     conn = get_db_connection()
-    conn.execute("UPDATE users SET password = ? WHERE id = ?", (new_password, user_id))
+    conn.execute("UPDATE users SET password = ? WHERE id = ?",
+                 (new_password, user_id))
     conn.commit()
     changes = conn.total_changes
     conn.close()
@@ -147,85 +159,114 @@ def update_password(user_id):
         return jsonify({"success": False})
     return jsonify({"success": True})
 
+
 # Register the blueprint for CV routes
 app.register_blueprint(cv_bp)
 
 
-#for eventlist 
+# for eventlist
 
 
-#notes here !!!!!!
+# notes here !!!!!!
 @app.route("/events", methods=["POST"])
 def create_event():
-    data = request.get_json() or {}
+    # 1️⃣ Read JSON body
+    data = request.get_json(silent=True) or {}
+    print("🔹 Incoming /events POST:", data)
 
     title = (data.get("title") or "").strip()
     description = (data.get("description") or "").strip()
-    date = data.get("date")      # expected "YYYY-MM-DD"
-    time = data.get("time") or ""  # expected "HH:MM" or ""
+    date = (data.get("date") or "").strip()       # "YYYY-MM-DD"
+    time = (data.get("time") or "").strip()       # "HH:MM" or ""
+    importance = data.get("importance", 0)
+    user_id = data.get("user_id")
 
+    # 2️⃣ Basic validation
+    if not user_id:
+        print("❌ Missing user_id")
+        return jsonify({"error": "User must be logged in"}), 401
+
+    try:
+        user_id = int(user_id)
+    except (TypeError, ValueError):
+        print("❌ Invalid user_id:", user_id)
+        return jsonify({"error": "Invalid user_id"}), 400
 
     if not title or not date:
+        print("❌ Missing title or date")
         return jsonify({"error": "title and date are required"}), 400
 
-    # store date and time 
+    # 3️⃣ Build datetime strings
     if time:
         start_dt = f"{date}T{time}:00"
     else:
         start_dt = f"{date}T00:00:00"
+    end_dt = start_dt
 
-    end_dt = start_dt  # later change this to show duration
-
-
+    # 4️⃣ Insert into DB with error logging
     conn = get_db_connection()
     cur = conn.cursor()
-    #notes !!!!!!
-    cur.execute(
-        """
-        INSERT INTO events (user_id, event_id, title, description,
-                            start_time_utc, end_time_utc, importance)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
-            data.get("user_id"),   # set it to be none for now 
-            None,                  # event_id 
-            title,
-            description,
-            start_dt,
-            end_dt,
-            data.get("importance", 0),
-        ),
-    )
-    conn.commit()
+
+    try:
+        cur.execute(
+            """
+            INSERT INTO events (user_id, event_id, title, description,
+                                start_time_utc, end_time_utc, importance)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                user_id,
+                None,
+                title,
+                description,
+                start_dt,
+                end_dt,
+                importance,
+            ),
+        )
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        print("❌ DB error on INSERT into events:", repr(e))
+        return jsonify({"error": "database error", "details": str(e)}), 500
+
     event_id = cur.lastrowid
-    row = conn.execute("SELECT * FROM events WHERE id = ?", (event_id,)).fetchone()
+    row = conn.execute("SELECT * FROM events WHERE id = ?",
+                       (event_id,)).fetchone()
     conn.close()
 
-    return jsonify(dict(row)) , 201
+    print("✅ Event inserted with id:", event_id)
+    return jsonify(dict(row)), 201
 
 
 @app.route("/events", methods=["GET"])
 def list_events_for_day():
-    
+
     date = request.args.get("date")
+    user_id = request.args.get("user_id")
     if not date:
         return jsonify({"error": "missing date parameter"}), 400
 
+    if not user_id:
+        return jsonify({"error": "missing user_id parameter"}), 401
+
     start_dt = f"{date}T00:00:00"
-    end_dt   = f"{date}T23:59:59"
+    end_dt = f"{date}T23:59:59"
 
     conn = get_db_connection()
     rows = conn.execute(
         """
         SELECT * FROM events
-        WHERE start_time_utc BETWEEN ? AND ?
+        WHERE user_id = ?
+          AND start_time_utc BETWEEN ? AND ?
         ORDER BY start_time_utc
         """,
-        (start_dt, end_dt),
+        (user_id, start_dt, end_dt),
     ).fetchall()
     conn.close()
 
     return jsonify([dict(r) for r in rows])
+
 
 @app.route("/forgot", methods=["POST"])
 def reset_password():
@@ -238,11 +279,13 @@ def reset_password():
 
     conn = get_db_connection()
     try:
-        user = conn.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
+        user = conn.execute(
+            "SELECT id FROM users WHERE email = ?", (email,)).fetchone()
         # If user exists, generate and send new password and update DB
         if user:
             new_password = forgot_password(email)
-            conn.execute("UPDATE users SET password = ? WHERE email = ?", (new_password, email))
+            conn.execute(
+                "UPDATE users SET password = ? WHERE email = ?", (new_password, email))
             conn.commit()
     finally:
         conn.close()
@@ -251,6 +294,6 @@ def reset_password():
     return jsonify({"success": True, "message": "If the email is correct, a new password was sent to your email."})
 
 
-#Run Flask
+# Run Flask
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=3001)

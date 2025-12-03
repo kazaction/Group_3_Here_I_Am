@@ -7,7 +7,7 @@
   --accent-2:#a9e7cf; /*for secondary coloring*/
   --text:#0f1720; /*for text*/
   --muted:#788792; /*for lighter text broders etc*/
-
+  --past: #e89039;
   /* you guys can add more so that we can use them as variables 
   and not try to find the values all the time, this will help with consistency
   on how things look */
