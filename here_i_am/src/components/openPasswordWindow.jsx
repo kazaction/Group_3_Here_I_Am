@@ -3,8 +3,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../css/openPasswordWindow.css";
 
-const ChangePasswordPopup = ({ userId }) => {
+const ChangePasswordPopup = ({ }) => {
   const navigate = useNavigate();
+  const userObj = JSON.parse(localStorage.getItem("user") || "{}");
+  const userId = userObj.user_id;
   const apiBase = `http://localhost:3001/users/${userId}`;
   const [oldPass, setOldPass] = useState("");
   const [newPass, setNewPass] = useState("");
