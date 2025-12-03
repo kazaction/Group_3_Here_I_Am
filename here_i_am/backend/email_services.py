@@ -34,10 +34,10 @@ def sign_up(to_email):
 def event_creation(email, title, description, start_time_utc, importance):
     yag.send(
         to=email,
-        subject="Here I Am: Event " + title + "created successfully!" ,
+        subject="Here I Am: Event " + title + " created successfully!" ,
         contents=("Your event named " + title + " has been created successfully!\n"
                   "Start time: " + start_time_utc + "\n" 
-                  "Importance level: " + importance + "\n" 
+                  "Importance level: " + str(importance) + "\n" 
                   "Description: " +description)
     )
 
@@ -47,7 +47,7 @@ def event_reminder(email, title, description, start_time_utc, importance):
         subject="Here I Am: Event " + title + " is about to start!" ,
         contents=("Your event named " + title + " starts in 30 minutes!\n"
                   "Start time: " + start_time_utc + "\n" 
-                  "Importance level: " + importance + "\n" 
+                  "Importance level: " + str(importance) + "\n" 
                   "Description: " +description)
     )
 

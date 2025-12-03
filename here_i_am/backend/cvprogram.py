@@ -28,7 +28,11 @@ def validate_phone(phone):
     phone = phone.strip()
     if not phone:
         return "error: phone number can't be empty"
-    if not phone.isdigit():
+    
+    check_phone = phone
+    if check_phone.startswith('+'):
+        check_phone = check_phone[1:]
+    if not check_phone.isdigit():
         return "error: phone number must contain only digits"
     if len(phone) < 8 or len(phone) > 15:
         return "error: phone number length is invalid"
