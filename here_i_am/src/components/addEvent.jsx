@@ -1,5 +1,5 @@
 // AddEvent.jsx
-import React, { useState } from "react";
+import React, { useState ,useEffect } from "react";
 
 
 
@@ -8,6 +8,7 @@ function AddEvent({ selectedDate, onSave, onClose }) {
   const [title, setTitle] = useState(""); //these store the date the user types into the form 
   const [time, setTime] = useState("");
   const [description, setDescription] = useState("")
+  const [importance , setImportance] = useState("normal");
 
   const dateObj = new Date(selectedDate); //formats it to date object to so that we can use on the calendar 
   const readable = dateObj.toLocaleDateString(undefined, { // this format shte date into weekday, month dayofmonth , year 
@@ -18,44 +19,22 @@ function AddEvent({ selectedDate, onSave, onClose }) {
   });
 
   //////////////////////////////////////////////////////////////////
-  const handleSubmit = async (e) => { // function declaration for the e. = event our button guys 
-    e.preventDefault();         // the arrow functions have bvecome a standard in react ,
-                                //  previous methods were not working correctly 
+ const handleSubmit = (e) => {
+  e.preventDefault();
 
-                                
-    const trimmedTitle = title.trim();
-    const trimmedTime = time.trim();
-    const trimmedDescription = description.trim();
+  const trimmedTitle = title.trim();
+  const trimmedTime = time.trim();
+  const trimmedDescription = description.trim();
 
-    if (!title.trim()) return;
+  if (!trimmedTitle) return;
 
-   
-
-    onSave({ //On save is declared in schedule.jsx ,when save trim the spaces from starting and end points 
-      title: trimmedTitle,
-      time: trimmedTime,
-      description: trimmedDescription,
-    });
-
-    try {
-      const res = await fetch("http://localhost:3001/schedule", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: trimmedTitle,
-          time: trimmedTime,
-          description: trimmedDescription,
-          date: selectedDate, // important: tell backend which day this is for
-        }),
-      });
-
-      if (!res.ok) {
-        console.error("Failed to save event:", await res.text());
-      }
-    } catch (err) {
-      console.error("Error calling backend:", err);
-    }
-  };
+  onSave({
+    title: trimmedTitle,
+    time: trimmedTime,
+    description: trimmedDescription,
+    importance, // if you added the importance select
+  });
+};
 
   return (
     <div className="modal-backdrop">
@@ -94,12 +73,31 @@ function AddEvent({ selectedDate, onSave, onClose }) {
             />
           </div>
 
+
+        {/* #field for improtance */}
+
+          <div className="field">
+                <label>Importance</label>
+                <select
+                  value={importance}
+                  onChange={(e) => setImportance(e.target.value)}
+                >
+                  <option value="low">Low</option>
+                  <option value="normal">Normal</option>
+                  <option value="high">High</option>
+                </select>
+          </div>
+
+        {/* #field for improtance */}
+
           <div className="modal-actions">
             <button type="button" className="btn-secondary" onClick={onClose}>
               Cancel
             </button> {/*cancel button used to exit the pop-up*/}
             <button type="submit" className="btn-primary">Save</button> {/*Save button used to save the event in the pop-up, also closes the window and sends the submited form*/}
           </div>
+
+
         </form>
       </div>
     </div>

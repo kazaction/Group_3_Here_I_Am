@@ -11,6 +11,21 @@ function formatDateKey(date) {
   return `${y}-${m}-${d}`;
 }
 
+//////////////////////////////////////////////
+
+
+function buildEventDateSet(events) {
+  const set = new Set();
+  events.forEach((e) => { 
+    if (!e.date) return;
+    const key = e.date.slice(0, 10); // "YYYY-MM-DD"
+    set.add(key);
+  });
+  return set;
+}
+
+//////////////////////////////////////////////
+
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 function Calendar({
@@ -22,6 +37,8 @@ function Calendar({
   const [internalSelected, setInternalSelected] = useState(
     selectedDate || formatDateKey(new Date())
   );
+
+  const eventDates = buildEventDateSet(events || []);
 
   // ✅ NEW: this is the date we consider "selected" in the UI
   const effectiveSelected = selectedDate || internalSelected;
@@ -98,11 +115,11 @@ function Calendar({
     });
   };
 
-  // ✅ NEW: when a day is clicked, update internal selection AND notify parent
+  // when a day is clicked, update internal selection AND notify parent
   const handleDayClick = (date) => {
     const key = formatDateKey(date);
     setInternalSelected(key);     // internal
-    if (onDateSelect) onDateSelect(key);  // 🔴 send selected date to parent
+    if (onDateSelect) onDateSelect(key);  
   };
 
   const legend = [
@@ -160,7 +177,7 @@ function Calendar({
             const key = formatDateKey(date);
             const isToday = key === todayKey;
 
-            // ✅ UPDATED: use effectiveSelected (which can come from parent)
+            //  use effectiveSelected (which can come from parent)
             const isSelected = key === effectiveSelected;
 
             const hasEvents = !!eventsByDate[key];
