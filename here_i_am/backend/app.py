@@ -205,7 +205,7 @@ def create_event():
         VALUES (?, ?, ?, ?, ?, ?, ?)
         """,
         (
-            data.get("user_id"),   # set it to be none for now 
+            data.get("user_id"),   # set it to be none for now
             None,                  # event_id 
             title,
             description,
@@ -302,6 +302,15 @@ def upload_profile_picture(user_id):
 
     url = f"http://localhost:3001/pictures/{filename}"
     return jsonify({"profile_picture": url}), 200
+
+@app.route("/users/<int:user_id>/history", methods=["GET"])
+def get_events(user_id):
+    conn = get_db_connection()
+    try:
+        rows = conn.execute("SELECT * FROM events WHERE user_id = ?", (user_id,)).fetchall()
+    finally:
+        conn.close()
+    return jsonify([dict(r) for r in rows])
 
 
 #Run Flask

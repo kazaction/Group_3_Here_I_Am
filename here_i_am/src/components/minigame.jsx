@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "../css/minigame.css";
 
-
 const StartMiniGame = () => {
     const canvasRef = useRef(null);
     const [showGame,setShowGame] = React.useState(false);
@@ -194,6 +193,7 @@ const StartMiniGame = () => {
 
             </div>)
             }
+
         </div>
     );
 }
