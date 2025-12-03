@@ -42,7 +42,7 @@ function MainRoutes() {
         <Route path="/history" element={<History />} />
         {/* Add more routes like: */}
         {/* <Route path="/history" element={<History />} /> */}
-        {/* <Route path="/cv" element={<CVGeneration />} /> */}
+        
       </Routes>
     </div>
   );

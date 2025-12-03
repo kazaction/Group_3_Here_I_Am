@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import sqlite3
 import os
@@ -6,8 +6,18 @@ import re
 from cv_routes import cv_bp
 from email_services import sign_up
 from email_services import forgot_password
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+
+# Folder where profile pictures are stored
+PICTURES_FOLDER = os.path.join(os.path.dirname(__file__), "Pictures")
+os.makedirs(PICTURES_FOLDER, exist_ok=True)  # create if not exists
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
 #allow rewuests from Rreact frontend
 CORS(app)
 
@@ -88,7 +98,15 @@ def get_user(user_id):
     
     if user is None:
         return jsonify({"error": "User not found"}), 404
-    return jsonify(dict(user))
+    
+    user_dict = dict(user)
+
+    # If profile_picture has a filename, convert to full URL
+    if user_dict.get("profile_picture"):
+        filename = user_dict["profile_picture"]
+        user_dict["profile_picture"] = f"http://localhost:3001/pictures/{filename}"
+
+    return jsonify(user_dict)
 
 
 #Update user info
@@ -250,15 +268,40 @@ def reset_password():
     # Always return a generic success message when format is valid
     return jsonify({"success": True, "message": "If the email is correct, a new password was sent to your email."})
 
-@app.route("/history", methods=["GET"])
-def get_events():
+#for the pictures
+@app.route("/pictures/<filename>")
+def get_picture(filename):
+    return send_from_directory(PICTURES_FOLDER, filename)
+#fore the pictrures
+@app.route("/users/<int:user_id>/profile-picture", methods=["POST"])
+def upload_profile_picture(user_id):
+    if "profile_picture" not in request.files:
+        return jsonify({"error": "No file part"}), 400
+
+    file = request.files["profile_picture"]
+
+    if file.filename == "":
+        return jsonify({"error": "No selected file"}), 400
+
+    if not allowed_file(file.filename):
+        return jsonify({"error": "Invalid file type. Only .jpg, .jpeg, .png allowed."}), 400
+
+    ext = file.filename.rsplit(".", 1)[1].lower()
+    filename = secure_filename(f"user_{user_id}.{ext}")
+    save_path = os.path.join(PICTURES_FOLDER, filename)
+    file.save(save_path)
+
+    # Save filename in DB
     conn = get_db_connection()
-    try:
-        user_id = request.args.get("user_id")
-        rows = conn.execute("SELECT * FROM events WHERE user_id = ?", (user_id,)).fetchall()
-    finally:
-        conn.close()
-    return jsonify([dict(r) for r in rows])
+    conn.execute(
+        "UPDATE users SET profile_picture = ? WHERE id = ?",
+        (filename, user_id)
+    )
+    conn.commit()
+    conn.close()
+
+    url = f"http://localhost:3001/pictures/{filename}"
+    return jsonify({"profile_picture": url}), 200
 
 
 #Run Flask
