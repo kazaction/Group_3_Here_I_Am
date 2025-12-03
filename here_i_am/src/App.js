@@ -35,7 +35,7 @@ function MainRoutes() {
 
         {/* path below empty chane this to show home if needed*/}
         
-        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot" element={<ForgotPage />} />

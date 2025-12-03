@@ -29,7 +29,7 @@ function NavbarLandingPage() {
 export default function LandingPage() {
   return (
     <>
-      <NavbarLandingPage />
+      {/* <NavbarLandingPage /> */}
 
       <main className="lp-main">
         {/* Hero */}
@@ -60,6 +60,17 @@ export default function LandingPage() {
               <h3>Rectangle 4</h3>
               <p>Click to go to login.</p>
             </Link>
+
+            <div className="lp-nav-actions">
+                <Link to="/login" className="lp-btn lp-btn-ghost">
+                    Sign In
+                </Link>
+
+
+                <Link to="/register" className="lp-btn lp-btn-primary">
+                    Register
+                </Link>
+                </div>
           </div>
         </section>
       </main>

@@ -15,7 +15,8 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
-    navigate('/');
+    navigate('/Home');
+
   };
 
   return (
@@ -25,12 +26,12 @@ const Navbar = () => {
           
 
           {/* this commented out so that he home button is not outputted */}
-          {/* <li className="navbar__item">
+          <li className="navbar__item">
             <Link to="/home" className="navbar__link">
               <i data-feather="home"></i>
               <span>Here I Am</span>
             </Link>
-          </li> */}
+          </li>
          
           <li className="navbar__item">
             <Link to="/schedule" className="navbar__link">

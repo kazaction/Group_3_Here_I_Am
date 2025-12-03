@@ -94,6 +94,51 @@
 .lp-rect:hover {
   transform: translateY(-3px);
   box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
-  border-color: #0ea5e9;
+  border-color: var(--accent);
   background: #ffffff;
+}
+
+
+/* .lp-nav-actions {
+  border : 2px solid var(--accent);
+  border-radius: var(--r-md) ;
+  width : 200px;
+  height: 44px;
+  text-align: center;
+  padding: 10px;
+  margin-top: 8px;
+}
+
+.lp-nav-actions :hover{
+  border : 2px solid var(--accent);
+  border-radius: var(--r-md) ;
+  background-color: var(--accent-2);
+  width : 200px;
+  height: 44px;
+  text-align: center;
+  padding: 10px;
+  margin-top: 8px;
+} */
+
+.lp-btn-primary {
+  text-align: center;
+  margin: 6px;
+  border: 2px solid var(--accent);
+  border-radius: 16px;
+  border-left: none;
+  background-color: var(--accent);
+  padding: 8px;
+  color: var(--text);
+}
+
+
+.lp-btn-ghost {
+  text-align: center;
+  color: var(--text);
+  margin : 10px;
+  border: 2px solid var(--accent);
+  border-radius: 16px;
+  border-right: none;
+  background-color: var(--accent);
+  padding: 8px;
 }
