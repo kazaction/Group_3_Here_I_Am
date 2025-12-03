@@ -287,56 +287,89 @@ if (file) {
         </form>
 
        
-        <div
-          className="cv-preview"
-          style={{ position: "sticky", top: "20px" }}
-        >
-          <div
-            className="cv-preview-header"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "15px",
-            }}
-          >
-            {imagePreviewUrl && (
-              <div className="cv-preview-picture">
-                <img
-                  src={imagePreviewUrl}
-                  alt="Profile Preview"
-                  className="profile-pic-preview"
-                />
+                
+        <div className="cv-preview">
+          <div className="cv-page">
+            <div className="cv-page-inner">
+              
+              <div className="cv-left">
+                
+                <h1 className="cv-name">
+                  {(form.name + " " + form.surname).trim() || "Your Name"}
+                </h1>
+                <p className="cv-degree">
+                  {form.degree || "Your degree here"}
+                </p>
+
+                
+                <section className="cv-section">
+                  <h3 className="cv-section-title">EXPERIENCE</h3>
+                  <p className="cv-text">
+                    Previous job(s):{" "}
+                    {form.job_count !== "" ? form.job_count : "0"}
+                  </p>
+                  <p className="cv-text">
+                    Number of skills entered:{" "}
+                    {form.skill_count !== "" ? form.skill_count : "0"}
+                  </p>
+                </section>
+
+                
+                <section className="cv-section">
+                  <h3 className="cv-section-title">EDUCATION</h3>
+                  <p className="cv-text">
+                    Degree: {form.degree || "Your degree here"}
+                  </p>
+                </section>
               </div>
-            )}
-            <h2>
-              {form.name} {form.surname}
-            </h2>
-          </div>
-          <div className="cv-preview-body">
-            <p>
-              <strong>Email:</strong> {form.email || "example@email.com"}
-            </p>
-            <p>
-              <strong>Phone:</strong> {form.phone || "+357 ..."}
-            </p>
-            <p>
-              <strong>Degree:</strong> {form.degree || "Your degree here"}
-            </p>
-            <p>
-              <strong>Birthdate:</strong>{" "}
-              {form.birthdate || "DD/MM/YYYY"}
-            </p>
-            <p>
-              <strong>Jobs:</strong> {form.job_count || "0"}
-            </p>
-            <p>
-              <strong>Skills count:</strong> {form.skill_count || "0"}
-            </p>
+
+             
+              <div className="cv-right">
+                
+                <div className="cv-avatar-wrapper">
+                  <div className="cv-avatar-circle">
+                    {imagePreviewUrl ? (
+                      <img
+                        src={imagePreviewUrl}
+                        alt="Profile Preview"
+                        className="cv-avatar-img"
+                      />
+                    ) : (
+                      <span className="cv-avatar-initials">
+                        {((form.name?.trim()[0] || "") +
+                          (form.surname?.trim()[0] || "")).toUpperCase() ||
+                          "?"}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                
+                <div className="cv-contact">
+                  <p>
+                    <span className="cv-contact-label">email:</span>
+                    <span className="cv-contact-value">
+                      {form.email || "example@email.com"}
+                    </span>
+                  </p>
+                  <p>
+                    <span className="cv-contact-label">phone:</span>
+                    <span className="cv-contact-value">
+                      {form.phone || "+357..."}
+                    </span>
+                  </p>
+                  <p>
+                    <span className="cv-contact-label">Birthdate:</span>
+                    <span className="cv-contact-value">{form.birthdate || "DD/MM/YYYY"}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
   );
 };
 
