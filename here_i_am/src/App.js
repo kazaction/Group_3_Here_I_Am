@@ -15,7 +15,7 @@ import CvGeneration from './components/cvGeneration';
 // Render Navbar only on non-login routes
 function NavbarWrapper() {
   const location = useLocation();
-  if (location.pathname === '/' || location.pathname === '/register' || location.pathname === '/forgot') return null;
+  if (location.pathname === '/' || location.pathname === '/register' || location.pathname === '/forgot' || location.pathname === '/login') return null;
   return <Navbar />;
 }
 
@@ -23,18 +23,18 @@ function NavbarWrapper() {
 function MainRoutes() {
   const location = useLocation();
   // remove left margin for login so the login component can center itself
-  const isAuthless = location.pathname === '/' || location.pathname === '/register' || location.pathname === '/forgot';
+  const isAuthless = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/forgot' || location.pathname === '/';
   const containerStyle = isAuthless ? { padding: '20px' } : { marginLeft: '200px', padding: '20px' };
 
   return (
     <div style={containerStyle}>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot" element={<ForgotPage />} />
         <Route path="/schedule" element={<Schedule />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/home" element={<Home />} />
         <Route path="/change-password" element={<ChangePasswordPopup userId={1}/>} />
         <Route path="/minigame" element={<StartMiniGame />} />
         <Route path="/cvGeneration" element={<CvGeneration />} />
