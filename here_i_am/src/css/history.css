@@ -5,16 +5,6 @@
 
 }
 
-/* -------- Sidebar -------- */
-.sidebar {
-    border-radius: var(--border-radius);
-    width: 260px;
-    background: #fff;
-    padding: 0px;
-    padding-bottom: 80px;
-    border-right: 1px solid #ddd;
-}
-
 .sidebar h2 {
     margin-bottom: 15px;
 }

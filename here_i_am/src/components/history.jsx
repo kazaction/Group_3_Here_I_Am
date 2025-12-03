@@ -80,8 +80,7 @@ const History = () => {
 
     return(
         <div className="history-wrapper">
-            {/* ---------------- LEFT SIDEBAR ---------------- */}
-            <aside className="sidebar">
+            <aside className="card">
                 <h2>Filters</h2>
 
                 {/* Search */}
@@ -156,7 +155,7 @@ const History = () => {
                 </div>
             </aside>
 
-            <grid>
+            <div className="card">
                 {/* ---------------- EVENT LIST ---------------- */}
                 <main className="event-list">
                     <h1>Event History</h1>
@@ -174,7 +173,7 @@ const History = () => {
                             )
                         )
                     )}
-                </grid>
+                </main>
             </div>
         </div>
     );
