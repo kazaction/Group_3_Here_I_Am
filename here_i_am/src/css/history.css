@@ -1,0 +1,70 @@
+.history-wrapper {
+    display: flex;
+    height: 100vh;
+    background: #f5f5f5;
+}
+
+/* -------- Sidebar -------- */
+.sidebar {
+    border-radius: var(--border-radius);
+    width: 260px;
+    background: #fff;
+    padding: 0px;
+    border-right: 1px solid #ddd;
+}
+
+.sidebar h2 {
+    margin-bottom: 15px;
+}
+
+.filter-section {
+    margin-bottom: 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-section input[type="text"],
+.filter-section input[type="date"],
+.filter-section input[type="time"] {
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* -------- Event List -------- */
+.event-list {
+    flex: 1;
+    padding: 0px;
+    overflow-y: auto;
+}
+
+.event-row {
+    background: white;
+    padding: 12px 18px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.2fr;
+    gap: 15px;
+    box-shadow: 0 1px 4px #0002;
+}
+
+.event-title {
+    font-weight: bold;
+}
+
+.checkbox-row {
+
+    display: flex;
+    align-items: center;
+    gap: 8px;   /* space between checkbox and text */
+    margin: 4px;
+    margin-left: 35%;
+    width: 15px;
+}
+
+div{
+    text-align: center;
+    margin-top: 0px;
+}

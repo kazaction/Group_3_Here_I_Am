@@ -250,6 +250,16 @@ def reset_password():
     # Always return a generic success message when format is valid
     return jsonify({"success": True, "message": "If the email is correct, a new password was sent to your email."})
 
+@app.route("/history", methods=["GET"])
+def get_events():
+    conn = get_db_connection()
+    try:
+        user_id = request.args.get("user_id")
+        rows = conn.execute("SELECT * FROM events WHERE user_id = ?", (user_id,)).fetchall()
+    finally:
+        conn.close()
+    return jsonify([dict(r) for r in rows])
+
 
 #Run Flask
 if __name__ == "__main__":
