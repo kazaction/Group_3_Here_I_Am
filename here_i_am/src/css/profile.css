@@ -148,15 +148,6 @@ button:hover {
     padding: 8px 10px;
     border: 1px solid #ccc;
     border-radius: 6px;
-<<<<<<< HEAD
-    background-color: var(--accent-2);
-    cursor: #007bff;
-    color: black;
-}
-
-button:hover{
-    background-color: var(--accent);
-=======
     font-size: 16px;
 }
 
@@ -167,5 +158,4 @@ button:hover{
     display: flex;
     gap: 10px;
     justify-content: center;
->>>>>>> 478620ded1da3a43d0877b010b2c5c522ce0b256
 }
