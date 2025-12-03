@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import sqlite3
 import os
@@ -6,8 +6,23 @@ import re
 from cv_routes import cv_bp
 from email_services import sign_up
 from email_services import forgot_password
+from werkzeug.utils import secure_filename
+from email_services import event_reminder
+from email_services import event_creation
+
 
 app = Flask(__name__)
+
+# Folder where profile pictures are stored
+PICTURES_FOLDER = os.path.join(os.path.dirname(__file__), "Pictures")
+os.makedirs(PICTURES_FOLDER, exist_ok=True)  # create if not exists
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
+
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 # allow rewuests from Rreact frontend
 CORS(app)
 
@@ -97,7 +112,15 @@ def get_user(user_id):
 
     if user is None:
         return jsonify({"error": "User not found"}), 404
-    return jsonify(dict(user))
+
+    user_dict = dict(user)
+
+    # If profile_picture has a filename, convert to full URL
+    if user_dict.get("profile_picture"):
+        filename = user_dict["profile_picture"]
+        user_dict["profile_picture"] = f"http://localhost:3001/pictures/{filename}"
+
+    return jsonify(user_dict)
 
 
 # Update user info
@@ -163,16 +186,64 @@ def update_password(user_id):
 # Register the blueprint for CV routes
 app.register_blueprint(cv_bp)
 
+# for the pictures
 
-# for eventlist
+
+@app.route("/pictures/<filename>")
+def get_picture(filename):
+    return send_from_directory(PICTURES_FOLDER, filename)
+# fore the pictrures
 
 
-# notes here !!!!!!
+@app.route("/users/<int:user_id>/profile-picture", methods=["POST"])
+def upload_profile_picture(user_id):
+    if "profile_picture" not in request.files:
+        return jsonify({"error": "No file part"}), 400
+
+    file = request.files["profile_picture"]
+
+    if file.filename == "":
+        return jsonify({"error": "No selected file"}), 400
+
+    if not allowed_file(file.filename):
+        return jsonify({"error": "Invalid file type. Only .jpg, .jpeg, .png allowed."}), 400
+
+    ext = file.filename.rsplit(".", 1)[1].lower()
+    filename = secure_filename(f"user_{user_id}.{ext}")
+    save_path = os.path.join(PICTURES_FOLDER, filename)
+    file.save(save_path)
+
+    # Save filename in DB
+    conn = get_db_connection()
+    conn.execute(
+        "UPDATE users SET profile_picture = ? WHERE id = ?",
+        (filename, user_id)
+    )
+    conn.commit()
+    conn.close()
+
+    url = f"http://localhost:3001/pictures/{filename}"
+    return jsonify({"profile_picture": url}), 200
+
+
+@app.route("/users/<int:user_id>/history", methods=["GET"])
+def get_events(user_id):
+    conn = get_db_connection()
+    try:
+        rows = conn.execute(
+            "SELECT * FROM events WHERE user_id = ?", (user_id,)).fetchall()
+    finally:
+        conn.close()
+    return jsonify([dict(r) for r in rows])
+
+
+######################################## for eventlist #######################################
+
 @app.route("/events", methods=["POST"])
 def create_event():
-    # 1️⃣ Read JSON body
+    # JSON body
     data = request.get_json(silent=True) or {}
-    print("🔹 Incoming /events POST:", data)
+    print("Incoming /events POST:", data)
 
     title = (data.get("title") or "").strip()
     description = (data.get("description") or "").strip()
@@ -181,29 +252,30 @@ def create_event():
     importance = data.get("importance", 0)
     user_id = data.get("user_id")
 
-    # 2️⃣ Basic validation
+    # validation
     if not user_id:
-        print("❌ Missing user_id")
+        print("Missing user_id")
         return jsonify({"error": "User must be logged in"}), 401
 
     try:
         user_id = int(user_id)
     except (TypeError, ValueError):
-        print("❌ Invalid user_id:", user_id)
+        print("Invalid user_id:", user_id)
         return jsonify({"error": "Invalid user_id"}), 400
 
     if not title or not date:
-        print("❌ Missing title or date")
+        print("Missing title or date")
         return jsonify({"error": "title and date are required"}), 400
 
-    # 3️⃣ Build datetime strings
+    #  datetime strings
     if time:
         start_dt = f"{date}T{time}:00"
     else:
         start_dt = f"{date}T00:00:00"
     end_dt = start_dt
 
-    # 4️⃣ Insert into DB with error logging
+    # Insert into DB with error logging
+
     conn = get_db_connection()
     cur = conn.cursor()
 
@@ -225,9 +297,10 @@ def create_event():
             ),
         )
         conn.commit()
+        # event_creation(email,title,description,start_time_utc,importance)
     except Exception as e:
         conn.rollback()
-        print("❌ DB error on INSERT into events:", repr(e))
+        print(" DB error on INSERT into events:", repr(e))
         return jsonify({"error": "database error", "details": str(e)}), 500
 
     event_id = cur.lastrowid
@@ -235,7 +308,7 @@ def create_event():
                        (event_id,)).fetchone()
     conn.close()
 
-    print("✅ Event inserted with id:", event_id)
+    print("Event inserted with id:", event_id)
     return jsonify(dict(row)), 201
 
 
@@ -268,32 +341,7 @@ def list_events_for_day():
     return jsonify([dict(r) for r in rows])
 
 
-@app.route("/forgot", methods=["POST"])
-def reset_password():
-    data = request.get_json() or {}
-    email = (data.get("email") or "").strip().lower()
-
-    # basic email format validation
-    if not email or not re.match(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
-        return jsonify({"success": False, "error": "Invalid email format"}), 400
-
-    conn = get_db_connection()
-    try:
-        user = conn.execute(
-            "SELECT id FROM users WHERE email = ?", (email,)).fetchone()
-        # If user exists, generate and send new password and update DB
-        if user:
-            new_password = forgot_password(email)
-            conn.execute(
-                "UPDATE users SET password = ? WHERE email = ?", (new_password, email))
-            conn.commit()
-    finally:
-        conn.close()
-
-    # Always return a generic success message when format is valid
-    return jsonify({"success": True, "message": "If the email is correct, a new password was sent to your email."})
-
-
+######################################## for eventlist #######################################
 # Run Flask
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=3001)

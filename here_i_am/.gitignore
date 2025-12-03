@@ -26,5 +26,4 @@ yarn-error.log*
 backend/credentials.json
 backend/token.json
 backend/__pycache__
-
-../README.md
+backend/db/database.db
