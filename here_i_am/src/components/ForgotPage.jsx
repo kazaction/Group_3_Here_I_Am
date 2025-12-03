@@ -40,6 +40,7 @@ function ForgotPage() {
         setMessage(data.message || 'If the email is correct, a new password was sent to your email.');
         setMessageType('success');
         setEmail('');
+        setTimeout(() => navigate('/login'), 4000);
       } else {
         setMessage(data.error || 'An error occurred. Please try again.');
         setMessageType('error');
@@ -52,7 +53,7 @@ function ForgotPage() {
   };
 
   const handleCancel = () => {
-    navigate('/');
+    navigate('/login');
   };
 
   return (
