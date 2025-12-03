@@ -26,13 +26,23 @@ def validate_birthdate(birthdate):
 
 def validate_phone(phone):
     phone = phone.strip()
+    
     if not phone:
         return "error: phone number can't be empty"
-    if not phone.isdigit():
-        return "error: phone number must contain only digits"
-    if len(phone) < 8 or len(phone) > 15:
+    
+    if phone.startswith("+"):
+        digits = phone[1:]
+    else:
+        digits = phone
+
+    if not digits.isdigit():
+        return "error: phone number must contain only digits (except leading +)"
+
+    if len(digits) < 8 or len(digits) > 15:
         return "error: phone number length is invalid"
+
     return phone
+
 
 def validate_nonempty(value):
     stripped_value = value.strip()

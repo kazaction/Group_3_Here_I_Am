@@ -199,7 +199,7 @@ if (file) {
             {errors.birthdate && <p className="error">{errors.birthdate}</p>}
           </div>
 
-          <div className="form-row">
+          <div className="form-row"> 
             <label>Degree</label>
             <input
               type="text"
