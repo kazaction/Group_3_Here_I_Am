@@ -3,8 +3,12 @@ import io
 import shutil
 import sqlite3
 from pathlib import Path
+import sys
 
 import pytest
+
+BACKEND_DIR = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(BACKEND_DIR))
 
 import app as flask_app_module  # this imports your app.py
 
