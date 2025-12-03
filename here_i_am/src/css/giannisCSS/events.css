@@ -61,14 +61,14 @@
 
 /* upcoming events */
 .event-item-future {
-  border: 2px solid var(--accent-2);
+  border: 2px solid var(--accent);
   /* background-color: var(--accent-2);  */
   box-shadow: var(--shadow);
 }
 
 /* past events */
 .event-item-past {
-  border: 2px solid var(--past );
+  border: 2px solid var(--accent-2);
   background-color: #f3f3f3; /* light grey */
   opacity: 0.7;
   box-shadow: var(--shadow);

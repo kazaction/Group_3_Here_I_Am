@@ -241,7 +241,7 @@ def get_events(user_id):
 
 @app.route("/events", methods=["POST"])
 def create_event():
-    # JSON body
+
     data = request.get_json(silent=True) or {}
     print("Incoming /events POST:", data)
 
@@ -297,6 +297,8 @@ def create_event():
             ),
         )
         conn.commit()
+        # next week add the functionality of the email verification and upload file feature to the form
+
         # event_creation(email,title,description,start_time_utc,importance)
     except Exception as e:
         conn.rollback()
@@ -339,9 +341,11 @@ def list_events_for_day():
     conn.close()
 
     return jsonify([dict(r) for r in rows])
-
+    
 
 ######################################## for eventlist #######################################
+
+
 # Run Flask
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=3001)

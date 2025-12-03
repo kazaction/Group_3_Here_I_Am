@@ -15,8 +15,10 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
-    navigate('/Home');
+    navigate('/home');
+    setShowLogoutModal(false);
 
+    
   };
 
   return (

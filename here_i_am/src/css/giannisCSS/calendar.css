@@ -41,6 +41,11 @@
   color:#516069
 }
 
+.icon-btn:hover {
+  background-color: var(--accent);
+}
+
+
 /* .mini-cal-cell.is-selected {
   background:rgba(46,204,147,.12);
   outline:1px solid var(--accent);

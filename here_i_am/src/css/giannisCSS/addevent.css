@@ -50,15 +50,26 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  box-shadow: var(--shadow);
 }
+
+.btn-primary:hover{
+  background-color: var(--accent-2);
+}
+
 
 .btn-secondary {
   padding: 8px 14px;
   background: #ddd;
-  color: #333;
+  color: #666;
   border: none;
   border-radius: 6px;
   cursor: pointer;
+}
+
+.btn-secondary:hover{
+  background-color: var(--accent-2);
+  color: #666;
 }
 
 .field{
