@@ -27,7 +27,7 @@
 /* -------- Event List -------- */
 .event-list {
     flex: 1;
-    padding: 0px;
+    padding: 20px;
     overflow-y: auto;
 }
 
@@ -56,7 +56,9 @@
     width: 15px;
 }
 
-div{
+/* div{
     text-align: center;
-    margin-top: 0px;
-}
+    margin-top: 10px;
+
+    kiko auto xalaei ta panta oyla 
+} */
