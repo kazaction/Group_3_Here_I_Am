@@ -5,6 +5,7 @@ import '../css/login.css';
 function Register() {
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -15,19 +16,19 @@ function Register() {
     e.preventDefault();
     setError('');
     setSuccess('');
-    if (!name || !surname || !email || !password) return setError('All fields required');
+    if (!name || !surname || !username || !email || !password) return setError('All fields required');
 
-    fetch('http://localhost:5000/register', {
+    fetch('http://localhost:3001/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, surname, email, password }),
+      body: JSON.stringify({ name, surname, username, email, password }),
     })
       .then(async (res) => {
         const body = await res.json().catch(() => ({}));
         if (!res.ok) return setError(body.message || 'Registration failed');
-        setSuccess('Registered. Check your email for verification (link expires in 15 minutes).');
+        setSuccess('Registered. Check your email for verification.');
         // Optionally navigate to login
-        setTimeout(() => navigate('/'), 1500);
+        setTimeout(() => navigate('/login'), 1500);
       })
       .catch((err) => setError('Unable to contact server'));
   };
@@ -40,29 +41,34 @@ function Register() {
         {success && <div style={{ background: '#e6ffea', color: '#006400', padding: '8px', borderRadius: 4, marginBottom: 8 }}>{success}</div>}
 
         <div className="field">
-          <label>Name</label>
+          <label className="koupas">Name</label>
           <input value={name} onChange={(e) => setName(e.target.value)} />
         </div>
 
         <div className="field">
-          <label>Surname</label>
+          <label className="koupas">Surname</label>
           <input value={surname} onChange={(e) => setSurname(e.target.value)} />
         </div>
 
         <div className="field">
-          <label>Email</label>
+          <label className="koupas">Username</label>
+          <input value={username} onChange={(e) => setUsername(e.target.value)} />
+        </div>
+
+        <div className="field">
+          <label className="koupas">Email</label>
           <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" />
         </div>
 
         <div className="field">
-          <label>Password</label>
+          <label className="koupas">Password</label>
           <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" />
         </div>
 
         <button type="submit" className="login-btn">Register</button>
 
         <div className="login-links" style={{ marginTop: 12 }}>
-          <Link to="/">Already have an account? Login Here</Link>
+          <Link to="/login">Already have an account? Login Here</Link>
         </div>
       </form>
     </div>

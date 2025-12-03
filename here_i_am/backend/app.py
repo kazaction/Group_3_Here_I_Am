@@ -1,9 +1,23 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import sqlite3
 import os
+import re
+from cv_routes import cv_bp
+from email_services import sign_up
+from email_services import forgot_password
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+
+# Folder where profile pictures are stored
+PICTURES_FOLDER = os.path.join(os.path.dirname(__file__), "Pictures")
+os.makedirs(PICTURES_FOLDER, exist_ok=True)  # create if not exists
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
 #allow rewuests from Rreact frontend
 CORS(app)
 
@@ -42,6 +56,38 @@ def login():
     #return user_id, username, and email from frontend to store
     return jsonify({"success": True, "user_id": user["id"], "username": user["username"], "email": user["email"]})
 
+@app.route("/register", methods=["POST"])
+def register():
+    data = request.get_json() or {}
+    name = (data.get("name") or "").strip()
+    surname = (data.get("surname") or "").strip()
+    username = (data.get("username") or "").strip()
+    email = (data.get("email") or "").strip().lower()
+    password = data.get("password") or ""
+
+    if not all([name, surname, username, email, password]):
+        return jsonify({"message": "All fields required"}), 400
+
+    conn = get_db_connection()
+    try:
+        existing = conn.execute(
+            "SELECT id FROM users WHERE username = ? OR email = ?",
+            (username, email)
+        ).fetchone()
+        if existing:
+            return jsonify({"message": "Username or email already in use"}), 409
+
+        #hashed = generate_password_hash(password)
+        conn.execute(
+            "INSERT INTO users (name, surname, username, email, password) VALUES (?, ?, ?, ?, ?)",
+            (name, surname, username, email, password)
+        )
+        sign_up(email)
+        conn.commit()
+    finally:
+        conn.close()
+
+    return jsonify({"message": "Registered"}), 201
 
 #Get user info by id
 @app.route("/users/<int:user_id>", methods=["GET"])
@@ -52,7 +98,15 @@ def get_user(user_id):
     
     if user is None:
         return jsonify({"error": "User not found"}), 404
-    return jsonify(dict(user))
+    
+    user_dict = dict(user)
+
+    # If profile_picture has a filename, convert to full URL
+    if user_dict.get("profile_picture"):
+        filename = user_dict["profile_picture"]
+        user_dict["profile_picture"] = f"http://localhost:3001/pictures/{filename}"
+
+    return jsonify(user_dict)
 
 
 #Update user info
@@ -110,6 +164,144 @@ def update_password(user_id):
     if changes == 0:
         return jsonify({"success": False})
     return jsonify({"success": True})
+
+# Register the blueprint for CV routes
+app.register_blueprint(cv_bp)
+
+
+#for eventlist 
+
+
+#notes here !!!!!!
+@app.route("/events", methods=["POST"])
+def create_event():
+    data = request.get_json() or {}
+
+    title = (data.get("title") or "").strip()
+    description = (data.get("description") or "").strip()
+    date = data.get("date")      # expected "YYYY-MM-DD"
+    time = data.get("time") or ""  # expected "HH:MM" or ""
+
+
+    if not title or not date:
+        return jsonify({"error": "title and date are required"}), 400
+
+    # store date and time 
+    if time:
+        start_dt = f"{date}T{time}:00"
+    else:
+        start_dt = f"{date}T00:00:00"
+
+    end_dt = start_dt  # later change this to show duration
+
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+    #notes !!!!!!
+    cur.execute(
+        """
+        INSERT INTO events (user_id, event_id, title, description,
+                            start_time_utc, end_time_utc, importance)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            data.get("user_id"),   # set it to be none for now 
+            None,                  # event_id 
+            title,
+            description,
+            start_dt,
+            end_dt,
+            data.get("importance", 0),
+        ),
+    )
+    conn.commit()
+    event_id = cur.lastrowid
+    row = conn.execute("SELECT * FROM events WHERE id = ?", (event_id,)).fetchone()
+    conn.close()
+
+    return jsonify(dict(row)) , 201
+
+
+@app.route("/events", methods=["GET"])
+def list_events_for_day():
+    
+    date = request.args.get("date")
+    if not date:
+        return jsonify({"error": "missing date parameter"}), 400
+
+    start_dt = f"{date}T00:00:00"
+    end_dt   = f"{date}T23:59:59"
+
+    conn = get_db_connection()
+    rows = conn.execute(
+        """
+        SELECT * FROM events
+        WHERE start_time_utc BETWEEN ? AND ?
+        ORDER BY start_time_utc
+        """,
+        (start_dt, end_dt),
+    ).fetchall()
+    conn.close()
+
+    return jsonify([dict(r) for r in rows])
+
+@app.route("/forgot", methods=["POST"])
+def reset_password():
+    data = request.get_json() or {}
+    email = (data.get("email") or "").strip().lower()
+
+    # basic email format validation
+    if not email or not re.match(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+        return jsonify({"success": False, "error": "Invalid email format"}), 400
+
+    conn = get_db_connection()
+    try:
+        user = conn.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
+        # If user exists, generate and send new password and update DB
+        if user:
+            new_password = forgot_password(email)
+            conn.execute("UPDATE users SET password = ? WHERE email = ?", (new_password, email))
+            conn.commit()
+    finally:
+        conn.close()
+
+    # Always return a generic success message when format is valid
+    return jsonify({"success": True, "message": "If the email is correct, a new password was sent to your email."})
+
+#for the pictures
+@app.route("/pictures/<filename>")
+def get_picture(filename):
+    return send_from_directory(PICTURES_FOLDER, filename)
+#fore the pictrures
+@app.route("/users/<int:user_id>/profile-picture", methods=["POST"])
+def upload_profile_picture(user_id):
+    if "profile_picture" not in request.files:
+        return jsonify({"error": "No file part"}), 400
+
+    file = request.files["profile_picture"]
+
+    if file.filename == "":
+        return jsonify({"error": "No selected file"}), 400
+
+    if not allowed_file(file.filename):
+        return jsonify({"error": "Invalid file type. Only .jpg, .jpeg, .png allowed."}), 400
+
+    ext = file.filename.rsplit(".", 1)[1].lower()
+    filename = secure_filename(f"user_{user_id}.{ext}")
+    save_path = os.path.join(PICTURES_FOLDER, filename)
+    file.save(save_path)
+
+    # Save filename in DB
+    conn = get_db_connection()
+    conn.execute(
+        "UPDATE users SET profile_picture = ? WHERE id = ?",
+        (filename, user_id)
+    )
+    conn.commit()
+    conn.close()
+
+    url = f"http://localhost:3001/pictures/{filename}"
+    return jsonify({"profile_picture": url}), 200
 
 
 #Run Flask

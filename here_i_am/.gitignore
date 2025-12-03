@@ -21,3 +21,9 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+#credentials .json
+backend/credentials.json
+backend/token.json
+backend/__pycache__
+backend/db/database.db
