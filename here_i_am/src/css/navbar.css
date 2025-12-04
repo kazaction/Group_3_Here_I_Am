@@ -113,7 +113,7 @@ body {
 }
 
 .navbar__link:hover {
-  color: #00BF00;
+  color: var(--accent-4);
 }
 
 .navbar__link:hover span {
@@ -132,12 +132,13 @@ body {
 
 /* Logout overlay - covers entire screen */
 .logout-overlay {
+  margin-top: 0;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -179,21 +180,25 @@ body {
 }
 
 .btn-yes {
-  background: #00BF00;
+  background: var(--accent-3);
   color: white;
 }
 
 .btn-yes:hover {
-  background: #00a300;
+  background: var(--accent-4);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
 }
 
 .btn-no {
-  background: #e0e0e0;
-  color: #333;
+  background: #c4c3c3;
+  color: #f3f3f3;
 }
 
 .btn-no:hover {
   background: #d0d0d0;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
 }
 
 .logout-modal-btn-no:hover {

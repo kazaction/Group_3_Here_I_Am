@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import feather from "feather-icons";
 import "../css/navbar.css";
 import logo from "../assets/logo.png";
+import {user} from 'react-feather';
 
 const Navbar = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -15,7 +16,7 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
-    navigate('/home');
+    navigate('/landing');
     setShowLogoutModal(false);
 
     
@@ -64,7 +65,8 @@ const Navbar = () => {
         <ul className="navbar__menu bottom-menu">
           <li className="navbar__item">
             <Link to="/profile" className="navbar__link">
-              <img src={logo} alt="Profile" className="profile-logo" />
+              {/* <img src={logo} alt="Profile" className="profile-logo" /> */}
+              <i data-feather="user"></i>
               <span>Profile</span>
             </Link>
           </li>

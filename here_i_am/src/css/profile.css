@@ -34,13 +34,15 @@ button {
     font-size: 16px;
     border: none;
     border-radius: 6px;
-    background-color: var(--accent-2);
+    background-color: var(--accent-3);
     cursor: pointer; /* ✅ fixed from #007bff */
     color: black;
 }
 
 button:hover {
-    background-color: var(--accent);
+    background-color: var(--accent-4);
+    transform: translateY(-1px);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
 }
 
 /* ===== Profile layout ===== */
@@ -58,6 +60,11 @@ button:hover {
     display: flex;
     flex-direction: column;  /* picture on top, form below */
     align-items: center;     /* center picture + form horizontally */
+
+    padding: 20px;
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
 /* Logo at the top */

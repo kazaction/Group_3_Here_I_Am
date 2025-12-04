@@ -39,7 +39,7 @@ function AddEvent({ selectedDate, onSave, onClose }) {
   return (
     <div className="modal-backdrop">
       <div className="modal">
-        <h2>Add Event</h2>
+        <h2>Note Event</h2>
         <p className="modal-date">{readable}</p> {/*the constant we previously created that has the date stored*/}
 
         <form onSubmit={handleSubmit}>

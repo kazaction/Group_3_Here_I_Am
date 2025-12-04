@@ -14,13 +14,16 @@ import CvGeneration from './components/cvGeneration';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import History from './components/history'; 
+import Landing from './components/landing';
 
 // Render Navbar only on non-login routes
 function NavbarWrapper() {
   const location = useLocation();
-  if (location.pathname === '/' || location.pathname === '/register' || location.pathname === '/forgot' || location.pathname === '/login') return null;
+  if (location.pathname === '/' || location.pathname === '/register' || location.pathname === '/forgot' || location.pathname === '/login' || location.pathname == '/landing') return null;
   return <Navbar />;
 }
+
+// || location.pathname == '/home'
 
 // Main content container adjusts layout based on current route
 function MainRoutes() {
@@ -45,6 +48,7 @@ function MainRoutes() {
         <Route path="/minigame" element={<StartMiniGame />} />
         <Route path="/cvGeneration" element={<CvGeneration />} />
         <Route path="/history" element={<History />} />
+        <Route path="/landing" element={<Landing />} />
         {/* <Route path="/history" element={<Home />} /> */}
         {/* Add more routes like: */}
         {/* <Route path="/history" element={<History />} /> */}

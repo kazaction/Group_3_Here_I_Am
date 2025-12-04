@@ -61,8 +61,8 @@ function EventList({
           className="pill-btn"
           onClick={onAddEventClick}
         >
-          <LuPlus size={16} />
-          <span>Add Event</span>
+          <LuPlus size={10} />
+          <span> Add Event</span>
         </button>
       </div>
 
