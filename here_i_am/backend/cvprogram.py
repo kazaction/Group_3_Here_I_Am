@@ -77,3 +77,44 @@ def validate_email(email):
         return email
     else:
         return "error: Invalid Email"
+    
+def validate_portfolio(url):
+    url = url.strip()
+    if not url:
+        return ""
+    pattern = r"^https?://.+"
+    if not re.match(pattern, url):
+        return "error: portfolio must be a valid URL starting with http:// or https://"
+    return url
+
+
+def validate_english_level(level):
+    level = level.strip()
+    if not level:
+      
+        return ""
+    cefr = {"A1", "A2", "B1", "B2", "C1", "C2"}
+    words = {
+        "beginner",
+        "elementary",
+        "intermediate",
+        "upper-intermediate",
+        "advanced",
+        "fluent",
+        "native",
+    }
+
+    if level.upper() in cefr or level.lower() in words:
+        return level
+
+    return "error: enter a CEFR level (A1-C2) or level like Intermediate/Advanced"
+
+
+def validate_optional_text(value):
+    value = value.strip()
+    if not value:
+        return ""   
+    if len(value) < 5:
+        return "error: text is too short"
+    return value
+

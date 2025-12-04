@@ -13,6 +13,9 @@ from cvprogram import (
     validate_job_count,
     validate_skill_count,
     validate_email,
+    validate_portfolio,
+    validate_english_level,
+    validate_optional_text,
 )
 
 
@@ -28,6 +31,10 @@ VALIDATORS = {
     "phone": validate_phone,
     "email": validate_email,
     "skill_count": validate_skill_count,
+    "portfolio": validate_portfolio,
+    "english_level": validate_english_level,
+    "job_history": validate_optional_text,
+    "skill_history": validate_optional_text,
 }
 
 
@@ -89,7 +96,7 @@ def generate_cv():
     from reportlab.lib.pagesizes import A4
     from reportlab.lib import colors
     from reportlab.lib.utils import ImageReader
-    import os  
+    import os
 
     data = request.get_json(force=True) or {}
 
@@ -102,9 +109,9 @@ def generate_cv():
     margin_right = 50
     top_y = height - 80
     right_col_x = width * 0.62
-    right_y = top_y      
+    right_y = top_y
 
-    
+    # vertical separator
     c.setStrokeColorRGB(0.85, 0.85, 0.85)
     c.setLineWidth(1)
     c.line(right_col_x - 20, 70, right_col_x - 20, height - 70)
@@ -122,6 +129,7 @@ def generate_cv():
     c.drawString(margin_left, top_y - 24, subtitle)
     c.setFillColor(colors.black)
 
+    # EXPERIENCE
     y = top_y - 70
     c.setFont("Helvetica", 9)
     c.setFillColorRGB(0.55, 0.55, 0.55)
@@ -134,25 +142,49 @@ def generate_cv():
     job_count = data.get("job_count", "")
     jobs_text = f"Previous job(s): {job_count}"
 
-    
     text_obj = c.beginText()
     text_obj.setTextOrigin(margin_left, y)
     text_obj.setLeading(14)
     text_obj.textLines(jobs_text)
     c.drawText(text_obj)
 
-    
     y -= 14 * (jobs_text.count("\n") + 2)
 
-    
-    c.setFont("Helvetica", 10)
+    # job history
+    job_history = data.get("job_history", "").strip()
+    if job_history:
+        c.setFont("Helvetica-Bold", 10)
+        c.drawString(margin_left, y, "Job history:")
+        y -= 14
+        c.setFont("Helvetica", 10)
+        job_text = c.beginText()
+        job_text.setTextOrigin(margin_left, y)
+        job_text.setLeading(14)
+        job_text.textLines(job_history)
+        c.drawText(job_text)
+        y -= 14 * (job_history.count("\n") + 2)
+
+    # skills count + history
     skill_count = data.get("skill_count", "")
     skills_line = f"Number of skills entered: {skill_count}"
+    c.setFont("Helvetica", 10)
     c.drawString(margin_left, y, skills_line)
-
     y -= 18
 
+    skill_history = data.get("skill_history", "").strip()
+    if skill_history:
+        c.setFont("Helvetica-Bold", 10)
+        c.drawString(margin_left, y, "Skill history:")
+        y -= 14
+        c.setFont("Helvetica", 10)
+        skill_text = c.beginText()
+        skill_text.setTextOrigin(margin_left, y)
+        skill_text.setLeading(14)
+        skill_text.textLines(skill_history)
+        c.drawText(skill_text)
+        y -= 14 * (skill_history.count("\n") + 2)
 
+    # EDUCATION
     y -= 10
     c.setFont("Helvetica", 9)
     c.setFillColorRGB(0.55, 0.55, 0.55)
@@ -164,6 +196,7 @@ def generate_cv():
     c.drawString(margin_left, y, f"Degree: {degree}")
     y -= 16
 
+    # AVATAR
     picture_path = data.get("picture_path", "")
     avatar_center_x = right_col_x + 80
     avatar_center_y = right_y - 10
@@ -175,24 +208,21 @@ def generate_cv():
         try:
             c.saveState()
 
-           
             p = c.beginPath()
             p.circle(avatar_center_x, avatar_center_y, circle_radius)
             c.clipPath(p, stroke=0, fill=0)
 
-          
             img = ImageReader(picture_path)
             img_w, img_h = img.getSize()
             aspect = img_h / float(img_w)
 
-            if img_w < img_h:  
+            if img_w < img_h:
                 new_w = diameter
                 new_h = diameter * aspect
-            else:  
+            else:
                 new_h = diameter
                 new_w = diameter / aspect
 
-           
             c.drawImage(
                 picture_path,
                 avatar_center_x - new_w / 2,
@@ -204,7 +234,6 @@ def generate_cv():
 
             c.restoreState()
 
-           
             c.setStrokeColorRGB(0.7, 0.7, 0.7)
             c.setLineWidth(2)
             c.circle(avatar_center_x, avatar_center_y, circle_radius, stroke=1, fill=0)
@@ -216,7 +245,6 @@ def generate_cv():
             c.circle(avatar_center_x, avatar_center_y, circle_radius, stroke=1, fill=0)
             c.setStrokeColor(colors.black)
     else:
-        
         name = data.get("name", "").strip()
         surname = data.get("surname", "").strip()
         initials = ""
@@ -225,30 +253,28 @@ def generate_cv():
         if surname:
             initials += surname[0].upper()
 
-        
-        c.setFillColorRGB(0.85, 0.85, 0.85) 
+        c.setFillColorRGB(0.85, 0.85, 0.85)
         c.circle(avatar_center_x, avatar_center_y, circle_radius, stroke=0, fill=1)
 
         if initials:
-           
             c.setFillColor(colors.white)
             c.setFont("Helvetica-Bold", 24)
             c.drawCentredString(avatar_center_x, avatar_center_y - 8, initials)
 
-        
         c.setStrokeColorRGB(0.7, 0.7, 0.7)
         c.setLineWidth(2)
         c.circle(avatar_center_x, avatar_center_y, circle_radius, stroke=1, fill=0)
 
-
+    # CONTACT (right column)
     right_y -= 80
-    c.setFillColor(colors.black)  
-
+    c.setFillColor(colors.black)
 
     c.setFont("Helvetica", 10)
     email = data.get("email", "")
     phone = data.get("phone", "")
     birthdate = data.get("birthdate", "")
+    portfolio = data.get("portfolio", "")
+    english_level = data.get("english_level", "")
 
     label_font = "Helvetica"
     value_font = "Helvetica-Bold"
@@ -256,29 +282,37 @@ def generate_cv():
     if email:
         c.setFont(value_font, 10)
         c.drawString(right_col_x, right_y, "email: ")
-
         c.setFont(label_font, 10)
         c.drawString(right_col_x + 32, right_y, email)
-
-    right_y -= 16
+        right_y -= 16
 
     if phone:
         c.setFont(value_font, 10)
         c.drawString(right_col_x, right_y, "phone: ")
-
         c.setFont(label_font, 10)
         c.drawString(right_col_x + 37, right_y, phone)
-
-    right_y -= 16
+        right_y -= 16
 
     if birthdate:
         c.setFont(value_font, 10)
         c.drawString(right_col_x, right_y, "Birthdate: ")
-
         c.setFont(label_font, 10)
         c.drawString(right_col_x + 50, right_y, birthdate)
+        right_y -= 16
 
-    right_y -= 24
+    if portfolio:
+        c.setFont(value_font, 10)
+        c.drawString(right_col_x, right_y, "Portfolio: ")
+        c.setFont(label_font, 10)
+        c.drawString(right_col_x + 48, right_y, portfolio)
+        right_y -= 16
+
+    if english_level:
+        c.setFont(value_font, 10)
+        c.drawString(right_col_x, right_y, "English: ")
+        c.setFont(label_font, 10)
+        c.drawString(right_col_x + 45, right_y, english_level)
+        right_y -= 24
 
     c.showPage()
     c.save()

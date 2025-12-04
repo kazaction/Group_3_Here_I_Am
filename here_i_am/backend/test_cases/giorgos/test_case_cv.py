@@ -6,11 +6,10 @@ import requests
 from PIL import Image
 
 
-# --- Configuration ---
 BASE_URL = os.environ.get("TEST_BASE_URL", "http://localhost:3001")
 
 
-# --- Fixtures ---
+
 
 
 @pytest.fixture
@@ -48,7 +47,6 @@ def temp_image_file(tmp_path: Path) -> Path:
     return file_path
 
 
-# --- Helper Functions ---
 
 def _validate_all_fields(session, cv_data):
     """Helper to run validation for all fields and return the validated data."""
@@ -62,7 +60,7 @@ def _validate_all_fields(session, cv_data):
         validated_data[field] = data["value"]
     return validated_data
 
-# --- Tests ---
+# Tests cases
 
 
 def test_full_cv_generation_success_no_picture(api_session, valid_cv_data, temp_pdf_file):
@@ -229,6 +227,6 @@ def test_picture_upload_fails_for_invalid_file_type(api_session, tmp_path):
     assert not data.get("ok"), "Request should have failed for an invalid file type."
 
     error_msg = str(data.get("error", "")).lower()
-    # Don't be a slave to exact wording, but require that it's clearly about invalid type.
+   
     assert "invalid" in error_msg and ("type" in error_msg or "file" in error_msg), \
         f"Unexpected error message: {data.get('error')}"
