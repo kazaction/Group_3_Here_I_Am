@@ -7,6 +7,9 @@ from cv_routes import cv_bp
 from email_services import sign_up
 from email_services import forgot_password
 from werkzeug.utils import secure_filename
+from email_services import event_reminder
+from email_services import event_creation
+
 
 app = Flask(__name__)
 
@@ -222,11 +225,13 @@ def upload_profile_picture(user_id):
     url = f"http://localhost:3001/pictures/{filename}"
     return jsonify({"profile_picture": url}), 200
 
+
 @app.route("/users/<int:user_id>/history", methods=["GET"])
 def get_events(user_id):
     conn = get_db_connection()
     try:
-        rows = conn.execute("SELECT * FROM events WHERE user_id = ?", (user_id,)).fetchall()
+        rows = conn.execute(
+            "SELECT * FROM events WHERE user_id = ?", (user_id,)).fetchall()
     finally:
         conn.close()
     return jsonify([dict(r) for r in rows])
@@ -292,6 +297,7 @@ def create_event():
             ),
         )
         conn.commit()
+        # event_creation(email,title,description,start_time_utc,importance)
     except Exception as e:
         conn.rollback()
         print(" DB error on INSERT into events:", repr(e))
