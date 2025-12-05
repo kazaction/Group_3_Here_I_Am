@@ -43,7 +43,7 @@ const Navbar = () => {
           <li className="navbar__item">
             <Link to="/cvGeneration" className="navbar__link">
               <i data-feather="file-text"></i>
-              <span>CV Generation</span>
+              <span>Personal Details</span>
             </Link>
           </li>
           <li className="navbar__item">
