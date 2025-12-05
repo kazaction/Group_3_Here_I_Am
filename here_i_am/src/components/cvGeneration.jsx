@@ -79,7 +79,7 @@ const CvGeneration = () => {
 
     const droppedFiles = e.dataTransfer.files;
     if (droppedFiles && droppedFiles.length > 0) {
-      // fake a change event
+
       const fakeEvent = { target: { files: droppedFiles } };
       handleFileChange(fakeEvent);
     }
@@ -257,6 +257,7 @@ const CvGeneration = () => {
                   value={form.name}
                   onChange={handleChange}
                   placeholder="George"
+                  maxLength={15}
                 />
                 {errors.name && <p className="error">{errors.name}</p>}
               </div>
@@ -269,6 +270,7 @@ const CvGeneration = () => {
                   value={form.surname}
                   onChange={handleChange}
                   placeholder="Jordan"
+                  maxLength={15}
                 />
                 {errors.surname && <p className="error">{errors.surname}</p>}
               </div>
@@ -281,6 +283,7 @@ const CvGeneration = () => {
                   value={form.birthdate}
                   onChange={handleChange}
                   placeholder="DD/MM/YYYY"
+                  maxLength={10}
                 />
                 {errors.birthdate && (
                   <p className="error">{errors.birthdate}</p>
@@ -295,6 +298,7 @@ const CvGeneration = () => {
                   value={form.degree}
                   onChange={handleChange}
                   placeholder="BSc Computer Science"
+                  maxLength={40}
                 />
                 {errors.degree && <p className="error">{errors.degree}</p>}
               </div>
@@ -302,17 +306,38 @@ const CvGeneration = () => {
           </div>
 
           {/* REST OF FIELDS UNDERNEATH */}
-          <div className="form-row">
-            <label>Number of jobs</label>
-            <input
-              type="number"
-              name="job_count"
-              value={form.job_count}
-              onChange={handleChange}
-              min="0"
-              max="10"
-              placeholder="0-10"
-            />
+<div className="form-row">
+  <label>Number of jobs</label>
+  <input
+    type="text"
+    name="job_count"
+    value={form.job_count}
+    placeholder="0-10"
+    onChange={(e) => {
+      let v = e.target.value;
+
+      
+      if (v === "") {
+        handleChange(e);
+        return;
+      }
+
+     
+      if (!/^\d+$/.test(v)) return;
+
+      
+      if (v.length > 2) return;
+
+      
+      let num = Number(v);
+
+      
+      if (num > 10) return;
+
+      
+      handleChange(e);
+    }}
+  />
             {errors.job_count && <p className="error">{errors.job_count}</p>}
           </div>
 
@@ -324,6 +349,7 @@ const CvGeneration = () => {
               onChange={handleChange}
               placeholder="Describe your previous jobs, positions, dates..."
               rows={3}
+              maxLength={200}
             />
             {errors.job_history && (
               <p className="error">{errors.job_history}</p>
@@ -338,6 +364,7 @@ const CvGeneration = () => {
               value={form.phone}
               onChange={handleChange}
               placeholder="+357..."
+              maxLength={15}
             />
             {errors.phone && <p className="error">{errors.phone}</p>}
           </div>
@@ -350,25 +377,46 @@ const CvGeneration = () => {
               value={form.email}
               onChange={handleChange}
               placeholder="example@email.com"
+              maxLength={60}
             />
             {errors.email && <p className="error">{errors.email}</p>}
           </div>
 
-          <div className="form-row">
-            <label>Number of skills</label>
-            <input
-              type="number"
-              name="skill_count"
-              value={form.skill_count}
-              onChange={handleChange}
-              min="0"
-              max="20"
-              placeholder="0-20"
-            />
-            {errors.skill_count && (
-              <p className="error">{errors.skill_count}</p>
-            )}
-          </div>
+<div className="form-row">
+  <label>Number of skills</label>
+  <input
+    type="text"
+    name="skill_count"
+    value={form.skill_count}
+    placeholder="0-20"
+    onChange={(e) => {
+      let v = e.target.value;
+
+     
+      if (v === "") {
+        handleChange(e);
+        return;
+      }
+
+      
+      if (!/^\d+$/.test(v)) return;
+
+      
+      if (v.length > 2) return;
+
+      let num = Number(v);
+
+      
+      if (num > 20) return;
+
+      handleChange(e);
+    }}
+  />
+
+  {errors.skill_count && (
+    <p className="error">{errors.skill_count}</p>
+  )}
+</div>
 
           <div className="form-row">
             <label>Skill history</label>
@@ -378,6 +426,7 @@ const CvGeneration = () => {
               onChange={handleChange}
               placeholder="List or describe your key skills, technologies, tools..."
               rows={3}
+             maxLength={200}
             />
             {errors.skill_history && (
               <p className="error">{errors.skill_history}</p>
@@ -392,6 +441,7 @@ const CvGeneration = () => {
               value={form.portfolio}
               onChange={handleChange}
               placeholder="https://github.com/yourname"
+              maxLength={60}
             />
             {errors.portfolio && (
               <p className="error">{errors.portfolio}</p>
@@ -406,6 +456,7 @@ const CvGeneration = () => {
               value={form.english_level}
               onChange={handleChange}
               placeholder="B2 / C1 / Native, etc."
+              maxLength={20}
             />
             {errors.english_level && (
               <p className="error">{errors.english_level}</p>

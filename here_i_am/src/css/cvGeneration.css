@@ -29,6 +29,7 @@
   display: flex;
   flex-direction: column;
   margin-bottom: 12px;
+  
 }
 
 .form-row label {
@@ -84,6 +85,7 @@
   max-width: 420px;
   aspect-ratio: 210 / 297;
   margin: 0 auto;
+  height: 700px;
 }
 
 .cv-page-inner {
@@ -112,13 +114,15 @@
   font-size: 24px;
   font-weight: 700;
   margin: 0;
+  word-break: break-all; 
 }
 
 .cv-degree {
   font-size: 14px;
   color: #444;
   margin-top: 8px;
-  margin-bottom: 24px;            
+  margin-bottom: 24px;     
+  word-break: break-all;
 }
 
 
@@ -136,6 +140,7 @@
 .cv-text {
   font-size: 11px;
   line-height: 1.4;
+  word-break: break-all; 
 }
 
 
@@ -161,8 +166,8 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 100% !important;
-  height: 100% !important;
+  width: 100%;
+  height: 100%;
   object-fit: cover;      
   display: block;
 }
@@ -208,7 +213,10 @@
 }
 
 .cv-contact-value {
-  font-weight: 400;
+  max-width: 150px;      
+  white-space: normal; 
+  word-break: break-all; 
+  
 }
 
 
@@ -304,4 +312,3 @@
 .upload-remove-btn:hover {
   background: rgba(0, 0, 0, 0.8);
 }
-
