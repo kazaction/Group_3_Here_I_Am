@@ -111,8 +111,81 @@ def generate_cv():
     right_col_x = width * 0.62
     right_y = top_y
 
-    # vertical separator
-    c.setStrokeColorRGB(0.85, 0.85, 0.85)
+    # Helper function to wrap text based on actual pixel width
+    def wrap_text_by_width(text, font_name, font_size, max_width):
+        """Wrap text based on actual rendered width, breaking long words if needed"""
+        if not text or not str(text).strip():
+            return ""
+        
+        if max_width <= 0:
+            return str(text)
+        
+        text = str(text)
+        
+        # Set font for width calculation
+        try:
+            c.setFont(font_name, font_size)
+        except:
+            # Fallback to default font if specified font fails
+            c.setFont("Helvetica", font_size)
+        
+        # Split by newlines first, then process each line
+        paragraphs = text.split('\n')
+        all_lines = []
+        
+        for para in paragraphs:
+            if not para.strip():
+                all_lines.append("")
+                continue
+                
+            words = para.split()
+            lines = []
+            current_line = ""
+            
+            for word in words:
+                # Check if word itself is too long
+                word_width = c.stringWidth(word)
+                if word_width > max_width:
+                    # Break the long word
+                    if current_line:
+                        lines.append(current_line.strip())
+                        current_line = ""
+                    # Break word into chunks character by character
+                    chars = list(word)
+                    chunk = ""
+                    for char in chars:
+                        test_chunk = chunk + char
+                        if c.stringWidth(test_chunk) <= max_width:
+                            chunk = test_chunk
+                        else:
+                            if chunk:
+                                lines.append(chunk)
+                            chunk = char
+                    if chunk:
+                        current_line = chunk + " "
+                    continue
+                
+                # Test if adding this word fits
+                test_line = current_line + word + " " if current_line else word + " "
+                test_width = c.stringWidth(test_line)
+                
+                if test_width <= max_width:
+                    current_line = test_line
+                else:
+                    # Current line is full
+                    if current_line:
+                        lines.append(current_line.strip())
+                    current_line = word + " "
+            
+            if current_line:
+                lines.append(current_line.strip())
+            
+            all_lines.extend(lines)
+        
+        return "\n".join(all_lines) if all_lines else text
+
+    # vertical separator (very light to not dominate)
+    c.setStrokeColorRGB(0.902, 0.902, 0.902)  # #e6e6e6
     c.setLineWidth(1)
     c.line(right_col_x - 20, 70, right_col_x - 20, height - 70)
     c.setFillColor(colors.black)
@@ -120,19 +193,43 @@ def generate_cv():
     full_name = f"{data.get('name', '')} {data.get('surname', '')}".strip() or "Your Name"
     degree = data.get("degree", "").strip()
 
+    # Wrap name if too long
+    name_max_width = (right_col_x - 20 - margin_left) * 0.95
+    wrapped_name = wrap_text_by_width(full_name, "Helvetica-Bold", 24, name_max_width)
     c.setFont("Helvetica-Bold", 24)
-    c.drawString(margin_left, top_y, full_name)
+    name_text = c.beginText()
+    name_text.setTextOrigin(margin_left, top_y)
+    name_text.setLeading(28)
+    name_text.textLines(wrapped_name)
+    c.drawText(name_text)
+    
+    name_lines = wrapped_name.count("\n") + 1 if wrapped_name else 1
+    degree_y = top_y - (28 * name_lines)
 
-    c.setFont("Helvetica", 14)
-    subtitle = degree
-    c.setFillColorRGB(0.2, 0.2, 0.2)
-    c.drawString(margin_left, top_y - 24, subtitle)
+    # Wrap degree if too long
+    if degree:
+        wrapped_degree = wrap_text_by_width(degree, "Helvetica", 14, name_max_width)
+        c.setFont("Helvetica", 14)
+        c.setFillColorRGB(0.2, 0.2, 0.2)
+        degree_text = c.beginText()
+        degree_text.setTextOrigin(margin_left, degree_y)
+        degree_text.setLeading(18)
+        degree_text.textLines(wrapped_degree)
+        c.drawText(degree_text)
+        degree_lines = wrapped_degree.count("\n") + 1 if wrapped_degree else 1
+    else:
+        degree_lines = 0
+    
     c.setFillColor(colors.black)
 
     # EXPERIENCE
-    y = top_y - 70
-    c.setFont("Helvetica", 9)
-    c.setFillColorRGB(0.55, 0.55, 0.55)
+    # Calculate y position based on name and degree height
+    if degree:
+        y = degree_y - (18 * degree_lines) - 20
+    else:
+        y = top_y - (28 * name_lines) - 20
+    c.setFont("Helvetica-Bold", 13)
+    c.setFillColorRGB(0.267, 0.267, 0.267)  # #444
     c.drawString(margin_left, y, "EXPERIENCE")
     c.setFillColor(colors.black)
     y -= 18
@@ -148,11 +245,14 @@ def generate_cv():
     text_obj.textLines(jobs_text)
     c.drawText(text_obj)
 
-    y -= 14 * (jobs_text.count("\n") + 2)
+    y -= 10 * (jobs_text.count("\n") + 2)
 
     # job history
     job_history = data.get("job_history", "").strip()
     if job_history:
+        # Calculate max width for left column
+        max_width = (right_col_x - 20 - margin_left) * 0.95
+        wrapped_job_history = wrap_text_by_width(job_history, "Helvetica", 10, max_width)
         c.setFont("Helvetica-Bold", 10)
         c.drawString(margin_left, y, "Job history:")
         y -= 14
@@ -160,11 +260,12 @@ def generate_cv():
         job_text = c.beginText()
         job_text.setTextOrigin(margin_left, y)
         job_text.setLeading(14)
-        job_text.textLines(job_history)
+        job_text.textLines(wrapped_job_history)
         c.drawText(job_text)
-        y -= 14 * (job_history.count("\n") + 2)
+        y -= 14 * (wrapped_job_history.count("\n") + 1)
 
     # skills count + history
+    y -= 12  # Add extra spacing to distinguish skills section
     skill_count = data.get("skill_count", "")
     skills_line = f"Number of skills entered: {skill_count}"
     c.setFont("Helvetica", 10)
@@ -173,6 +274,9 @@ def generate_cv():
 
     skill_history = data.get("skill_history", "").strip()
     if skill_history:
+        # Calculate max width for left column
+        max_width = (right_col_x - 20 - margin_left) * 0.95
+        wrapped_skill_history = wrap_text_by_width(skill_history, "Helvetica", 10, max_width)
         c.setFont("Helvetica-Bold", 10)
         c.drawString(margin_left, y, "Skill history:")
         y -= 14
@@ -180,21 +284,30 @@ def generate_cv():
         skill_text = c.beginText()
         skill_text.setTextOrigin(margin_left, y)
         skill_text.setLeading(14)
-        skill_text.textLines(skill_history)
+        skill_text.textLines(wrapped_skill_history)
         c.drawText(skill_text)
-        y -= 14 * (skill_history.count("\n") + 2)
+        y -= 14 * (wrapped_skill_history.count("\n") + 1)
 
     # EDUCATION
     y -= 10
-    c.setFont("Helvetica", 9)
-    c.setFillColorRGB(0.55, 0.55, 0.55)
+    c.setFont("Helvetica-Bold", 13)
+    c.setFillColorRGB(0.267, 0.267, 0.267)  # #444
     c.drawString(margin_left, y, "EDUCATION")
     c.setFillColor(colors.black)
     y -= 18
 
-    c.setFont("Helvetica", 10)
-    c.drawString(margin_left, y, f"Degree: {degree}")
-    y -= 16
+    if degree:
+        # Wrap degree text if too long
+        max_width = (right_col_x - 20 - margin_left) * 0.95
+        wrapped_degree_text = wrap_text_by_width(f"Degree: {degree}", "Helvetica", 10, max_width)
+        c.setFont("Helvetica", 10)
+        degree_display_text = c.beginText()
+        degree_display_text.setTextOrigin(margin_left, y)
+        degree_display_text.setLeading(14)
+        degree_display_text.textLines(wrapped_degree_text)
+        c.drawText(degree_display_text)
+        y -= 14 * (wrapped_degree_text.count("\n") + 1)
+    y -= 2
 
     # AVATAR
     picture_path = data.get("picture_path", "")
@@ -279,40 +392,68 @@ def generate_cv():
     label_font = "Helvetica"
     value_font = "Helvetica-Bold"
 
+    # Calculate max width for right column
+    right_col_max_width = (width - right_col_x - margin_right) * 0.95
+
     if email:
+        wrapped_email = wrap_text_by_width(email, label_font, 10, right_col_max_width - 35)
         c.setFont(value_font, 10)
         c.drawString(right_col_x, right_y, "email: ")
         c.setFont(label_font, 10)
-        c.drawString(right_col_x + 32, right_y, email)
-        right_y -= 16
+        email_text = c.beginText()
+        email_text.setTextOrigin(right_col_x + 32, right_y)
+        email_text.setLeading(15)  # Increased for better spacing
+        email_text.textLines(wrapped_email)
+        c.drawText(email_text)
+        right_y -= 15 * (wrapped_email.count("\n") + 1) + 1  # Increased spacing
 
     if phone:
+        wrapped_phone = wrap_text_by_width(phone, label_font, 10, right_col_max_width - 40)
         c.setFont(value_font, 10)
         c.drawString(right_col_x, right_y, "phone: ")
         c.setFont(label_font, 10)
-        c.drawString(right_col_x + 37, right_y, phone)
-        right_y -= 16
+        phone_text = c.beginText()
+        phone_text.setTextOrigin(right_col_x + 37, right_y)
+        phone_text.setLeading(15)  # Increased for better spacing
+        phone_text.textLines(wrapped_phone)
+        c.drawText(phone_text)
+        right_y -= 15 * (wrapped_phone.count("\n") + 1) + 1  # Increased spacing
 
     if birthdate:
+        wrapped_birthdate = wrap_text_by_width(birthdate, label_font, 10, right_col_max_width - 55)
         c.setFont(value_font, 10)
         c.drawString(right_col_x, right_y, "Birthdate: ")
         c.setFont(label_font, 10)
-        c.drawString(right_col_x + 50, right_y, birthdate)
-        right_y -= 16
+        birthdate_text = c.beginText()
+        birthdate_text.setTextOrigin(right_col_x + 50, right_y)
+        birthdate_text.setLeading(15)  # Increased for better spacing
+        birthdate_text.textLines(wrapped_birthdate)
+        c.drawText(birthdate_text)
+        right_y -= 15 * (wrapped_birthdate.count("\n") + 1) + 1  # Increased spacing
 
     if portfolio:
+        wrapped_portfolio = wrap_text_by_width(portfolio, label_font, 10, right_col_max_width - 52)
         c.setFont(value_font, 10)
         c.drawString(right_col_x, right_y, "Portfolio: ")
         c.setFont(label_font, 10)
-        c.drawString(right_col_x + 48, right_y, portfolio)
-        right_y -= 16
+        portfolio_text = c.beginText()
+        portfolio_text.setTextOrigin(right_col_x + 48, right_y)
+        portfolio_text.setLeading(15)  # Increased for better spacing
+        portfolio_text.textLines(wrapped_portfolio)
+        c.drawText(portfolio_text)
+        right_y -= 15 * (wrapped_portfolio.count("\n") + 1) + 1  # Increased spacing
 
     if english_level:
+        wrapped_english = wrap_text_by_width(english_level, label_font, 10, right_col_max_width - 48)
         c.setFont(value_font, 10)
         c.drawString(right_col_x, right_y, "English: ")
         c.setFont(label_font, 10)
-        c.drawString(right_col_x + 45, right_y, english_level)
-        right_y -= 24
+        english_text = c.beginText()
+        english_text.setTextOrigin(right_col_x + 45, right_y)
+        english_text.setLeading(15)  # Increased for better spacing
+        english_text.textLines(wrapped_english)
+        c.drawText(english_text)
+        right_y -= 15 * (wrapped_english.count("\n") + 1) + 1  # Increased spacing
 
     c.showPage()
     c.save()

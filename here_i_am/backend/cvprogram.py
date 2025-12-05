@@ -38,7 +38,7 @@ def validate_phone(phone):
     if not digits.isdigit():
         return "error: phone number must contain only digits (except leading +)"
 
-    if len(digits) < 8 or len(digits) > 15:
+    if len(digits) < 8 or len(digits) > 19:
         return "error: phone number length is invalid"
 
     return phone
