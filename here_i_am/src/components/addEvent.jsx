@@ -10,6 +10,8 @@ function AddEvent({ selectedDate, onSave, onClose }) {
   const [description, setDescription] = useState("")
   const [importance , setImportance] = useState("normal");
 
+  const [file, setFile] = useState(null);
+
   const dateObj = new Date(selectedDate); //formats it to date object to so that we can use on the calendar 
   const readable = dateObj.toLocaleDateString(undefined, { // this format shte date into weekday, month dayofmonth , year 
     weekday: "long",
@@ -33,6 +35,7 @@ function AddEvent({ selectedDate, onSave, onClose }) {
     time: trimmedTime,
     description: trimmedDescription,
     importance, // if you added the importance select
+    file,
   });
 };
 
@@ -73,6 +76,22 @@ function AddEvent({ selectedDate, onSave, onClose }) {
             />
           </div>
 
+          {/* field for file */}
+
+          <div className="field">
+                <label htmlFor="event-file">Attach file (optional)</label>
+                <input
+                  id="event-file"
+                  type="file"
+                  onChange={(e) => {
+                    const selected = e.target.files && e.target.files[0];
+                    setFile(selected || null);
+                  }}
+                />
+            </div>
+
+
+          {/* field for file */}
 
         {/* #field for improtance */}
 

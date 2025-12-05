@@ -37,7 +37,7 @@ def event_creation(email, title, description, start_time_utc, importance):
         subject="Here I Am: Event " + title + "created successfully!" ,
         contents=("Your event named " + title + " has been created successfully!\n"
                   "Start time: " + start_time_utc + "\n" 
-                  "Importance level: " + importance + "\n" 
+                  f"Importance level: " + importance + "\n" 
                   "Description: " +description)
     )
 

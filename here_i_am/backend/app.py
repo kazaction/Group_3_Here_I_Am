@@ -9,6 +9,7 @@ from email_services import forgot_password
 from werkzeug.utils import secure_filename
 from email_services import event_reminder
 from email_services import event_creation
+from upload_services import save_file
 
 
 app = Flask(__name__)
@@ -33,7 +34,7 @@ DB_PATH = os.path.join(os.path.dirname(__file__), "db", "database.db")
 
 
 def get_db_connection():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect("./db/database.db")
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -242,7 +243,14 @@ def get_events(user_id):
 @app.route("/events", methods=["POST"])
 def create_event():
 
-    data = request.get_json(silent=True) or {}
+    # data = request.get_json(silent=True) or {}
+    # print("Incoming /events POST:", data)
+
+    if request.content_type and request.content_type.startswith("multipart/form-data"):
+        data = request.form
+    else:
+        data = request.get_json(silent=True) or {}
+
     print("Incoming /events POST:", data)
 
     title = (data.get("title") or "").strip()
@@ -299,15 +307,44 @@ def create_event():
         conn.commit()
         # next week add the functionality of the email verification and upload file feature to the form
 
+        event_id = cur.lastrowid
+
+        # calling the save_file function kikos made
+        file = request.files.get("file")
+        if file and file.filename:
+            save_file(file, user_id, event_id)
+
+        cur.execute("SELECT email FROM users WHERE id = ?", (user_id,))
+        user_row = cur.fetchone()
+        user_email = user_row["email"] if user_row else None
+
+        # event_creation(user_email, title, description,
+        #                start_dt, str(importance))
+
+        if user_email:
+            try:
+                event_creation(
+                    email=user_email,
+                    title=title,
+                    description=description,
+                    start_time_utc=start_dt,
+                    importance=str(importance),
+                )
+            except Exception as e:
+                # You probably don't want email failure to break the API
+                print("Error sending event creation email:", repr(e))
+
         # event_creation(email,title,description,start_time_utc,importance)
     except Exception as e:
         conn.rollback()
         print(" DB error on INSERT into events:", repr(e))
         return jsonify({"error": "database error", "details": str(e)}), 500
 
-    event_id = cur.lastrowid
-    row = conn.execute("SELECT * FROM events WHERE id = ?",
-                       (event_id,)).fetchone()
+    # event_id = cur.lastrowid
+    row = conn.execute(
+        "SELECT * FROM events WHERE id = ?",
+        (event_id,)
+    ).fetchone()
     conn.close()
 
     print("Event inserted with id:", event_id)
@@ -341,9 +378,30 @@ def list_events_for_day():
     conn.close()
 
     return jsonify([dict(r) for r in rows])
-    
+
 
 ######################################## for eventlist #######################################
+
+#had to manualy import the file in the app.py 
+def save_file(file_storage, user_id, event_id):
+    """
+    file_storage = request.files["file"]
+    """
+    filename = file_storage.filename
+    file_data = file_storage.read()
+
+    # Save to database
+    conn = sqlite3.connect("./db/database.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO uploads (filename, filedata, user_id, event_id) VALUES (?, ?, ?, ?)",
+        (filename, file_data, user_id, event_id)
+    )
+    conn.commit()
+    conn.close()
+
+    print(f"File saved successfully: {filename}")
+    return filename
 
 
 # Run Flask

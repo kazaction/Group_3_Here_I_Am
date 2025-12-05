@@ -59,137 +59,131 @@ function Schedule() {
 
   //Load events from backend whenever the selected day changes
   useEffect(() => {
-    async function fetchEventsForDay() {
+      async function fetchEventsForDay() {
+        const storedUser = localStorage.getItem("user");
+        if (!storedUser) {
+          console.warn("No user in localStorage, not loading events");
+          return;
+        }
 
-      const storedUser = localStorage.getItem("user");
-      if (!storedUser){
-        console.warn("No userId, not loading events");
-        return;
+        let user;
+        try {
+          user = JSON.parse(storedUser);
+        } catch (err) {
+          console.error("Failed to parse stored user:", err);
+          return;
+        }
+
+        const userId = user.user_id;
+        if (!userId) {
+          console.warn("User object has no user_id");
+          return;
+        }
+
+        try {
+          const res = await fetch(
+            `http://localhost:3001/events?date=${selectedDate}&user_id=${userId}`
+          );
+
+          if (!res.ok) {
+            console.error("Failed to fetch events:", await res.text());
+            return;
+          }
+
+          const data = await res.json();
+
+          const mapped = data.map((e) => ({
+            id: e.id,
+            title: e.title,
+            date: e.start_time_utc,                  // full datetime string
+            time: e.start_time_utc
+              ? e.start_time_utc.slice(11, 16)       // "HH:MM"
+              : "",
+            note: e.description,
+            importance: e.importance,
+          }));
+
+          setEvents(mapped);
+        } catch (err) {
+          console.error("Error loading events:", err);
+        }
       }
 
-      let user;
+      fetchEventsForDay();
+    }, [selectedDate]);
+
+ 
+
+  // Called when form is submitted
+  const handleSaveEvent = async (data) => {
+  // data: { title, time, description, importance, file }
+
+    // 1️⃣ Read current user from localStorage
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) {
+      alert("You must be logged in to create an event.");
+      return;
+    }
+
+    let user;
     try {
       user = JSON.parse(storedUser);
     } catch (err) {
       console.error("Failed to parse stored user:", err);
+      alert("Login information is corrupted. Please log in again.");
+      localStorage.removeItem("user");
       return;
     }
 
     const userId = user.user_id;
-    if (!userId) return;
-
-    const res = await fetch(
-      `http://localhost:3001/events?date=${selectedDate}&user_id=${userId}`
-    );
-
-
-
-      try {
-        const res = await fetch(
-          `http://localhost:3001/events?date=${selectedDate}&user_id=${userId}`
-        );
-
-        if (!res.ok) {
-          console.error("Failed to fetch events:", await res.text());
-          return;
-        }
-
-        const data = await res.json();
-
-        // Map DB rows to the shape EventList expects
-        const mapped = data.map((e) => ({
-          id: e.id,
-          title: e.title,
-          date: e.start_time_utc,                  // full datetime string
-          time: e.start_time_utc?.slice(11, 16),   // "HH:MM"
-          note: e.description,
-          importance: e.importance,
-          // location: e.location, // add this later if you add the column to DB
-        }));
-
-        setEvents(mapped);
-      } catch (err) {
-        console.error("Error loading events:", err);
-      }
-    }
-
-    fetchEventsForDay();
-  }, [selectedDate]);
-
-  // Called when form is submitted
-  const handleSaveEvent = async (data) => {
-  // 1️⃣ Read current user from localStorage
-  const storedUser = localStorage.getItem("user");
-  if (!storedUser) {
-    alert("You must be logged in to create an event.");
-    return;
-  }
-
-  let user;
-  try {
-    user = JSON.parse(storedUser);
-  } catch (err) {
-    console.error("Failed to parse stored user:", err);
-    alert("Login information is corrupted. Please log in again.");
-    localStorage.removeItem("user");
-    return;
-  }
-
-  const userId = user.user_id;
-  if (!userId) {
-    alert("Missing user id. Please log in again.");
-    return;
-  }
-
-  // 2️⃣ Build payload
-  const payload = {
-    title: data.title,
-    time: data.time,
-    description: data.description,
-    date: selectedDate,          // "YYYY-MM-DD"
-    importance: data.importance, // might be "low"/"normal"/"high"
-    user_id: userId,             // critical for DB insert
-  };
-
-  console.log("Sending event payload:", payload);
-
-  // 3️⃣ POST to backend
-  try {
-    const res = await fetch("http://localhost:3001/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    const text = await res.text();
-    console.log("Server response (status, raw):", res.status, text);
-
-    if (!res.ok) {
-      // if backend threw error, do NOT pretend event was created
-      console.error("Failed to save event:", text);
-      alert("Could not save event. Check backend logs.");
+    if (!userId) {
+      alert("Missing user id. Please log in again.");
       return;
     }
 
-    const saved = JSON.parse(text); // because we already read as text
-    console.log("Parsed saved event:", saved);
+  // 2️⃣ Build FormData (NOTE: capital F in FormData)
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("time", data.time);        // 👈 use data.time from AddEvent
+    formData.append("date", selectedDate);     // 👈 send the selected date
+    formData.append("importance", data.importance);
+    formData.append("user_id", userId);        // 👈 use userId from localStorage
 
-    // 4️⃣ Map to shape EventList expects
-    const newEvent = {
-      id: saved.id,
-      title: saved.title,
-      date: saved.start_time_utc,
-      time: saved.start_time_utc
-        ? saved.start_time_utc.slice(11, 16)
-        : "",
-      note: saved.description,
-      location: saved.location,      // if you add this later
-      importance: saved.importance,
-    };
+    if (data.file) {
+      formData.append("file", data.file);      // name must be "file" for request.files["file"]
+    }
+
+  // 3️⃣ POST to backend
+  try {
+      const res = await fetch("http://localhost:3001/events", {
+        method: "POST",
+        body: formData, 
+      });
+
+      if (!res.ok) {
+        console.error("Failed to save event:", await res.text());
+        alert("Could not save event.");
+        return;
+      }
+
+    const saved = await res.json();
+
+    // 4️⃣ Map to EventList shape
+      const newEvent = {
+        id: saved.id,
+        title: saved.title,
+        date: saved.start_time_utc,
+        time: saved.start_time_utc
+          ? saved.start_time_utc.slice(11, 16)
+          : "",
+        note: saved.description,
+        importance: saved.importance,
+      };
 
     setEvents((prev) => [...prev, newEvent]);
     setIsAddOpen(false);
-  } catch (err) {
+    } catch (err) {
     console.error("Error saving event:", err);
     alert("Network error while saving event.");
   }
