@@ -122,9 +122,11 @@ function Calendar({
     if (onDateSelect) onDateSelect(key);  
   };
 
+
+  //this was a headache to find 
   const legend = [
-    { color: "var(--accent)", label: "Selected" },
-    { color: "var(--accent-2)", label: "Today" },
+    { color: "var(--accent-4)", label: "Selected" },
+    { color: "var(--accent-3)", label: "Today" },
     { color: "var(--muted)", label: "Events" },
   ];
 

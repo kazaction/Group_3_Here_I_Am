@@ -1,5 +1,6 @@
 /* Dark overlay behind the popup */
 .modal-backdrop {
+  margin-top: 0;
   position: fixed;
   inset: 0; 
   background: rgba(0, 0, 0, 0.35);
@@ -45,20 +46,31 @@
 
 .btn-primary {
   padding: 8px 14px;
-  background: var(--accent);
+  background: var(--accent-4);
   color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+.btn-primary:hover{
+  background-color: var(--accent-3);
+}
+
+
+.btn-secondary {
+  padding: 8px 14px;
+  background: #ddd;
+  color: #666;
   border: none;
   border-radius: 6px;
   cursor: pointer;
 }
 
-.btn-secondary {
-  padding: 8px 14px;
-  background: #ddd;
-  color: #333;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.btn-secondary:hover{
+  background-color: var(--accent-3);
+  color: #666;
 }
 
 .field{

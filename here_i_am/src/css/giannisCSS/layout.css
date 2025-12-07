@@ -5,10 +5,11 @@
   --shadow:0 10px 30px rgba(0,0,0,.06); /*for the shadows*/
   --accent:#2ecc93; /*for for the key features*/
   --accent-2:#a9e7cf; /*for secondary coloring*/
+  --accent-3: #90d293;
+  --accent-4:#6cda71 ;
   --text:#0f1720; /*for text*/
   --muted:#788792; /*for lighter text broders etc*/
   --past: #e89039;
-
   /* you guys can add more so that we can use them as variables 
   and not try to find the values all the time, this will help with consistency
   on how things look */

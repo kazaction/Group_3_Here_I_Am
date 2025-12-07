@@ -14,10 +14,12 @@
 
 
 .cv-form {
-  background: #ffffff;
+  
   padding: 20px;
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  background: var(--panel);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  /* border: 1px solid #e0e0e0; */
 }
 
 .cv-form h2 {
@@ -53,7 +55,7 @@
   border-radius: 4px;
   border: none;
   cursor: pointer;
-  background: var(--accent);
+  background: var(--accent-3);
   color: white;
 }
 
@@ -77,7 +79,7 @@
 
 
 .cv-page {
-  background: #ffffff;
+  background: var(--panel);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   border-radius: 8px;
   padding: 8px 40px 32px 40px;

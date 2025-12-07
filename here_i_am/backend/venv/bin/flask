@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+#!/Users/johnangelidis/Projects/Team3/Team3_Here_I_Am/here_i_am/backend/venv/bin/python3
+=======
 #!/Users/markosmavroudi/Group_3_Here_I_Am/here_i_am/backend/venv/bin/python3
+>>>>>>> markos
 # -*- coding: utf-8 -*-
 import re
 import sys

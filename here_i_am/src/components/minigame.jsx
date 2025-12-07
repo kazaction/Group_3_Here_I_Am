@@ -175,15 +175,15 @@ const StartMiniGame = () => {
     return(
         <div>
             {!showGame && (
-            <button onClick={() => setShowGame(true)}>
+            <button className="start" onClick={() => setShowGame(true)}>
               Start
             </button>)
             }
             {showGame &&
             (<div>
-                <h1>
+                <h1 className="score">
                     Score: {score}
-                    <button onClick={() => setShowGame(false)}>
+                    <button className="start" onClick={() => setShowGame(false)}>
                         Stop
                     </button>
                 </h1>

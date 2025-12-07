@@ -1,10 +1,10 @@
-.history-wrapper {
+/* .history-wrapper {
     display: flex;
     height: 100%;
     background: #f5f5f5;
 
 }
-
+\
 .sidebar h2 {
     margin-bottom: 15px;
 }
@@ -25,9 +25,9 @@
 }
 
 /* -------- Event List -------- */
-.event-list {
+/* .event-list {
     flex: 1;
-    padding: 20px;
+    padding: 0px;
     overflow-y: auto;
 }
 
@@ -44,21 +44,19 @@
 
 .event-title {
     font-weight: bold;
-}
+} */
 
-.checkbox-row {
+/* .checkbox-row {
 
     display: flex;
     align-items: center;
-    gap: 8px;   /* space between checkbox and text */
+    gap: 8px;   /* space between checkbox and text 
     margin: 4px;
     margin-left: 35%;
     width: 15px;
 }
 
-/* div{
+div{
     text-align: center;
-    margin-top: 10px;
-
-    kiko auto xalaei ta panta oyla 
-} */
+    margin-top: 0px;
+} */ 

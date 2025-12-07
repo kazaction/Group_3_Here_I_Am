@@ -170,7 +170,7 @@ if (file) {
               name="name"
               value={form.name}
               onChange={handleChange}
-              placeholder="George"
+              placeholder="John"
             />
             {errors.name && <p className="error">{errors.name}</p>}
           </div>
@@ -182,7 +182,7 @@ if (file) {
               name="surname"
               value={form.surname}
               onChange={handleChange}
-              placeholder="Jordan"
+              placeholder="Doe"
             />
             {errors.surname && <p className="error">{errors.surname}</p>}
           </div>

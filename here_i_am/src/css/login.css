@@ -64,7 +64,7 @@
   width: 100%;
   margin-top: 16px;
   padding: 10px 14px;
-  background: lightgreen;
+  background: var(--accent-3);
   color: white;
   border: none;
   border-radius: 4px;
@@ -73,7 +73,7 @@
 }
 
 .login-btn:hover { 
-  background: #00BF00;
+  background: var(--accent-4);
   opacity: 0.95; 
 }
 
@@ -85,7 +85,7 @@
   align-items: center;
 }
 
-.login-links a { color: #1976d2; text-decoration: none; }
+.login-links a { color: var(--accent-3); text-decoration: none; }
 .login-links a:hover { text-decoration: underline; }
 
 .login-error {
@@ -107,3 +107,5 @@
 .koupas{
   margin-left: 27.69px;
 }
+
+/*akraio class !!!!*/
