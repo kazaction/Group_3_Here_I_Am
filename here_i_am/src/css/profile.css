@@ -65,6 +65,7 @@ button:hover {
   border-radius: 8px;
   background: var(--panel);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+
 }
 
 /* Logo at the top */
