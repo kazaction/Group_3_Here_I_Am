@@ -1,0 +1,218 @@
+/* NAVBAR CONTAINER */
+.lp-nav-container {
+  position: fixed; /* stay at top */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* INNER LAYOUT */
+.lp-nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* LOGO */
+.lp-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.lp-logo-icon {
+  font-size: 1.3rem;
+  color: #0ea5e9; /* Light blue */
+}
+
+.lp-logo-text {
+  letter-spacing: 0.3px;
+}
+
+/* ACTION BUTTONS */
+/* Make content start below fixed navbar */
+.lp-main {
+  padding-top: 80px;
+}
+
+/* Simple hero */
+.lp-hero {
+  text-align: center;
+  padding: 3rem 1.5rem 2rem;
+}
+
+.lp-hero h1{
+  
+  color : var(--text);
+}
+
+.lp-hero h1 span{
+  font-weight: 800;
+  color: var(--accent-4);
+}
+
+/* Section for rectangles */
+.lp-rect-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 3rem;
+}
+
+/* 2x2 grid */
+.lp-rect-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 columns */
+  gap: 1.5rem;
+}
+
+/* .lp-rect h3:hover{
+  color: var(--accent-4);
+} */
+
+/* Each rectangle */
+.lp-rect {
+  display: block;
+  text-decoration: none;
+  background: #f9fafb;
+  border: 1px solid #e5ebe5;
+  border-radius: 16px;
+  padding: 1.5rem;
+  min-height: 140px;              /* makes it look like a rectangle */
+  color: var(--text);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease,
+    border-color 0.15s ease, background 0.15s ease;
+}
+
+.lp-rect h3 {
+  color: var(--text);
+  margin: 0 0 0.4rem;
+  font-size: 1.05rem;
+}
+
+.lp-rect p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.lp-rect:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
+  border-color: var(--accent);
+  background: #ffffff;
+}
+
+.lp-rect:hover h3{
+  color: var(--accent-3);
+}
+
+
+/* .lp-nav-actions {
+  border : 2px solid var(--accent);
+  border-radius: var(--r-md) ;
+  width : 200px;
+  height: 44px;
+  text-align: center;
+  padding: 10px;
+  margin-top: 8px;
+}
+
+.lp-nav-actions :hover{
+  border : 2px solid var(--accent);
+  border-radius: var(--r-md) ;
+  background-color: var(--accent-2);
+  width : 200px;
+  height: 44px;
+  text-align: center;
+  padding: 10px;
+  margin-top: 8px;
+} */
+
+.lp-btn-group {
+  display: flex;
+  justify-content: flex-start; /* left align the group */
+  gap: 12px;                  /* space between the buttons */
+  margin-top: 1.5rem;         /* space above buttons under the grid */
+}
+
+/* Let gap handle spacing instead of margins */
+.lp-btn-group .lp-btn-primary,
+.lp-btn-group .lp-btn-ghost {
+  margin: 0;
+}
+
+lp-btn-group button {
+  margin: 10px;
+}
+
+.lp-btn-primary,
+.lp-btn-ghost {
+  text-decoration: none;
+  color: var(--text);
+  border: 1px solid #e5ebe5;
+  border-radius: 10px;
+  width: 250px;
+  padding: 8px;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease,
+    border-color 0.15s ease, background 0.15s ease;
+}
+
+.lp-btn-ghost:hover{
+  color : #6cda71;
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
+  border-color: var(--accent);
+  background: #ffffff;
+  
+}
+
+.lp-btn-primary:hover{
+color : #6cda71;
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
+  border-color: var(--accent);
+  background: #ffffff;
+}
+
+/* 
+
+.lp-btn-primary {
+  display: flex;
+  width: 76px;
+  text-align: center;
+  border: 2px solid var(--accent);
+  border-radius: 10px;
+  border-left: none;
+  background-color: var(--accent);
+  padding: 8px;
+  color: var(--text);
+  
+}
+
+
+.lp-btn-ghost {
+  width:76px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  color: var(--text);
+  border: 2px solid var(--accent);
+  border-radius: 10px;
+  border-right: none;
+  background-color: var(--accent);
+  padding: 8px;
+} */

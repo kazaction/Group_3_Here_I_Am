@@ -22,12 +22,14 @@ const Navbar = () => {
     <>
       <nav className="navbar">
         <ul className="navbar__menu top-menu">
+          {/* 
           <li className="navbar__item">
             <Link to="/home" className="navbar__link">
               <i data-feather="home"></i>
               <span>Here I Am</span>
             </Link>
           </li>
+          */}
           <li className="navbar__item">
             <Link to="/schedule" className="navbar__link">
               <i data-feather="calendar"></i>

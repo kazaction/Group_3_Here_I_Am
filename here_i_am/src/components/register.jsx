@@ -26,9 +26,9 @@ function Register() {
       .then(async (res) => {
         const body = await res.json().catch(() => ({}));
         if (!res.ok) return setError(body.message || 'Registration failed');
-        setSuccess('Registered. Check your email for verification (link expires in 15 minutes).');
+        setSuccess('Registered. Check your email for verification.');
         // Optionally navigate to login
-        setTimeout(() => navigate('/'), 1500);
+        setTimeout(() => navigate('/login'), 1500);
       })
       .catch((err) => setError('Unable to contact server'));
   };
@@ -68,7 +68,7 @@ function Register() {
         <button type="submit" className="login-btn">Register</button>
 
         <div className="login-links" style={{ marginTop: 12 }}>
-          <Link to="/">Already have an account? Login Here</Link>
+          <Link to="/login">Already have an account? Login Here</Link>
         </div>
       </form>
     </div>
