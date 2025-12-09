@@ -86,7 +86,7 @@ const History = () => {
 
     return(
         <div className="history-wrapper">
-            <aside className="card">
+            <aside className="card-history">
                 <h2>Filters</h2>
 
                 <div className="filter-section">

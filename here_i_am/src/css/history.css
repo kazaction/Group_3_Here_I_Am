@@ -58,6 +58,16 @@
     margin-top: 0px
 }
 
+.card-history{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--r-xl);
+  box-shadow:var(--shadow);
+  padding:16px;
+  margin-top: 30px;
+  margin-right: 30px;
+}
+
 /*
 div{
     text-align: center;
