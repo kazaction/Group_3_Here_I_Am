@@ -12,10 +12,11 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
+    localStorage.removeItem('auth');
+    localStorage.removeItem('user');
     navigate('/landing');
     setShowLogoutModal(false);
+
 
     
   };
