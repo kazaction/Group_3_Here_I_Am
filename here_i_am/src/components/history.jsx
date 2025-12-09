@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import "../css/history.css";
 
 const History = () => {
@@ -8,7 +7,7 @@ const History = () => {
 
     const [importanceFilter, setImportanceFilter] = useState({
         high: true,
-        medium: true,
+        normal: true,
         low: true,
     });
 
@@ -18,162 +17,132 @@ const History = () => {
 
     const fetchEvents = async () => {
         try {
-            const res = await axios.get("http://localhost:3001/history", {
-            params: {
-                user_id: 1
+            const storedUser = localStorage.getItem("user");
+            if (!storedUser) {
+                alert("You must be logged in to create an event.");
+                return;
             }
-            });
-            setEvents(res.data);
+        let user;
+        try {
+            user = JSON.parse(storedUser);
+        } catch (err) {
+            console.error("Failed to parse stored user:", err);
+            alert("Login information is corrupted. Please log in again.");
+            localStorage.removeItem("user");
+            return;
+        }
+        const userId = user.user_id;
+        if (!userId) {
+            alert("Missing user id. Please log in again.");
+            return;
+        }
+        const res = await fetch(`http://localhost:3001/history?user_id=${userId}`);
+        if (!res.ok) {
+            console.error("Failed fetching events:", await res.text());
+            return;
+        }
+
+        const data = await res.json();
+        console.log(data)
+        setEvents(data);
         } catch (err) {
             console.error(err);
         }
     };
 
-
     useEffect(() => {
-        const userObj = localStorage.getItem("user");
-        const userId = userObj.user_id;
-
-        if (!userId) {
-            console.error("User ID missing!");
-            return;
-        }
-
-
-        axios
-        .get(`http://localhost:3001/users/${userId}/history`)
-        .then((res) => setEvents(res.data))
-        .catch((err) => console.error(err));
+        fetchEvents();
     }, []);
+
+    function splitDateTime(utcString) {
+        const d = new Date(utcString);
+        const date = d.toISOString().slice(0, 10);
+        const time = d.toISOString().slice(11, 16);
+        return { date, time };
+    }
+
 
     // ----------- Client-side filtering --------------
     const filteredEvents = events.filter((event) => {
-        const matchesSearch =
-            event.title.toLowerCase().includes(search.toLowerCase());
+        const { date, time: startTime } = splitDateTime(event.start_time_utc);
+        const { time: endTime } = splitDateTime(event.end_time_utc);
+        const matchesSearch = event.title.toLowerCase().includes(search.toLowerCase());
+        const matchesImportance = !importanceFilter.high && !importanceFilter.normal && !importanceFilter.low ? true : importanceFilter[event.importance];
+        const matchesDate = dateFilter ? date === dateFilter : true;
+        const matchesStart = startTimeFilter ? startTime >= startTimeFilter : true;
+        const matchesEnd = endTimeFilter ? endTime <= endTimeFilter : true;
+        return ( matchesSearch && matchesImportance && matchesDate && matchesStart && matchesEnd );
+    }); // Toggle importance checkbox
 
-        const matchesImportance = !importanceFilter.high && !importanceFilter.medium && !importanceFilter.low ? true : importanceFilter[event.importance];
-
-        const matchesDate = dateFilter ? event.date === dateFilter : true;
-
-        const matchesStart =
-          startTimeFilter ? event.start_time >= startTimeFilter : true;
-
-        const matchesEnd = endTimeFilter ? event.end_time <= endTimeFilter : true;
-
-        return (
-            matchesSearch &&
-            matchesImportance &&
-            matchesDate &&
-            matchesStart &&
-            matchesEnd
-        );
-    });
-
-    // Toggle importance checkbox
     const handleImportanceToggle = (level) => {
         setImportanceFilter((prev) => ({
-            ...prev,
-            [level]: !prev[level],
+            ...prev, [level]: !prev[level],
         }));
     };
-
 
     return(
         <div className="history-wrapper">
             <aside className="card">
                 <h2>Filters</h2>
 
-                {/* Search */}
                 <div className="filter-section">
                     <label>Search</label>
-                    <input
-                        type="text"
-                        placeholder="Search events..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
+                    <input type="text" placeholder="Search events..." value={search} onChange={(e) => setSearch(e.target.value)} />
                 </div>
 
-                {/* Importance */}
                 <div className="filter-section">
                     <label>Importance</label>
-
                     <div className="checkbox-row">
-                        <input
-                            type="checkbox"
-                            checked={importanceFilter.high}
-                            onChange={() => handleImportanceToggle("high")}
-                        />
+                        <input type="checkbox" checked={importanceFilter.high} onChange={() => handleImportanceToggle("high")} />
                         <span>High</span>
                     </div>
 
                     <div className="checkbox-row">
-                        <input
-                            type="checkbox"
-                            checked={importanceFilter.medium}
-                            onChange={() => handleImportanceToggle("medium")}
-                        />
-                        <span>Medium</span>
+                        <input type="checkbox" checked={importanceFilter.normal} onChange={() => handleImportanceToggle("normal")} />
+                        <span>Normal</span>
                     </div>
 
                     <div className="checkbox-row">
-                        <input
-                            type="checkbox"
-                            checked={importanceFilter.low}
-                            onChange={() => handleImportanceToggle("low")}
-                            />
+                        <input type="checkbox" checked={importanceFilter.low} onChange={() => handleImportanceToggle("low")} />
                         <span>Low</span>
                     </div>
+
                 </div>
 
-
-                {/* Date */}
                 <div className="filter-section">
                     <label>Date</label>
-                    <input
-                        type="date"
-                        value={dateFilter}
-                        onChange={(e) => setDateFilter(e.target.value)}
-                        />
+                    <input type="date" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} />
                 </div>
 
-                {/* Time Range */}
                 <div className="filter-section">
                     <label>Start Time</label>
-                    <input
-                        type="time"
-                        value={startTimeFilter}
-                        onChange={(e) => setStartTimeFilter(e.target.value)}
-                    />
-
+                    <input type="time" value={startTimeFilter} onChange={(e) => setStartTimeFilter(e.target.value)} />
                     <label>End Time</label>
-                    <input
-                        type="time"
-                        value={endTimeFilter}
-                        onChange={(e) => setEndTimeFilter(e.target.value)}
-                    />
+                    <input type="time" value={endTimeFilter} onChange={(e) => setEndTimeFilter(e.target.value)} />
                 </div>
             </aside>
 
-            <div className="card">
-                {/* ---------------- EVENT LIST ---------------- */}
-                <main className="event-list">
-                    <h1>Event History</h1>
+            <div className="marginrm">
+                <div className="card">
+                    {/* ---------------- EVENT LIST ---------------- */}
+                    <main className="event-list">
+                        <h1>Event History</h1>
 
-                    {filteredEvents.length === 0 ? (
-                        <p>No events found.</p>
+                        {filteredEvents.length === 0 ? (
+                            <p>No events found.</p>
                         ) : (
                             filteredEvents.map((event) => (
                                 <div className="event-row" key={event.id}>
                                     <div className="event-title">{event.title}</div>
                                     <div>{event.importance.toUpperCase()}</div>
                                     <div>{event.date}</div>
-                                    <div>{event.start_time} → {event.end_time}</div>
+                                    <div>Starts: {event.startTime}</div>
                                 </div>
-                            )
-                        )
-                    )}
-                </main>
+                            ))
+                        )}
+
+                    </main>
+                </div>
             </div>
         </div>
     );

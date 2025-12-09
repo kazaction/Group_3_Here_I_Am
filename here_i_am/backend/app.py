@@ -227,12 +227,12 @@ def upload_profile_picture(user_id):
     return jsonify({"profile_picture": url}), 200
 
 
-@app.route("/users/<int:user_id>/history", methods=["GET"])
-def get_events(user_id):
+@app.route("/history", methods=["GET"])
+def get_events():
     conn = get_db_connection()
     try:
-        rows = conn.execute(
-            "SELECT * FROM events WHERE user_id = ?", (user_id,)).fetchall()
+        user_id = request.args.get("user_id")
+        rows = conn.execute("SELECT * FROM events WHERE user_id = ?", (user_id,)).fetchall()
     finally:
         conn.close()
     return jsonify([dict(r) for r in rows])
