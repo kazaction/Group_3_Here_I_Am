@@ -29,7 +29,7 @@ function NavbarWrapper() {
 function MainRoutes() {
   const location = useLocation();
   // remove left margin for login so the login component can center itself
-  const isAuthless = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/forgot' || location.pathname === '/';
+  const isAuthless = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/forgot' || location.pathname === '/' || location.pathname === '/landing';
   const containerStyle = isAuthless ? { padding: '20px' } : { marginLeft: '200px', padding: '20px' };
 
   return (
