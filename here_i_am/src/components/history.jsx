@@ -11,9 +11,10 @@ const History = () => {
         low: true,
     });
 
+    const [dateEndFilter, setDateEndFilter] = useState("");
     const [dateFilter, setDateFilter] = useState("");
     const [startTimeFilter, setStartTimeFilter] = useState("");
-    const [endTimeFilter, setEndTimeFilter] = useState("");
+    //const [endTimeFilter, setEndTimeFilter] = useState("");
 
     const fetchEvents = async () => {
         try {
@@ -67,13 +68,14 @@ const History = () => {
     // ----------- Client-side filtering --------------
     const filteredEvents = events.filter((event) => {
         const { date, time: startTime } = splitDateTime(event.start_time_utc);
-        const { time: endTime } = splitDateTime(event.end_time_utc);
+        //const { time: endTime } = splitDateTime(event.end_time_utc);
         const matchesSearch = event.title.toLowerCase().includes(search.toLowerCase());
         const matchesImportance = !importanceFilter.high && !importanceFilter.normal && !importanceFilter.low ? true : importanceFilter[event.importance];
-        const matchesDate = dateFilter ? date === dateFilter : true;
+        const matchesStartDate = dateFilter ? date >= dateFilter : true;
+        const matchedEndDate = dateEndFilter ? date <= dateEndFilter : true;
         const matchesStart = startTimeFilter ? startTime == startTimeFilter : true;
-        const matchesEnd = endTimeFilter ? endTime <= endTimeFilter : true;
-        return ( matchesSearch && matchesImportance && matchesDate && matchesStart && matchesEnd );
+        //const matchesEnd = endTimeFilter ? endTime <= endTimeFilter : true;
+        return ( matchesSearch && matchesImportance && matchesStartDate && matchedEndDate && matchesStart );
     }); // Toggle importance checkbox
 
     const handleImportanceToggle = (level) => {
@@ -118,7 +120,7 @@ const History = () => {
 
                 <div className="filter-section">
                     <label>To Date</label>
-                    <input type="date" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} />
+                    <input type="date" value={dateEndFilter} onChange={(e) => setDateEndFilter(e.target.value)} />
                 </div>
 
                 <div className="filter-section">
