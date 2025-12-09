@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import feather from "feather-icons";
 import "../css/navbar.css";
-import logo from "../assets/logo.png";
-import {user} from 'react-feather';
 
 const Navbar = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
