@@ -1,6 +1,6 @@
 import './App.css';
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Navbar from './components/navbar';
 import Schedule from './components/schedule';
 import Profile from './components/profile';
@@ -11,13 +11,19 @@ import Home from './components/home';
 import ChangePasswordPopup from './components/openPasswordWindow';
 import StartMiniGame from './components/minigame';
 import CvGeneration from './components/cvGeneration';
+import { useState } from 'react';
+import { useEffect } from 'react';
+import History from './components/history'; 
+import Landing from './components/landing';
 
 // Render Navbar only on non-login routes
 function NavbarWrapper() {
   const location = useLocation();
-  if (location.pathname === '/' || location.pathname === '/register' || location.pathname === '/forgot' || location.pathname === '/login') return null;
+  if (location.pathname === '/landing' || location.pathname === '/register' || location.pathname === '/forgot' || location.pathname === '/login' || location.pathname == '/') return null;
   return <Navbar />;
 }
+
+// || location.pathname == '/home'
 
 // Main content container adjusts layout based on current route
 function MainRoutes() {
@@ -29,7 +35,10 @@ function MainRoutes() {
   return (
     <div style={containerStyle}>
       <Routes>
-        <Route path="/" element={<Home />} />
+
+        {/* path below empty chane this to show home if needed*/}
+        <Route path="/" element={<Navigate to="/landing" replace />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot" element={<ForgotPage />} />
@@ -38,6 +47,9 @@ function MainRoutes() {
         <Route path="/change-password" element={<ChangePasswordPopup userId={1}/>} />
         <Route path="/minigame" element={<StartMiniGame />} />
         <Route path="/cvGeneration" element={<CvGeneration />} />
+        <Route path="/history" element={<History />} />
+        <Route path="/landing" element={<Landing />} />
+        {/* <Route path="/history" element={<Home />} /> */}
         {/* Add more routes like: */}
         {/* <Route path="/history" element={<History />} /> */}
         
@@ -47,6 +59,15 @@ function MainRoutes() {
 }
 
 function App() {
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    fetch('/api/hello')
+      .then(res => res.json())
+      .then(data => setMessage(data.message))
+      .catch(err => console.error(err));
+  }, []);
+
   return (
     <Router>
       <NavbarWrapper />
