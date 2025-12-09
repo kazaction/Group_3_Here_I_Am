@@ -86,48 +86,48 @@ const History = () => {
 
     return(
         <div className="history-wrapper">
-            <aside className="card">
-                <h2>Filters</h2>
+                <aside className="card-history">
+                    <h2>Filters</h2>
 
-                <div className="filter-section">
-                    <label>Search</label>
-                    <input type="text" placeholder="Search events..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                </div>
-
-                <div className="filter-section">
-                    <label>Importance</label>
-                    <div className="checkbox-row">
-                        <input type="checkbox" checked={importanceFilter.high} onChange={() => handleImportanceToggle("high")} />
-                        <span>High</span>
+                    <div className="filter-section">
+                        <label>Search</label>
+                        <input type="text" placeholder="Search events..." value={search} onChange={(e) => setSearch(e.target.value)} />
                     </div>
 
-                    <div className="checkbox-row">
-                        <input type="checkbox" checked={importanceFilter.normal} onChange={() => handleImportanceToggle("normal")} />
-                        <span>Normal</span>
+                    <div className="filter-section">
+                        <label>Importance</label>
+                        <div className="checkbox-row">
+                            <input type="checkbox" checked={importanceFilter.high} onChange={() => handleImportanceToggle("high")} />
+                            <span>High</span>
+                        </div>
+
+                        <div className="checkbox-row">
+                            <input type="checkbox" checked={importanceFilter.normal} onChange={() => handleImportanceToggle("normal")} />
+                            <span>Normal</span>
+                        </div>
+
+                        <div className="checkbox-row">
+                            <input type="checkbox" checked={importanceFilter.low} onChange={() => handleImportanceToggle("low")} />
+                            <span>Low</span>
+                        </div>
+
                     </div>
 
-                    <div className="checkbox-row">
-                        <input type="checkbox" checked={importanceFilter.low} onChange={() => handleImportanceToggle("low")} />
-                        <span>Low</span>
+                    <div className="filter-section">
+                        <label>From Date</label>
+                        <input type="date" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} />
                     </div>
 
-                </div>
+                    <div className="filter-section">
+                        <label>To Date</label>
+                        <input type="date" value={dateEndFilter} onChange={(e) => setDateEndFilter(e.target.value)} />
+                    </div>
 
-                <div className="filter-section">
-                    <label>From Date</label>
-                    <input type="date" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} />
-                </div>
-
-                <div className="filter-section">
-                    <label>To Date</label>
-                    <input type="date" value={dateEndFilter} onChange={(e) => setDateEndFilter(e.target.value)} />
-                </div>
-
-                <div className="filter-section">
-                    <label>Start Time</label>
-                    <input type="time" value={startTimeFilter} onChange={(e) => setStartTimeFilter(e.target.value)} />
-                </div>
-            </aside>
+                    <div className="filter-section">
+                        <label>Start Time</label>
+                        <input type="time" value={startTimeFilter} onChange={(e) => setStartTimeFilter(e.target.value)} />
+                    </div>
+                </aside>
 
             <div className="marginrm">
                 <div className="card">
