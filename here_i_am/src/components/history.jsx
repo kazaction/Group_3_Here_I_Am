@@ -56,8 +56,10 @@ const History = () => {
 
     function splitDateTime(utcString) {
         const d = new Date(utcString);
-        const date = d.toISOString().slice(0, 10);
-        const time = d.toISOString().slice(11, 16);
+
+        const date = d.toLocaleDateString("en-CA");
+        const time = d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+
         return { date, time };
     }
 
@@ -69,7 +71,7 @@ const History = () => {
         const matchesSearch = event.title.toLowerCase().includes(search.toLowerCase());
         const matchesImportance = !importanceFilter.high && !importanceFilter.normal && !importanceFilter.low ? true : importanceFilter[event.importance];
         const matchesDate = dateFilter ? date === dateFilter : true;
-        const matchesStart = startTimeFilter ? startTime >= startTimeFilter : true;
+        const matchesStart = startTimeFilter ? startTime == startTimeFilter : true;
         const matchesEnd = endTimeFilter ? endTime <= endTimeFilter : true;
         return ( matchesSearch && matchesImportance && matchesDate && matchesStart && matchesEnd );
     }); // Toggle importance checkbox
@@ -110,15 +112,18 @@ const History = () => {
                 </div>
 
                 <div className="filter-section">
-                    <label>Date</label>
+                    <label>From Date</label>
+                    <input type="date" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} />
+                </div>
+
+                <div className="filter-section">
+                    <label>To Date</label>
                     <input type="date" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} />
                 </div>
 
                 <div className="filter-section">
                     <label>Start Time</label>
                     <input type="time" value={startTimeFilter} onChange={(e) => setStartTimeFilter(e.target.value)} />
-                    <label>End Time</label>
-                    <input type="time" value={endTimeFilter} onChange={(e) => setEndTimeFilter(e.target.value)} />
                 </div>
             </aside>
 
@@ -131,15 +136,19 @@ const History = () => {
                         {filteredEvents.length === 0 ? (
                             <p>No events found.</p>
                         ) : (
-                            filteredEvents.map((event) => (
-                                <div className="event-row" key={event.id}>
-                                    <div className="event-title">{event.title}</div>
-                                    <div>{event.importance.toUpperCase()}</div>
-                                    <div>{event.date}</div>
-                                    <div>Starts: {event.startTime}</div>
-                                </div>
-                            ))
-                        )}
+                            filteredEvents.map((event) => {
+                                const { date, time: startTime } = splitDateTime(event.start_time_utc);
+                                return(
+                                    <div className="event-row" key={event.id}>
+                                        <div className="event-title">{event.title}</div>
+                                        <div>Importance: {event.importance.toUpperCase()}</div>
+                                        <div>Date: {date}</div>
+                                        <div>Start time: {startTime}</div>
+
+                                    </div>
+                                )
+                            }))
+                        }
 
                     </main>
                 </div>
