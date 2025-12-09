@@ -1,6 +1,6 @@
 // src/pages/landing.jsx
 import { Link } from "react-router-dom";
-import "../css/landing.css"; // <-- new css file
+import "../css/landing.css"; 
 
 function LogoutLandingPage() {
   return (
@@ -8,7 +8,6 @@ function LogoutLandingPage() {
       <div className="landing-nav-inner">
         {/* Logo */}
         <div className="landing-logo">
-          <span className="landing-logo-icon">◆</span>
           <span className="landing-logo-text">Here I Am</span>
         </div>
 
@@ -64,14 +63,6 @@ export default function Landing() {
             </Link>
           </div>
 
-          <div className="landing-btn-group">
-            <Link to="/login" className="landing-btn landing-btn-ghost">
-              Sign In
-            </Link>
-            <Link to="/register" className="landing-btn landing-btn-primary">
-              Register
-            </Link>
-          </div>
         </section>
       </main>
     </div>

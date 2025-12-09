@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
-import logo from "../assets/logo.png";
 import "../css/profile.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./navbar";
-import { FiEdit2 } from "react-icons/fi"; // Feather pencil icon
+import { FiEdit2 } from "react-icons/fi";
 
 const Profile = () => {
   const navigate = useNavigate();
 
   const userObj = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = userObj.user_id;
+  const token = userObj.token; // 👈 read token from localStorage
+
   const apiBase = `http://localhost:3001/users/${userId}`;
 
   const [profile, setProfile] = useState({
@@ -23,6 +24,20 @@ const Profile = () => {
 
   const [isEditing, setIsEditing] = useState(false);
 
+  // If no user or token, send them back to login
+  useEffect(() => {
+    if (!userId || !token) {
+      navigate("/login");
+    }
+  }, [userId, token, navigate]);
+
+  // Common axios config with auth header
+  const authConfig = {
+    headers: {
+      Authorization: `Bearer ${token}`, // 👈 JWT auth header
+    },
+  };
+
   // Handle text inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,13 +48,22 @@ const Profile = () => {
   const handleSave = () => {
     setIsEditing(false);
     axios
-      .put(apiBase, {
-        name: profile.name,
-        surname: profile.surname,
-        email: profile.email,
-      })
+      .put(
+        apiBase,
+        {
+          name: profile.name,
+          surname: profile.surname,
+          email: profile.email,
+        },
+        authConfig // 👈 include token
+      )
       .then((res) => console.log("Profile updated:", res.data))
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          navigate("/login");
+        }
+      });
   };
 
   // Handle profile picture change
@@ -53,7 +77,7 @@ const Profile = () => {
       return;
     }
 
-    //instant preview while uploading
+    // instant preview while uploading
     const previewUrl = URL.createObjectURL(file);
     setProfile((prev) => ({
       ...prev,
@@ -64,11 +88,16 @@ const Profile = () => {
     formData.append("profile_picture", file);
 
     axios
-      .post(`http://localhost:3001/users/${userId}/profile-picture`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
+      .post(
+        `http://localhost:3001/users/${userId}/profile-picture`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // 👈 include token
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      )
       .then((res) => {
         // Use URL from backend so it works after refresh
         setProfile((prev) => ({
@@ -78,116 +107,127 @@ const Profile = () => {
       })
       .catch((err) => {
         console.error(err);
-        alert("Error uploading profile picture");
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          navigate("/login");
+        } else {
+          alert("Error uploading profile picture");
+        }
       });
   };
 
   // Load user from backend
   useEffect(() => {
-    if (!userId) return;
+    if (!userId || !token) return;
+
     axios
-      .get(apiBase)
+      .get(apiBase, authConfig) // 👈 include token
       .then((res) => {
         setProfile(res.data);
       })
-      .catch((err) => console.error(err));
-  }, [apiBase, userId]);
+      .catch((err) => {
+        console.error(err);
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          navigate("/login");
+        }
+      });
+  }, [apiBase, userId, token, navigate]);
 
   return (
-  <div className="profile-page">
-    <Navbar />
+    <div className="profile-page">
+      {/* You already render Navbar via NavbarWrapper in App; 
+          if that's the case, you can REMOVE this <Navbar /> to avoid double navbar */}
+      <Navbar />
 
-    <div className="profile-container">
-
-      {/* Picture + pencil */}
-      <div className="profile-picture-wrapper">
-        {profile.profile_picture ? (
-          <img
-            src={profile.profile_picture}
-            alt="Profile"
-            className="profile-picture"
-          />
-        ) : (
-          <div className="profile-picture placeholder">
-            <span>Profile</span>
-          </div>
-        )}
-
-        {/* Pencil icon */}
-        <label htmlFor="profilePicInput" className="edit-profile-icon">
-          <FiEdit2 className="edit-profile-icon-svg" />
-        </label>  
-
-        <input
-          id="profilePicInput"
-          type="file"
-          accept=".jpg,.jpeg,.png"
-          style={{ display: "none" }}
-          onChange={handleProfilePictureChange}
-        />
-      </div>
-
-      {/* FORM UNDER THE PICTURE */}
-      <div className="profile-form">
-        <div className="profile-field">
-          <label>Name:</label>
-          <input
-            type="text"
-            name="name"
-            value={profile.name}
-            onChange={handleChange}
-            readOnly={!isEditing}
-          />
-        </div>
-
-        <div className="profile-field">
-          <label>Surname:</label>
-          <input
-            type="text"
-            name="surname"
-            value={profile.surname}
-            onChange={handleChange}
-            readOnly={!isEditing}
-          />
-        </div>
-
-        <div className="profile-field">
-          <label>Username:</label>
-          <input
-            type="text"
-            name="username"
-            value={profile.username}
-            onChange={handleChange}
-            readOnly
-          />
-        </div>
-
-        <div className="profile-field">
-          <label>Email Address:</label>
-          <input
-            type="email"
-            name="email"
-            value={profile.email}
-            onChange={handleChange}
-            readOnly={!isEditing}
-          />
-        </div>
-
-        <div className="profile-buttons">
-          {!isEditing ? (
-            <button onClick={() => setIsEditing(true)}>Edit</button>
+      <div className="profile-container">
+        {/* Picture + pencil */}
+        <div className="profile-picture-wrapper">
+          {profile.profile_picture ? (
+            <img
+              src={profile.profile_picture}
+              alt="Profile"
+              className="profile-picture"
+            />
           ) : (
-            <button onClick={handleSave}>Save</button>
+            <div className="profile-picture placeholder">
+              <span>Profile</span>
+            </div>
           )}
 
-          <button onClick={() => navigate("/change-password")}>
-            Edit Password
-          </button>
+          {/* Pencil icon */}
+          <label htmlFor="profilePicInput" className="edit-profile-icon">
+            <FiEdit2 className="edit-profile-icon-svg" />
+          </label>
+
+          <input
+            id="profilePicInput"
+            type="file"
+            accept=".jpg,.jpeg,.png"
+            style={{ display: "none" }}
+            onChange={handleProfilePictureChange}
+          />
+        </div>
+
+        {/* FORM UNDER THE PICTURE */}
+        <div className="profile-form">
+          <div className="profile-field">
+            <label>Name:</label>
+            <input
+              type="text"
+              name="name"
+              value={profile.name}
+              onChange={handleChange}
+              readOnly={!isEditing}
+            />
+          </div>
+
+          <div className="profile-field">
+            <label>Surname:</label>
+            <input
+              type="text"
+              name="surname"
+              value={profile.surname}
+              onChange={handleChange}
+              readOnly={!isEditing}
+            />
+          </div>
+
+          <div className="profile-field">
+            <label>Username:</label>
+            <input
+              type="text"
+              name="username"
+              value={profile.username}
+              onChange={handleChange}
+              readOnly
+            />
+          </div>
+
+          <div className="profile-field">
+            <label>Email Address:</label>
+            <input
+              type="email"
+              name="email"
+              value={profile.email}
+              onChange={handleChange}
+              readOnly={!isEditing}
+            />
+          </div>
+
+          <div className="profile-buttons">
+            {!isEditing ? (
+              <button onClick={() => setIsEditing(true)}>Edit</button>
+            ) : (
+              <button onClick={handleSave}>Save</button>
+            )}
+
+            <button onClick={() => navigate("/change-password")}>
+              Edit Password
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
 };
 
 export default Profile;

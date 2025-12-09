@@ -6,6 +6,7 @@ function Login() {
   const [credential, setCredential] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const validate = () => {
@@ -25,7 +26,9 @@ function Login() {
     e.preventDefault();
     if (!validate()) return;
 
-    // Call backend to verify credentials
+    setLoading(true);
+    setError('');
+
     fetch('http://localhost:3001/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -33,20 +36,45 @@ function Login() {
     })
       .then(async (res) => {
         const body = await res.json().catch(() => ({}));
+
+        // If Flask returned an error status (4xx/5xx)
         if (!res.ok) {
           setError(body.error || body.message || 'Login failed');
           return;
         }
-        // success — store user info from Flask response
-        if (body.user_id && body.username) {
-          localStorage.setItem('user', JSON.stringify({ user_id: body.user_id, username: body.username, email: body.email }));
-          localStorage.setItem('auth', 'true');
+
+        // For the JWT backend we wrote, response looks like:
+        // { success: true, user_id, username, email, token }
+        if (!body.success) {
+          setError(body.error || 'Login failed');
+          return;
         }
+
+        if (body.user_id && body.username && body.token) {
+          // 🔐 store everything, including token
+          localStorage.setItem(
+            'user',
+            JSON.stringify({
+              user_id: body.user_id,
+              username: body.username,
+              email: body.email,
+              token: body.token,          // 👈 IMPORTANT
+            })
+          );
+          localStorage.setItem('auth', 'true'); // optional, if you use it elsewhere
+        } else {
+          setError('Invalid response from server');
+          return;
+        }
+
         navigate('/home');
       })
       .catch((err) => {
         console.error('Login error', err);
         setError('Unable to contact server');
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -57,7 +85,9 @@ function Login() {
         {error && <div className="login-error">{error}</div>}
 
         <div className="field">
-          <label className="koupas" htmlFor="credential">Username or Email</label>
+          <label className="koupas" htmlFor="credential">
+            Username or Email
+          </label>
           <input
             id="credential"
             type="text"
@@ -68,7 +98,9 @@ function Login() {
         </div>
 
         <div className="field">
-          <label className="koupas" htmlFor="password">Password</label>
+          <label className="koupas" htmlFor="password">
+            Password
+          </label>
           <input
             id="password"
             type="password"
@@ -78,10 +110,11 @@ function Login() {
           />
         </div>
 
-        <button type="submit" className="login-btn">Login</button>
+        <button type="submit" className="login-btn" disabled={loading}>
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
 
         <div className="login-links">
-          {/* Placeholder links - implement functionality later */}
           <Link to="/forgot">Forgot password?</Link>
           <span className="separator">&nbsp;·&nbsp;</span>
           <Link to="/register">Don't have an account? Register here</Link>

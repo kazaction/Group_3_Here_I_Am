@@ -8,7 +8,6 @@ function NavbarLandingPage() {
       <div className="lp-nav-inner">
         {/* Logo */}
         <div className="lp-logo">
-          <span className="lp-logo-icon">◆</span>
           <span className="lp-logo-text">Here I Am</span>
         </div>
 
