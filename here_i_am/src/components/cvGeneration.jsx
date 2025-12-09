@@ -342,7 +342,46 @@ const CvGeneration = () => {
                       type="text"
                       name="birthdate"
                       value={form.birthdate}
-                      onChange={handleChange}
+                      onChange={(e) => {
+                        const input = e.target;
+                        const cursorPosition = input.selectionStart;
+                        let value = e.target.value;
+                        
+                        // Remove all non-numeric characters
+                        const digitsOnly = value.replace(/\D/g, "");
+                        
+                        // Limit to 8 digits (DDMMYYYY)
+                        const limitedDigits = digitsOnly.slice(0, 8);
+                        
+                        // Format with slashes: DD/MM/YYYY
+                        let formatted = limitedDigits;
+                        if (limitedDigits.length > 2) {
+                          formatted = limitedDigits.slice(0, 2) + "/" + limitedDigits.slice(2);
+                        }
+                        if (limitedDigits.length > 4) {
+                          formatted = limitedDigits.slice(0, 2) + "/" + limitedDigits.slice(2, 4) + "/" + limitedDigits.slice(4);
+                        }
+                        
+                        // Calculate new cursor position
+                        // Count digits before cursor in original value
+                        const digitsBeforeCursor = value.slice(0, cursorPosition).replace(/\D/g, "").length;
+                        // Adjust for slashes that will be inserted
+                        let newCursorPos = digitsBeforeCursor;
+                        if (digitsBeforeCursor > 2) newCursorPos += 1; // After first slash
+                        if (digitsBeforeCursor > 4) newCursorPos += 1; // After second slash
+                        
+                        // Update the form with formatted value
+                        setForm((prev) => ({
+                          ...prev,
+                          birthdate: formatted,
+                        }));
+                        setErrors((prev) => ({ ...prev, birthdate: "" }));
+                        
+                        // Restore cursor position after state update
+                        setTimeout(() => {
+                          input.setSelectionRange(newCursorPos, newCursorPos);
+                        }, 0);
+                      }}
                       placeholder="DD/MM/YYYY"
                       maxLength={10}
                     />
