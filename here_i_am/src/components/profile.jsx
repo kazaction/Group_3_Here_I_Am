@@ -10,7 +10,7 @@ const Profile = () => {
 
   const userObj = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = userObj.user_id;
-  const token = userObj.token; // 👈 read token from localStorage
+  const token = userObj.token; //read token from localStorage
 
   const apiBase = `http://localhost:3001/users/${userId}`;
 
@@ -34,7 +34,7 @@ const Profile = () => {
   // Common axios config with auth header
   const authConfig = {
     headers: {
-      Authorization: `Bearer ${token}`, // 👈 JWT auth header
+      Authorization: `Bearer ${token}`, // JWT auth header
     },
   };
 
@@ -55,7 +55,7 @@ const Profile = () => {
           surname: profile.surname,
           email: profile.email,
         },
-        authConfig // 👈 include token
+        authConfig //include token
       )
       .then((res) => console.log("Profile updated:", res.data))
       .catch((err) => {
@@ -93,7 +93,7 @@ const Profile = () => {
         formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // 👈 include token
+            Authorization: `Bearer ${token}`, // include token
             "Content-Type": "multipart/form-data",
           },
         }
