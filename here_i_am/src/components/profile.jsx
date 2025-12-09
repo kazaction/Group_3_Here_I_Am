@@ -1,11 +1,10 @@
-// src/components/profile.jsx
-
 import React, { useEffect, useState } from "react";
 import logo from "../assets/logo.png";
 import "../css/profile.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./navbar";
+import { FiEdit2 } from "react-icons/fi"; // Feather pencil icon
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -116,8 +115,8 @@ const Profile = () => {
 
         {/* Pencil icon */}
         <label htmlFor="profilePicInput" className="edit-profile-icon">
-          ✏️
-        </label>
+          <FiEdit2 className="edit-profile-icon-svg" />
+        </label>  
 
         <input
           id="profilePicInput"

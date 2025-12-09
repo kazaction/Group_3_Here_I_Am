@@ -26,17 +26,23 @@ def validate_birthdate(birthdate):
 
 def validate_phone(phone):
     phone = phone.strip()
+    
     if not phone:
         return "error: phone number can't be empty"
     
-    check_phone = phone
-    if check_phone.startswith('+'):
-        check_phone = check_phone[1:]
-    if not check_phone.isdigit():
-        return "error: phone number must contain only digits"
-    if len(phone) < 8 or len(phone) > 15:
+    if phone.startswith("+"):
+        digits = phone[1:]
+    else:
+        digits = phone
+
+    if not digits.isdigit():
+        return "error: phone number must contain only digits (except leading +)"
+
+    if len(digits) < 8 or len(digits) > 19:
         return "error: phone number length is invalid"
+
     return phone
+
 
 def validate_nonempty(value):
     stripped_value = value.strip()
@@ -71,3 +77,44 @@ def validate_email(email):
         return email
     else:
         return "error: Invalid Email"
+    
+def validate_portfolio(url):
+    url = url.strip()
+    if not url:
+        return ""
+    pattern = r"^https?://.+"
+    if not re.match(pattern, url):
+        return "error: portfolio must be a valid URL starting with http:// or https://"
+    return url
+
+
+def validate_english_level(level):
+    level = level.strip()
+    if not level:
+      
+        return ""
+    cefr = {"A1", "A2", "B1", "B2", "C1", "C2"}
+    words = {
+        "beginner",
+        "elementary",
+        "intermediate",
+        "upper-intermediate",
+        "advanced",
+        "fluent",
+        "native",
+    }
+
+    if level.upper() in cefr or level.lower() in words:
+        return level
+
+    return "error: enter a CEFR level (A1-C2) or level like Intermediate/Advanced"
+
+
+def validate_optional_text(value):
+    value = value.strip()
+    if not value:
+        return ""   
+    if len(value) < 5:
+        return "error: text is too short"
+    return value
+

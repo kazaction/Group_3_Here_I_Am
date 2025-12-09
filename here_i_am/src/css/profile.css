@@ -125,6 +125,12 @@ button:hover {
     font-weight: normal;
 }
 
+/* White pencil icon inside the circle */
+.edit-profile-icon-svg {
+    color: black;        /* white */
+    font-size: 18px;    /* size of the pencil */
+}
+
 /* ===== Form fields (name, surname, etc.) ===== */
 
 .profile-form {
