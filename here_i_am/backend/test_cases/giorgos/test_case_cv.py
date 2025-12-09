@@ -24,6 +24,8 @@ def valid_cv_data():
         "phone": "+35799123456",  # assumes your validate_phone allows leading +
         "email": "george.jordan@example.com",
         "skill_count": "5",
+        "portfolio": "https://github.com/georgejordan",
+        "english_level": "B2",
     }
 
 
@@ -166,12 +168,16 @@ def test_validation_fails_for_invalid_email(api_session):
         ("birthdate", "1990-12-25"),  # wrong format
         ("birthdate", "25/12/2099"),  # future date
         ("phone", "1234"),              # too short
-        ("phone", "1234567890123456"),  # too long
+        ("phone", "12345678901234561234567890"),  # too long
         ("phone", "abcdefg"),           # non-numeric (if you still require digits)
         ("job_count", "-1"),       # negative
         ("job_count", "11"),       # out of range (> 10) if that's your rule
         ("skill_count", "-5"),     # negative
         ("skill_count", "25"),     # out of range (> 20) if that's your rule
+        ("portfolio", "not-a-url"),     # invalid URL format
+        ("portfolio", "github.com/user"),  # missing http:// or https://
+        ("english_level", "D1"),    # invalid CEFR level
+        ("english_level", "invalid"),  # invalid level word
     ],
 )
 def test_validation_fails_for_invalid_fields(api_session, field, invalid_value):
@@ -227,6 +233,6 @@ def test_picture_upload_fails_for_invalid_file_type(api_session, tmp_path):
     assert not data.get("ok"), "Request should have failed for an invalid file type."
 
     error_msg = str(data.get("error", "")).lower()
-    # Don't be a slave to exact wording, but require that it's clearly about invalid type.
+   
     assert "invalid" in error_msg and ("type" in error_msg or "file" in error_msg), \
         f"Unexpected error message: {data.get('error')}"
