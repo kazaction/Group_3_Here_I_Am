@@ -11,15 +11,25 @@ import Home from './components/home';
 import ChangePasswordPopup from './components/openPasswordWindow';
 import StartMiniGame from './components/minigame';
 import CvGeneration from './components/cvGeneration';
-import { useState } from 'react';
-import { useEffect } from 'react';
 import History from './components/history'; 
 import Landing from './components/landing';
+
+// Check if user is authenticated
+const isAuthenticated = () => {
+  const auth = localStorage.getItem('auth');
+  const user = localStorage.getItem('user');
+  return auth === 'true' && user !== null;
+};
+
+// Protected Route Component
+function ProtectedRoute({ children }) {
+  return isAuthenticated() ? children : <Navigate to="/login" replace />;
+}
 
 // Render Navbar only on non-login routes
 function NavbarWrapper() {
   const location = useLocation();
-  if (location.pathname === '/landing' || location.pathname === '/register' || location.pathname === '/forgot' || location.pathname === '/login' || location.pathname == '/') return null;
+  if (location.pathname === '/landing' || location.pathname === '/register' || location.pathname === '/forgot' || location.pathname === '/login' || location.pathname === '/') return null;
   return <Navbar />;
 }
 
@@ -35,37 +45,39 @@ function MainRoutes() {
   return (
     <div style={containerStyle}>
       <Routes>
-
-        {/* path below empty chane this to show home if needed*/}
+        {/* Public routes */}
         <Route path="/" element={<Navigate to="/landing" replace />} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/landing" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot" element={<ForgotPage />} />
-        <Route path="/schedule" element={<Schedule />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/change-password" element={<ChangePasswordPopup userId={1}/>} />
-        <Route path="/minigame" element={<StartMiniGame />} />
-        <Route path="/cvGeneration" element={<CvGeneration />} />
-        <Route path="/history" element={<History />} />
-        <Route path="/landing" element={<Landing />} />
-        {/* <Route path="/history" element={<Home />} /> */}
-        {/* Add more routes like: */}
-        {/* <Route path="/history" element={<History />} /> */}
         
+        {/* Protected routes */}
+        <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+        <Route path="/schedule" element={<ProtectedRoute><Schedule /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/change-password" element={<ProtectedRoute><ChangePasswordPopup /></ProtectedRoute>} />
+        <Route path="/minigame" element={<ProtectedRoute><StartMiniGame /></ProtectedRoute>} />
+        <Route path="/cvGeneration" element={<ProtectedRoute><CvGeneration /></ProtectedRoute>} />
+        <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
       </Routes>
     </div>
   );
 }
 
 function App() {
-  const [message, setMessage] = useState('');
-
-  useEffect(() => {
-    fetch('/api/hello')
-      .then(res => res.json())
-      .then(data => setMessage(data.message))
-      .catch(err => console.error(err));
+  // Clear any invalid/incomplete authentication on app load
+  React.useEffect(() => {
+    const auth = localStorage.getItem('auth');
+    const user = localStorage.getItem('user');
+    
+    // If auth exists but user doesn't, or vice versa, clear everything
+    if ((auth && !user) || (!auth && user)) {
+      localStorage.removeItem('auth');
+      localStorage.removeItem('user');
+      //localStorage.removeItem('token');
+      //localStorage.removeItem('userId');
+    }
   }, []);
 
   return (
