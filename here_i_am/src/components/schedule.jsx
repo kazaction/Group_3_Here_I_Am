@@ -95,12 +95,11 @@ function Schedule() {
           const mapped = data.map((e) => ({
             id: e.id,
             title: e.title,
-            date: e.start_time_utc,                  // full datetime string
-            time: e.start_time_utc
-              ? e.start_time_utc.slice(11, 16)       // "HH:MM"
-              : "",
+            date: e.start_time_utc,
+            time: e.start_time_utc?.slice(11, 16),
             note: e.description,
             importance: e.importance,
+            hasFile: e.has_file === 1,    // 👈 THIS IS REQUIRED
           }));
 
           setEvents(mapped);
@@ -189,6 +188,55 @@ function Schedule() {
   }
 };
 
+const handleDeleteEvent = async (eventId) => {
+  const storedUser = localStorage.getItem("user");
+  if (!storedUser) {
+    alert("You must be logged in to delete events.");
+    return;
+  }
+
+  let user;
+  try {
+    user = JSON.parse(storedUser);
+  } catch (err) {
+    console.error("Failed to parse stored user:", err);
+    alert("Login information is corrupted. Please log in again.");
+    localStorage.removeItem("user");
+    return;
+  }
+
+  const userId = user.user_id;
+  if (!userId) {
+    alert("Missing user id. Please log in again.");
+    return;
+  }
+
+
+  //extra bit to make sure user wants to delete , maybe make it so that it is like the logout version
+  // if (!window.confirm("Are you sure you want to delete this event?")) {
+  //   return;
+  // }
+
+  try {
+    const res = await fetch(
+      `http://localhost:3001/events/${eventId}?user_id=${userId}`,
+      { method: "DELETE" }
+    );
+
+    if (!res.ok) {
+      console.error("Failed to delete event:", await res.text());
+      alert("Could not delete event.");
+      return;
+    }
+
+    // Remove from local state so UI updates
+    setEvents((prev) => prev.filter((e) => e.id !== eventId));
+  } catch (err) {
+    console.error("Error deleting event:", err);
+    alert("Network error while deleting event.");
+  }
+};
+
 //connect to db 
 
   return (
@@ -207,6 +255,7 @@ function Schedule() {
         selectedDate={selectedDate} // so it can filter that days events only and not output the entirety of the events in the webapp
         onAddEventClick= {() => setIsAddOpen(true)} // this is for the add event button ,
                                                     //  change the dfault value of it to true so the add form is displayed
+        onDeleteEvent={handleDeleteEvent}                                                    
       />
 
       

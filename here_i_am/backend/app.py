@@ -232,7 +232,8 @@ def get_events():
     conn = get_db_connection()
     try:
         user_id = request.args.get("user_id")
-        rows = conn.execute("SELECT * FROM events WHERE user_id = ?", (user_id,)).fetchall()
+        rows = conn.execute(
+            "SELECT * FROM events WHERE user_id = ?", (user_id,)).fetchall()
     finally:
         conn.close()
     return jsonify([dict(r) for r in rows])
@@ -366,23 +367,76 @@ def list_events_for_day():
     end_dt = f"{date}T23:59:59"
 
     conn = get_db_connection()
-    rows = conn.execute(
-        """
-        SELECT * FROM events
-        WHERE user_id = ?
-          AND start_time_utc BETWEEN ? AND ?
+    rows = conn.execute("""
+        SELECT 
+            e.*,
+            EXISTS (
+                SELECT 1 FROM uploads u 
+                WHERE u.event_id = e.id
+            ) AS has_file
+        FROM events e
+        WHERE start_time_utc BETWEEN ? AND ?
+        AND user_id = ?
         ORDER BY start_time_utc
-        """,
-        (user_id, start_dt, end_dt),
-    ).fetchall()
-    conn.close()
+    """, (start_dt, end_dt, user_id)).fetchall()
 
     return jsonify([dict(r) for r in rows])
+
+    ######################################## delete event#######################################
+
+
+@app.route("/events/<int:event_id>", methods=["DELETE"])
+def delete_event(event_id):
+
+    user_id = request.args.get("user_id")
+    if not user_id:
+        return jsonify({"error": "missing user_id parameter"}), 400
+
+    try:
+        user_id_int = int(user_id)
+    except (TypeError, ValueError):
+        return jsonify({"error": "invalid user_id"}), 400
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # 1️⃣ Ensure the event exists and belongs to this user
+    row = cur.execute(
+        "SELECT user_id FROM events WHERE id = ?",
+        (event_id,)
+    ).fetchone()
+
+    if not row:
+        conn.close()
+        return jsonify({"error": "event not found"}), 404
+
+    if row["user_id"] != user_id_int:
+        conn.close()
+        return jsonify({"error": "forbidden: event does not belong to this user"}), 403
+
+    try:
+        # 2️⃣ Delete associated uploads first (because of FK)
+        cur.execute("DELETE FROM uploads WHERE event_id = ?", (event_id,))
+
+        # 3️⃣ Then delete the event
+        cur.execute("DELETE FROM events WHERE id = ?", (event_id,))
+
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        print("DB error on DELETE event:", repr(e))
+        return jsonify({"error": "database error", "details": str(e)}), 500
+
+    conn.close()
+    return jsonify({"status": "ok", "deleted_id": event_id}), 200
+
+######################################## delete event #######################################
 
 
 ######################################## for eventlist #######################################
 
-#had to manualy import the file in the app.py 
+# had to manualy import the file in the app.py
 def save_file(file_storage, user_id, event_id):
     """
     file_storage = request.files["file"]
