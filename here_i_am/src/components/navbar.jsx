@@ -12,8 +12,8 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
+    localStorage.removeItem('user');
+    localStorage.removeItem('auth');
     navigate('/landing');
     setShowLogoutModal(false);
 
