@@ -1,5 +1,1 @@
 MUST MAKE THE EVENTS SHOW THE UPLOADED FILES SO THAT THEY CAN BE 
-
-make it so that here is a var for event being done and not and show in the card
-
-make delete notes

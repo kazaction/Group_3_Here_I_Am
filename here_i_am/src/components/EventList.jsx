@@ -2,6 +2,7 @@
 import React, { useMemo } from "react";
 import AddEvent from "./addEvent";
 import { LuClock3, LuMapPin, LuPlus } from "react-icons/lu";
+import {FiFile} from "react-icons/fi"
 
 // to check if an event is in the past 
   function isEventInPast(event) {
@@ -25,6 +26,7 @@ function EventList({
   selectedDate,          // ✅ NEW: this comes from the parent (same value Calendar sends)
   events = [],
   onAddEventClick,
+  onDeleteEvent,
 }) {
   // ✅ NEW: use selectedDate to build a pretty header
   const dateObj = selectedDate ? new Date(selectedDate) : new Date();
@@ -86,14 +88,20 @@ function EventList({
                   key={e.id}
                   className={`event-item ${past ? "event-item-past" : "event-item-future"}`}
                 >
+                    
                   <div className="event-icon">
+                    
                     <div
                       className={`icon-circle ${
                         past ? "icon-circle-past" : "icon-circle-future"
                       }`}
                     />
                   </div>
+
+                 
+
                   <div className="event-content">
+                    
                     <div className="event-title">{e.title}</div>
                     <div className="event-meta">
                       {e.time && (
@@ -101,9 +109,9 @@ function EventList({
                           <LuClock3 size={14} /> {e.time}
                         </span>
                       )}
-                      {e.location && (
-                        <span className="meta">
-                          <LuMapPin size={14} /> {e.location}
+                      {e.hasFile && (
+                        <span className="meta file-meta">
+                          <FiFile size={14} />
                         </span>
                       )}
                     </div>
@@ -116,6 +124,26 @@ function EventList({
                             ? "Low"
                             : "Normal"}
                     </div>
+
+                    <div className="file-icon">
+
+                    </div>
+                    
+                    {/* adding delete button */}
+
+                     {/* small delete button on the right */}
+
+                        {onDeleteEvent && (
+                          <button
+                            type="button"
+                            className="event-delete-btn"
+                            onClick={() => onDeleteEvent(e.id)}
+                          >
+                            ✕
+                          </button>
+                        )}
+
+                    {/* adding delete button */}
 
                   </div>
                 </div>

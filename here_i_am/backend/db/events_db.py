@@ -25,6 +25,8 @@ CREATE TABLE IF NOT EXISTS events (
 )
 """)
 
+#maybe add the file upload filename and file data in this table for ease of use !
+
 conn.commit()
 conn.close()
 

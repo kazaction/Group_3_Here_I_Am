@@ -108,6 +108,8 @@
 .pill-btn{
   border:1px solid var(--accent-3);
   background-color: var(--panel);
+  margin-bottom: 14px;
+  margin-right: 10px;
 }
 
 .pill-btn:hover{
@@ -115,3 +117,25 @@
   transform: translateY(-1px);
   box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
 }
+
+.rm-btn{
+  width: 100px;
+  padding: 5px;
+  border-radius: 8px;
+  justify-content: right;
+  color: var(--text);
+  background-color: var(--accent-4);
+}
+
+.rm-btn:hover{
+  color: black;
+  background-color: var(--accent-4);
+}
+
+.file-meta {
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+  color: var(--accent-3); /* blue-ish */
+}
+
