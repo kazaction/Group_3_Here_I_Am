@@ -118,6 +118,19 @@ const CvGeneration = () => {
     setMessageType("");
 
     try {
+      // Check if english_level is required and empty
+      if (!form.english_level || form.english_level.trim() === "") {
+        setErrors({ english_level: "English level is required" });
+        setLoading(false);
+        setTimeout(() => {
+          const englishLevelField = document.querySelector(`[name="english_level"]`);
+          if (englishLevelField) {
+            englishLevelField.focus();
+          }
+        }, 100);
+        return;
+      }
+
       const validated = {};
 
       const fieldsToCheck = [
@@ -392,12 +405,13 @@ const CvGeneration = () => {
                 </div>
 
                 <div className="form-row">
-                  <label>English level</label>
+                  <label>English level <span className="required">*</span></label>
                   <select
                     name="english_level"
                     value={form.english_level}
                     onChange={handleChange}
                     className="form-select"
+                    required
                   >
                     <option value="">Select level</option>
                     <option value="A1">A1 - Beginner</option>
