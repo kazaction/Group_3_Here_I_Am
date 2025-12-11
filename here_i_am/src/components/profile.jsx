@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../css/profile.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./navbar";
 import { FiEdit2 } from "react-icons/fi";
+import useAuth from "./tokenJWT"; // Import the useAuth hook
 
 const Profile = () => {
   const navigate = useNavigate();
 
-  const userObj = JSON.parse(localStorage.getItem("user") || "{}");
-  const userId = userObj.user_id;
-  const token = userObj.token; //read token from localStorage
-
-  const apiBase = `http://localhost:3001/users/${userId}`;
+  // Ensure the user is authenticated using the custom useAuth hook
+  useAuth(); // The hook will redirect the user to the login page if they are not authenticated
 
   const [profile, setProfile] = useState({
     name: "",
@@ -23,13 +21,13 @@ const Profile = () => {
   });
 
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true); // Add a loading state to show while data is being fetched
 
-  // If no user or token, send them back to login
-  useEffect(() => {
-    if (!userId || !token) {
-      navigate("/login");
-    }
-  }, [userId, token, navigate]);
+  const userObj = JSON.parse(localStorage.getItem("user") || "{}");
+  const userId = userObj.user_id;
+  const token = userObj.token; // Get the JWT token from localStorage
+
+  const apiBase = `http://localhost:3001/users/${userId}`;
 
   // Common axios config with auth header
   const authConfig = {
@@ -55,13 +53,15 @@ const Profile = () => {
           surname: profile.surname,
           email: profile.email,
         },
-        authConfig //include token
+        authConfig // include token in the request header
       )
-      .then((res) => console.log("Profile updated:", res.data))
+      .then((res) => {
+        console.log("Profile updated:", res.data);
+      })
       .catch((err) => {
         console.error(err);
         if (err.response?.status === 401 || err.response?.status === 403) {
-          navigate("/login");
+          navigate("/login"); // Redirect to login if unauthorized
         }
       });
   };
@@ -115,12 +115,15 @@ const Profile = () => {
       });
   };
 
-  // Load user from backend
+  // Load user data from backend
   useEffect(() => {
     if (!userId || !token) return;
 
+    // Set loading state to true when fetching starts
+    setLoading(true);
+
     axios
-      .get(apiBase, authConfig) // 👈 include token
+      .get(apiBase, authConfig) // Include token in the header
       .then((res) => {
         setProfile(res.data);
       })
@@ -129,13 +132,27 @@ const Profile = () => {
         if (err.response?.status === 401 || err.response?.status === 403) {
           navigate("/login");
         }
+      })
+      .finally(() => {
+        // Set loading state to false once the data is fetched
+        setLoading(false);
       });
   }, [apiBase, userId, token, navigate]);
 
+  // Show loading spinner if the data is being fetched
+  if (loading) {
+    return (
+      <div className="profile-page">
+        <Navbar />
+        <div className="profile-container">
+          <p>Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="profile-page">
-      {/* You already render Navbar via NavbarWrapper in App; 
-          if that's the case, you can REMOVE this <Navbar /> to avoid double navbar */}
       <Navbar />
 
       <div className="profile-container">
