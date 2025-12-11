@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
-import logo from "../assets/logo.png";
-import "../css/profile.css";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Navbar from "./navbar";
 import { FiEdit2 } from "react-icons/fi"; // Feather pencil icon
+import ChangePasswordPopup from "./openPasswordWindow"; // ChangePasswordModal component
+import "../css/profile.css";
 
 const Profile = () => {
   const navigate = useNavigate();
-
   const userObj = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = userObj.user_id;
   const apiBase = `http://localhost:3001/users/${userId}`;
@@ -22,6 +21,7 @@ const Profile = () => {
   });
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
 
   // Handle text inputs
   const handleChange = (e) => {
@@ -53,7 +53,7 @@ const Profile = () => {
       return;
     }
 
-    //instant preview while uploading
+    // Instant preview while uploading
     const previewUrl = URL.createObjectURL(file);
     setProfile((prev) => ({
       ...prev,
@@ -93,101 +93,112 @@ const Profile = () => {
       .catch((err) => console.error(err));
   }, [apiBase, userId]);
 
+  // Open/close Change Password modal
+  const handleOpenChangePassword = () => {
+    setIsChangePasswordModalOpen(true);
+  };
+
+  const handleCloseChangePassword = () => {
+    setIsChangePasswordModalOpen(false);
+  };
+
   return (
-  <div className="profile-page">
-    <Navbar />
+    <div className="profile-page">
+      <Navbar />
 
-    <div className="profile-container">
-
-      {/* Picture + pencil */}
-      <div className="profile-picture-wrapper">
-        {profile.profile_picture ? (
-          <img
-            src={profile.profile_picture}
-            alt="Profile"
-            className="profile-picture"
-          />
-        ) : (
-          <div className="profile-picture placeholder">
-            <span>Profile</span>
-          </div>
-        )}
-
-        {/* Pencil icon */}
-        <label htmlFor="profilePicInput" className="edit-profile-icon">
-          <FiEdit2 className="edit-profile-icon-svg" />
-        </label>  
-
-        <input
-          id="profilePicInput"
-          type="file"
-          accept=".jpg,.jpeg,.png"
-          style={{ display: "none" }}
-          onChange={handleProfilePictureChange}
-        />
-      </div>
-
-      {/* FORM UNDER THE PICTURE */}
-      <div className="profile-form">
-        <div className="profile-field">
-          <label>Name:</label>
-          <input
-            type="text"
-            name="name"
-            value={profile.name}
-            onChange={handleChange}
-            readOnly={!isEditing}
-          />
-        </div>
-
-        <div className="profile-field">
-          <label>Surname:</label>
-          <input
-            type="text"
-            name="surname"
-            value={profile.surname}
-            onChange={handleChange}
-            readOnly={!isEditing}
-          />
-        </div>
-
-        <div className="profile-field">
-          <label>Username:</label>
-          <input
-            type="text"
-            name="username"
-            value={profile.username}
-            onChange={handleChange}
-            readOnly
-          />
-        </div>
-
-        <div className="profile-field">
-          <label>Email Address:</label>
-          <input
-            type="email"
-            name="email"
-            value={profile.email}
-            onChange={handleChange}
-            readOnly={!isEditing}
-          />
-        </div>
-
-        <div className="profile-buttons">
-          {!isEditing ? (
-            <button onClick={() => setIsEditing(true)}>Edit</button>
+      <div className="profile-container">
+        {/* Profile Picture Section */}
+        <div className="profile-picture-wrapper">
+          {profile.profile_picture ? (
+            <img
+              src={profile.profile_picture}
+              alt="Profile"
+              className="profile-picture"
+            />
           ) : (
-            <button onClick={handleSave}>Save</button>
+            <div className="profile-picture placeholder">
+              <span>Profile</span>
+            </div>
           )}
 
-          <button onClick={() => navigate("/change-password")}>
-            Edit Password
-          </button>
+          {/* Pencil Icon to Edit Profile Picture */}
+          <label htmlFor="profilePicInput" className="edit-profile-icon">
+            <FiEdit2 className="edit-profile-icon-svg" />
+          </label>
+
+          <input
+            id="profilePicInput"
+            type="file"
+            accept=".jpg,.jpeg,.png"
+            style={{ display: "none" }}
+            onChange={handleProfilePictureChange}
+          />
+        </div>
+
+        {/* Profile Form */}
+        <div className="profile-form">
+          <div className="profile-field">
+            <label>Name:</label>
+            <input
+              type="text"
+              name="name"
+              value={profile.name}
+              onChange={handleChange}
+              readOnly={!isEditing}
+            />
+          </div>
+
+          <div className="profile-field">
+            <label>Surname:</label>
+            <input
+              type="text"
+              name="surname"
+              value={profile.surname}
+              onChange={handleChange}
+              readOnly={!isEditing}
+            />
+          </div>
+
+          <div className="profile-field">
+            <label>Username:</label>
+            <input
+              type="text"
+              name="username"
+              value={profile.username}
+              onChange={handleChange}
+              readOnly
+            />
+          </div>
+
+          <div className="profile-field">
+            <label>Email Address:</label>
+            <input
+              type="email"
+              name="email"
+              value={profile.email}
+              onChange={handleChange}
+              readOnly={!isEditing}
+            />
+          </div>
+
+          <div className="profile-buttons">
+            {!isEditing ? (
+              <button onClick={() => setIsEditing(true)}>Edit</button>
+            ) : (
+              <button onClick={handleSave}>Save</button>
+            )}
+
+            <button onClick={handleOpenChangePassword}>Change Password</button>
+          </div>
         </div>
       </div>
+
+      {/* Modal for Change Password */}
+      {isChangePasswordModalOpen && (
+        <ChangePasswordPopup onClose={handleCloseChangePassword} />
+      )}
     </div>
-  </div>
-);
+  );
 };
 
 export default Profile;
