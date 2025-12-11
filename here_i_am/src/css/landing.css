@@ -38,14 +38,6 @@
   color: var(--accent-5);
 }
 
-.landing-logo-icon {
-  font-size: 1.3rem;
-  color: #0ea5e9;
-}
-
-.landing-logo-text {
-  letter-spacing: 0.3px;
-}
 
 /* NAVBAR buttons */
 .landing-nav-actions {

@@ -139,6 +139,10 @@ function Calendar({
     <div className="card">
       <div className="card-head">
         <h2>Calendar</h2>
+        <span className="calendar-month-label">
+            <LuCalendar size={16} />
+            <span>{monthLabel}</span>
+          </span> 
         <div className="card-actions">
           <button
             type="button"
@@ -156,10 +160,7 @@ function Calendar({
           >
             <LuChevronRight />
           </button>
-          <span className="calendar-month-label">
-            <LuCalendar size={16} />
-            <span>{monthLabel}</span>
-          </span>
+          
         </div>
       </div>
 
