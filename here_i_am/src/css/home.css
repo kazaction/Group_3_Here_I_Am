@@ -216,3 +216,37 @@ color : #6cda71;
   background-color: var(--accent);
   padding: 8px;
 } */
+
+
+/* Landing page specific layout (won't affect home.jsx) */
+.lp-main--landing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;           /* center horizontally */
+  min-height: calc(100vh - 80px); /* viewport height minus navbar */
+}
+
+/* Keep hero nicely centered with reasonable width */
+.lp-main--landing .lp-hero {
+  max-width: 700px;
+  width: 100%;
+}
+
+/* Center the whole section */
+.lp-main--landing .lp-rect-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;  /* center section content */
+}
+
+/* Limit grid width and keep it centered */
+.lp-main--landing .lp-rect-grid {
+  max-width: 800px;
+  width: 100%;
+}
+
+/* Center the Sign In / Register buttons under the grid */
+.lp-main--landing .lp-btn-group {
+  justify-content: center;
+}
