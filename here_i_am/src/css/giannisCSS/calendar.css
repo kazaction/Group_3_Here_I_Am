@@ -175,11 +175,12 @@
 }
 
 .card-head{
-  padding: 5px;
+  margin-top: 10px ;
+  padding: 10px;
 }
 
 .card-actions{
   margin: 10px;
-  margin-bottom: 30px;
+  margin-bottom: 35px;
   
 }
