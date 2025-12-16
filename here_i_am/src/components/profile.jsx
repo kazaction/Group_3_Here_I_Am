@@ -37,9 +37,15 @@ const Profile = () => {
         name: profile.name,
         surname: profile.surname,
         email: profile.email,
+        authenticated_user_id: userId,
       })
       .then((res) => console.log("Profile updated:", res.data))
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          alert("Access denied");
+        }
+      });
   };
 
   // Handle profile picture change
@@ -62,6 +68,7 @@ const Profile = () => {
 
     const formData = new FormData();
     formData.append("profile_picture", file);
+    formData.append("authenticated_user_id", userId);
 
     axios
       .post(`http://localhost:3001/users/${userId}/profile-picture`, formData, {
@@ -78,7 +85,11 @@ const Profile = () => {
       })
       .catch((err) => {
         console.error(err);
-        alert("Error uploading profile picture");
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          alert("Access denied");
+        } else {
+          alert("Error uploading profile picture");
+        }
       });
   };
 
@@ -86,12 +97,18 @@ const Profile = () => {
   useEffect(() => {
     if (!userId) return;
     axios
-      .get(apiBase)
+      .get(`${apiBase}?authenticated_user_id=${userId}`)
       .then((res) => {
         setProfile(res.data);
       })
-      .catch((err) => console.error(err));
-  }, [apiBase, userId]);
+      .catch((err) => {
+        console.error(err);
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          alert("Access denied");
+          navigate("/login");
+        }
+      });
+  }, [apiBase, userId, navigate]);
 
   // Open/close Change Password modal
   const handleOpenChangePassword = () => {
