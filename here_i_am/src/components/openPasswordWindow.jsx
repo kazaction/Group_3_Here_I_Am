@@ -19,7 +19,10 @@ const ChangePasswordPopup = ({ onClose }) => {
     setLoading(true);
 
     try {
-      const res = await axios.post(`${apiBase}/check-password`, { password: oldPass });
+      const res = await axios.post(`${apiBase}/check-password`, { 
+        password: oldPass,
+        authenticated_user_id: userId 
+      });
       if (res.data.valid) {
         alert("✅ Old password is correct!");
         setIsVerified(true);
@@ -28,7 +31,12 @@ const ChangePasswordPopup = ({ onClose }) => {
       }
     } catch (err) {
       console.error(err);
-      alert("Error checking password.");
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        alert("Access denied");
+        navigate("/login");
+      } else {
+        alert("Error checking password.");
+      }
     } finally {
       setLoading(false);
     }
@@ -39,7 +47,10 @@ const ChangePasswordPopup = ({ onClose }) => {
     setLoading(true);
 
     try {
-      const res = await axios.put(`${apiBase}/update-password`, { newPassword: newPass });
+      const res = await axios.put(`${apiBase}/update-password`, { 
+        newPassword: newPass,
+        authenticated_user_id: userId 
+      });
       if (res.status === 200) {
         alert("✅ Password updated successfully!");
         onClose(); // Close the modal when password is updated
@@ -48,7 +59,12 @@ const ChangePasswordPopup = ({ onClose }) => {
       }
     } catch (err) {
       console.error(err);
-      alert("Error updating password.");
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        alert("Access denied");
+        navigate("/login");
+      } else {
+        alert("Error updating password.");
+      }
     } finally {
       setLoading(false);
     }

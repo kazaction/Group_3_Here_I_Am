@@ -18,4 +18,17 @@
     justify-content: space-evenly;
 }
 
+/*Pictures*/
+.startScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
 
+.startImage {
+  width: 400px;       /* change as you like */
+  height: auto;
+  border-radius: 12px;
+  justify-self: center;
+}

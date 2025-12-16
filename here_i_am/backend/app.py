@@ -102,32 +102,64 @@ def register():
     return jsonify({"message": "Registered"}), 201
 
 # Get user info by id
-
-
 @app.route("/users/<int:user_id>", methods=["GET"])
 def get_user(user_id):
+    # Verify authenticated user can only access their own data
+    authenticated_user_id = request.args.get("authenticated_user_id")
+    
+    if not authenticated_user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    try:
+        authenticated_user_id = int(authenticated_user_id)
+    except (TypeError, ValueError):
+        return jsonify({"error": "Invalid authentication"}), 401
+    
+    if authenticated_user_id != user_id:
+        return jsonify({"error": "Forbidden - Access denied"}), 403
+
     conn = get_db_connection()
-    user = conn.execute("SELECT * FROM users WHERE id = ?",
-                        (user_id,)).fetchone()
-    conn.close()
+    try:
+        user = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+        
+        if user is None:
+            return jsonify({"error": "User not found"}), 404
 
-    if user is None:
-        return jsonify({"error": "User not found"}), 404
+        user_dict = dict(user)
+        
+        # Remove password from response for security
+        if "password" in user_dict:
+            del user_dict["password"]
 
-    user_dict = dict(user)
+        # If profile_picture has a filename, convert to full URL
+        if user_dict.get("profile_picture"):
+            filename = user_dict["profile_picture"]
+            user_dict["profile_picture"] = f"http://localhost:3001/pictures/{filename}"
 
-    # If profile_picture has a filename, convert to full URL
-    if user_dict.get("profile_picture"):
-        filename = user_dict["profile_picture"]
-        user_dict["profile_picture"] = f"http://localhost:3001/pictures/{filename}"
-
-    return jsonify(user_dict)
+        return jsonify(user_dict)
+    finally:
+        conn.close()
 
 
 # Update user info
 @app.route("/users/<int:user_id>", methods=["PUT"])
 def update_user(user_id):
     data = request.get_json()
+    
+    # Verify authenticated user can only update their own data
+    authenticated_user_id = data.get("authenticated_user_id")
+    
+    if not authenticated_user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    try:
+        authenticated_user_id = int(authenticated_user_id)
+    except (TypeError, ValueError):
+        return jsonify({"error": "Invalid authentication"}), 401
+    
+    if authenticated_user_id != user_id:
+        return jsonify({"error": "Forbidden - Access denied"}), 403
+    
     fields = ["name", "surname", "email", "profile_picture"]
 
     updates = [f"{field} = ?" for field in fields if field in data]
@@ -137,14 +169,14 @@ def update_user(user_id):
         return jsonify({"error": "No valid fields provided"}), 400
 
     conn = get_db_connection()
-    conn.execute(
-        f"UPDATE users SET {', '.join(updates)} WHERE id = ?", (*
-                                                                values, user_id)
-    )
-    conn.commit()
-    conn.close()
-
-    return jsonify({"message": "User updated successfully"})
+    try:
+        conn.execute(
+            f"UPDATE users SET {', '.join(updates)} WHERE id = ?", (*values, user_id)
+        )
+        conn.commit()
+        return jsonify({"message": "User updated successfully"})
+    finally:
+        conn.close()
 
 
 # Check password
@@ -152,36 +184,65 @@ def update_user(user_id):
 def check_password(user_id):
     data = request.get_json()
     password = data.get("password")
+    authenticated_user_id = data.get("authenticated_user_id")
+    
+    if not authenticated_user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    try:
+        authenticated_user_id = int(authenticated_user_id)
+    except (TypeError, ValueError):
+        return jsonify({"error": "Invalid authentication"}), 401
+    
+    if authenticated_user_id != user_id:
+        return jsonify({"error": "Forbidden - Access denied"}), 403
 
     conn = get_db_connection()
-    user = conn.execute(
-        "SELECT password FROM users WHERE id = ?", (user_id,)).fetchone()
-    conn.close()
+    try:
+        user = conn.execute(
+            "SELECT password FROM users WHERE id = ?", (user_id,)
+        ).fetchone()
+        
+        if user and user["password"] == password:
+            return jsonify({"valid": True})
+        return jsonify({"valid": False})
+    finally:
+        conn.close()
 
-    if user and user["password"] == password:
-        return jsonify({"valid": True})
-    return jsonify({"valid": False})
 
-
-# update passowrd
+# Update password
 @app.route("/users/<int:user_id>/update-password", methods=["PUT"])
 def update_password(user_id):
     data = request.get_json()
     new_password = data.get("newPassword")
+    authenticated_user_id = data.get("authenticated_user_id")
+    
+    if not authenticated_user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    try:
+        authenticated_user_id = int(authenticated_user_id)
+    except (TypeError, ValueError):
+        return jsonify({"error": "Invalid authentication"}), 401
+    
+    if authenticated_user_id != user_id:
+        return jsonify({"error": "Forbidden - Access denied"}), 403
 
     if not new_password:
         return jsonify({"error": "Missing new password"}), 400
 
     conn = get_db_connection()
-    conn.execute("UPDATE users SET password = ? WHERE id = ?",
-                 (new_password, user_id))
-    conn.commit()
-    changes = conn.total_changes
-    conn.close()
-
-    if changes == 0:
-        return jsonify({"success": False})
-    return jsonify({"success": True})
+    try:
+        conn.execute("UPDATE users SET password = ? WHERE id = ?",
+                     (new_password, user_id))
+        conn.commit()
+        changes = conn.total_changes
+        
+        if changes == 0:
+            return jsonify({"success": False}), 404
+        return jsonify({"success": True})
+    finally:
+        conn.close()
 
 
 # Register the blueprint for CV routes
@@ -198,6 +259,20 @@ def get_picture(filename):
 
 @app.route("/users/<int:user_id>/profile-picture", methods=["POST"])
 def upload_profile_picture(user_id):
+    # Verify authenticated user can only upload their own profile picture
+    authenticated_user_id = request.form.get("authenticated_user_id")
+    
+    if not authenticated_user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    try:
+        authenticated_user_id = int(authenticated_user_id)
+    except (TypeError, ValueError):
+        return jsonify({"error": "Invalid authentication"}), 401
+    
+    if authenticated_user_id != user_id:
+        return jsonify({"error": "Forbidden - Access denied"}), 403
+    
     if "profile_picture" not in request.files:
         return jsonify({"error": "No file part"}), 400
 
@@ -216,15 +291,16 @@ def upload_profile_picture(user_id):
 
     # Save filename in DB
     conn = get_db_connection()
-    conn.execute(
-        "UPDATE users SET profile_picture = ? WHERE id = ?",
-        (filename, user_id)
-    )
-    conn.commit()
-    conn.close()
-
-    url = f"http://localhost:3001/pictures/{filename}"
-    return jsonify({"profile_picture": url}), 200
+    try:
+        conn.execute(
+            "UPDATE users SET profile_picture = ? WHERE id = ?",
+            (filename, user_id)
+        )
+        conn.commit()
+        url = f"http://localhost:3001/pictures/{filename}"
+        return jsonify({"profile_picture": url}), 200
+    finally:
+        conn.close()
 
 
 @app.route("/history", methods=["GET"])

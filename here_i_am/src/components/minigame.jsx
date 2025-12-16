@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "../css/minigame.css";
+import snakeImg from "../assets/snake.png";
 
 const StartMiniGame = () => {
     const canvasRef = useRef(null);
@@ -174,11 +175,19 @@ const StartMiniGame = () => {
 
     return(
         <div>
+
             {!showGame && (
+              <div className="startScreen">
+                <div>
+                  <img className="startImage" src={snakeImg} alt="Snake game" />
+                </div>
+
                 <button className="start" onClick={() => setShowGame(true)}>
                   Start
-                </button>)
-            }
+                </button>
+              </div>
+            )}
+
             {showGame &&
             (<div>
                 <h1 className="score">
