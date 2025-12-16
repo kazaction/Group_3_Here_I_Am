@@ -84,9 +84,9 @@ function ForgotPage() {
           </button>
           <button 
             type="button" 
-            className="login-btn" 
+            className="btn-no" 
             onClick={handleCancel}
-            style={{ flex: 1, background: '#999' }}
+            style={{ flex: 1, background: '#999' , color: '#f3f3f3'}}
           >
             Back to Login Page
           </button>
