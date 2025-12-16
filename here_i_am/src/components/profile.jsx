@@ -183,12 +183,12 @@ const Profile = () => {
 
           <div className="profile-buttons">
             {!isEditing ? (
-              <button onClick={() => setIsEditing(true)}>Edit</button>
+              <button className="markos-btn" onClick={() => setIsEditing(true)}>Edit</button>
             ) : (
-              <button onClick={handleSave}>Save</button>
+              <button className="markos-btn" onClick={handleSave}>Save</button>
             )}
 
-            <button onClick={handleOpenChangePassword}>Change Password</button>
+            <button className="markos-btn" onClick={handleOpenChangePassword}>Change Password</button>
           </div>
         </div>
       </div>

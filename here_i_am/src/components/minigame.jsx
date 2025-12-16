@@ -175,9 +175,9 @@ const StartMiniGame = () => {
     return(
         <div>
             {!showGame && (
-            <button className="start" onClick={() => setShowGame(true)}>
-              Start
-            </button>)
+                <button className="start" onClick={() => setShowGame(true)}>
+                  Start
+                </button>)
             }
             {showGame &&
             (<div>

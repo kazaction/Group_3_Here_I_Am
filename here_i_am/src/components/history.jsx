@@ -87,7 +87,7 @@ const History = () => {
     return(
         <div className="history-wrapper">
             <aside className="card-history">
-                <h2>Filters</h2>
+                <h1>Filters</h1>
 
                 <div className="filter-section">
                     <label>Search</label>
@@ -97,17 +97,17 @@ const History = () => {
                 <div className="filter-section">
                     <label>Importance</label>
                     <div className="checkbox-row">
-                        <input type="checkbox" checked={importanceFilter.high} onChange={() => handleImportanceToggle("high")} />
+                        <input id="fltr" type="checkbox" checked={importanceFilter.high} onChange={() => handleImportanceToggle("high")} />
                         <span>High</span>
                     </div>
 
                     <div className="checkbox-row">
-                        <input type="checkbox" checked={importanceFilter.normal} onChange={() => handleImportanceToggle("normal")} />
+                        <input  id="fltr" type="checkbox" checked={importanceFilter.normal} onChange={() => handleImportanceToggle("normal")} />
                         <span>Normal</span>
                     </div>
 
                     <div className="checkbox-row">
-                        <input type="checkbox" checked={importanceFilter.low} onChange={() => handleImportanceToggle("low")} />
+                        <input  id="fltr" type="checkbox" checked={importanceFilter.low} onChange={() => handleImportanceToggle("low")} />
                         <span>Low</span>
                     </div>
 

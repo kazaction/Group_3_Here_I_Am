@@ -34,15 +34,17 @@ button {
     font-size: 16px;
     border: none;
     border-radius: 6px;
-    background-color: var(--accent-3);
+    background-color: #10b981;
     cursor: pointer; /* ✅ fixed from #007bff */
-    color: black;
+    color:  black;
 }
 
 button:hover {
-    background-color: var(--accent-4);
+    background-color: #10b981;
+    filter: brightness(var(--btnHover));
     transform: translateY(-1px);
-    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
+    /* box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16); */
+
 }
 
 /* ===== Profile layout ===== */
@@ -171,4 +173,9 @@ button:hover {
     display: flex;
     gap: 10px;
     justify-content: center;
+    
+}
+
+.markos-btn{
+    color: #f3f3f3;
 }

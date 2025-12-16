@@ -46,7 +46,7 @@
 
 .btn-primary {
   padding: 8px 14px;
-  background: var(--accent-4);
+  background: var(--accent-5);
   color: white;
   border: none;
   border-radius: 6px;
@@ -55,7 +55,8 @@
 }
 
 .btn-primary:hover{
-  background-color: var(--accent-3);
+  background-color: var(--accent-5);
+  filter: brightness(var(--btnHover));
 }
 
 
@@ -69,7 +70,8 @@
 }
 
 .btn-secondary:hover{
-  background-color: var(--accent-3);
+  background-color: #ddd;
+  filter: brightness(var(--btnHover));
   color: #666;
 }
 

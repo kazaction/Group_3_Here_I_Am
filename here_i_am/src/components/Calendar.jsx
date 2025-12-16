@@ -140,7 +140,7 @@ function Calendar({
       <div className="card-head">
         <h2>Calendar</h2>
         <span className="calendar-month-label">
-            <LuCalendar size={16} />
+            <LuCalendar size={16} className="cal-icon"/>
             <span>{monthLabel}</span>
           </span> 
         <div className="card-actions">
