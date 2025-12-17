@@ -66,18 +66,9 @@ function MainRoutes() {
 }
 
 function App() {
-  // Clear any invalid/incomplete authentication on app load
+  // Clear localStorage on app launch
   React.useEffect(() => {
-    const auth = localStorage.getItem('auth');
-    const user = localStorage.getItem('user');
-    
-    // If auth exists but user doesn't, or vice versa, clear everything
-    if ((auth && !user) || (!auth && user)) {
-      localStorage.removeItem('auth');
-      localStorage.removeItem('user');
-      //localStorage.removeItem('token');
-      //localStorage.removeItem('userId');
-    }
+    localStorage.clear();
   }, []);
 
   return (
