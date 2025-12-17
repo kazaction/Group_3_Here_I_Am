@@ -39,7 +39,7 @@ function NavbarWrapper() {
 function MainRoutes() {
   const location = useLocation();
   // remove left margin for login so the login component can center itself
-  const isAuthless = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/forgot' || location.pathname === '/';
+  const isAuthless = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/forgot' || location.pathname === '/' || location.pathname === '/landing';
   const containerStyle = isAuthless ? { padding: '20px' } : { marginLeft: '200px', padding: '20px' };
 
   return (
@@ -66,18 +66,9 @@ function MainRoutes() {
 }
 
 function App() {
-  // Clear any invalid/incomplete authentication on app load
+  // Clear localStorage on app launch
   React.useEffect(() => {
-    const auth = localStorage.getItem('auth');
-    const user = localStorage.getItem('user');
-    
-    // If auth exists but user doesn't, or vice versa, clear everything
-    if ((auth && !user) || (!auth && user)) {
-      localStorage.removeItem('auth');
-      localStorage.removeItem('user');
-      //localStorage.removeItem('token');
-      //localStorage.removeItem('userId');
-    }
+    localStorage.clear();
   }, []);
 
   return (

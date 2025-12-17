@@ -21,23 +21,8 @@
   align-items: center;
 }
 
-/* LOGO */
-.lp-logo {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-size: 1.15rem;
-  font-weight: 600;
-}
 
-.lp-logo-icon {
-  font-size: 1.3rem;
-  color: #0ea5e9; /* Light blue */
-}
 
-.lp-logo-text {
-  letter-spacing: 0.3px;
-}
 
 /* ACTION BUTTONS */
 /* Make content start below fixed navbar */
@@ -52,13 +37,12 @@
 }
 
 .lp-hero h1{
-  
   color : var(--text);
 }
 
 .lp-hero h1 span{
   font-weight: 800;
-  color: var(--accent-4);
+  color: var(--accent-5);
 }
 
 /* Section for rectangles */
@@ -83,7 +67,7 @@
 .lp-rect {
   display: block;
   text-decoration: none;
-  background: #f9fafb;
+  background: #ffffff;
   border: 1px solid #e5ebe5;
   border-radius: 16px;
   padding: 1.5rem;
@@ -113,31 +97,10 @@
   background: #ffffff;
 }
 
-.lp-rect:hover h3{
-  color: var(--accent-3);
-}
+  
 
 
-/* .lp-nav-actions {
-  border : 2px solid var(--accent);
-  border-radius: var(--r-md) ;
-  width : 200px;
-  height: 44px;
-  text-align: center;
-  padding: 10px;
-  margin-top: 8px;
-}
 
-.lp-nav-actions :hover{
-  border : 2px solid var(--accent);
-  border-radius: var(--r-md) ;
-  background-color: var(--accent-2);
-  width : 200px;
-  height: 44px;
-  text-align: center;
-  padding: 10px;
-  margin-top: 8px;
-} */
 
 .lp-btn-group {
   display: flex;
@@ -152,67 +115,40 @@
   margin: 0;
 }
 
-lp-btn-group button {
-  margin: 10px;
-}
-
-.lp-btn-primary,
-.lp-btn-ghost {
-  text-decoration: none;
-  color: var(--text);
-  border: 1px solid #e5ebe5;
-  border-radius: 10px;
-  width: 250px;
-  padding: 8px;
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
-  transition: transform 0.15s ease, box-shadow 0.15s ease,
-    border-color 0.15s ease, background 0.15s ease;
-}
-
-.lp-btn-ghost:hover{
-  color : #6cda71;
-  transform: translateY(-3px);
-  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
-  border-color: var(--accent);
-  background: #ffffff;
-  
-}
-
-.lp-btn-primary:hover{
-color : #6cda71;
-  transform: translateY(-3px);
-  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
-  border-color: var(--accent);
-  background: #ffffff;
-}
-
-/* 
-
-.lp-btn-primary {
-  display: flex;
-  width: 76px;
-  text-align: center;
-  border: 2px solid var(--accent);
-  border-radius: 10px;
-  border-left: none;
-  background-color: var(--accent);
-  padding: 8px;
-  color: var(--text);
-  
-}
 
 
-.lp-btn-ghost {
-  width:76px;
-  text-align: center;
+
+
+
+/* Landing page specific layout (won't affect home.jsx) */
+.lp-main--landing {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  text-align: center;
-  color: var(--text);
-  border: 2px solid var(--accent);
-  border-radius: 10px;
-  border-right: none;
-  background-color: var(--accent);
-  padding: 8px;
-} */
+  align-items: center;           /* center horizontally */
+  min-height: calc(100vh - 80px); /* viewport height minus navbar */
+}
+
+/* Keep hero nicely centered with reasonable width */
+.lp-main--landing .lp-hero {
+  max-width: 700px;
+  width: 100%;
+}
+
+/* Center the whole section */
+.lp-main--landing .lp-rect-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;  /* center section content */
+}
+
+/* Limit grid width and keep it centered */
+.lp-main--landing .lp-rect-grid {
+  max-width: 800px;
+  width: 100%;
+}
+
+/* Center the Sign In / Register buttons under the grid */
+.lp-main--landing .lp-btn-group {
+  justify-content: center;
+}

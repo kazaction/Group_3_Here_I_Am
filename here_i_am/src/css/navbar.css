@@ -104,7 +104,7 @@ body {
   margin-left: 1rem;
   opacity: 0;
   pointer-events: none;
-  color: var(--primary);
+  color: var(--accent-5);
   background: #fff;
   padding: calc(var(--spacer) * 0.75);
   transition: var(--transition);
@@ -113,7 +113,7 @@ body {
 }
 
 .navbar__link:hover {
-  color: var(--accent-4);
+  color: var(--accent-5);
 }
 
 .navbar__link:hover span {
@@ -180,25 +180,24 @@ body {
 }
 
 .btn-yes {
-  background: var(--accent-3);
+  background: var(--accent-5);
   color: white;
 }
 
 .btn-yes:hover {
-  background: var(--accent-4);
+  background: var(--accent-5);
   transform: translateY(-1px);
   box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
 }
 
 .btn-no {
-  background: #c4c3c3;
-  color: #f3f3f3;
+  background: #ddd;
+  color: #666;
 }
 
 .btn-no:hover {
-  background: #d0d0d0;
+  background: #ddd;
   transform: translateY(-1px);
-  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
 }
 
 .logout-modal-btn-no:hover {
@@ -206,3 +205,5 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+
+

@@ -1,8 +1,9 @@
 .history-wrapper {
     display: flex;
     height: 100%;
-    background: #f5f5f5;
 }
+
+
 
 .filter-section input[type="text"],
 .filter-section input[type="date"],
@@ -15,12 +16,23 @@
 
 .event-title {
     font-weight: bold;
+    margin-top: 10px;
 }
 
 .event-list {
     flex: 1;
     padding: 0px;
     overflow-y: auto;
+    padding-bottom: 10px;
+    min-height: 780px;
+    min-width: 400px;
+    background: var(--panel);
+}
+
+.event-list h1{
+    padding : 20px;
+    border-bottom: 1px solid #ddd;
+
 }
 
 .filter-section {
@@ -30,14 +42,26 @@
 }
 
 .event-row {
-    background: white;
+    /* background: white;
     padding: 12px 18px;
     margin-bottom: 10px;
     border-radius: 8px;
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1.2fr;
     gap: 15px;
-    box-shadow: 0 1px 4px #0002;
+    box-shadow: 0 1px 4px #0002; */
+    background-color: #c8cdc44e;
+    border: 1px solid var(--accent-5);
+    border-radius: 15px;
+    width: 400px;
+    padding: 20px;
+    padding-top: 10px;
+    box-shadow: 1px 4px 4px #3e3d3d66;
+
+}
+
+.event-row:hover{
+    background-color: #f3f3f3;
 }
 
 .checkbox-row {
@@ -68,9 +92,81 @@
   margin-right: 30px;
 }
 
+.card-history h1{
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
 /*
 div{
     text-align: center;
     margin-top: 0px;
 }
 */
+
+label {
+    display: flex;
+    margin: auto;
+    padding: 10px;
+    margin-left: 0;
+}
+
+.checkbox-row{
+    margin-left: 12px;
+}
+
+#fltr{
+    background-color: var(--accent-5);
+}
+
+
+input[type="checkbox"] {
+  accent-color: var(--accent-5); /* green */
+
+}
+
+
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(32%) sepia(96%) saturate(320%) hue-rotate(90deg);
+  cursor: pointer;
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(32%) sepia(96%) saturate(320%) hue-rotate(90deg);
+  cursor: pointer;
+}
+/* checkbox{
+    appearance: auto;
+} */
+
+
+
+/* added the  @media for smaller screens and scales in general */
+
+
+@media (max-width: 600px){
+  .event-list h1,
+  .card-history h1{
+    padding: 12px;
+    font-size: 18px;
+  }
+
+  .event-row{
+    max-width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  label{
+    padding: 8px;
+    flex-wrap: wrap;     /* prevents label content from overflowing */
+    gap: 8px;
+  }
+
+  .filter-section{
+    gap: 10px;
+  }
+}
+
+
