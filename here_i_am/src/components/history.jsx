@@ -6,9 +6,9 @@ const History = () => {
     const [search, setSearch] = useState("");
 
     const [importanceFilter, setImportanceFilter] = useState({
-        high: true,
-        normal: true,
-        low: true,
+        high: false,
+        normal: false,
+        low: false,
     });
 
     const [dateEndFilter, setDateEndFilter] = useState("");

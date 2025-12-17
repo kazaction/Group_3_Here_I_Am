@@ -91,11 +91,11 @@ function EventList({
                     
                   <div className="event-icon">
                     
-                    <div
+                    {/* <div
                       className={`icon-circle ${
                         past ? "icon-circle-past" : "icon-circle-future"
                       }`}
-                    />
+                    /> */}
                   </div>
 
                  

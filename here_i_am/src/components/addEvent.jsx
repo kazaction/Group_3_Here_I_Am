@@ -52,7 +52,7 @@ function AddEvent({ selectedDate, onSave, onClose }) {
               type="text"
               value={title} //input for the title of the event 
               onChange={(e) => setTitle(e.target.value)} //using the onChange function and setTitle so the user can input a title for the event
-            />
+              maxlength='70'            />
           </div>
 
           <div className="field">
@@ -73,6 +73,7 @@ function AddEvent({ selectedDate, onSave, onClose }) {
               value={description}
               onChange={(e) => setDescription(e.target.value)} 
               placeholder="Optional details about this event" //place holder for the description box imo makes it look better, maybe we should as some for the others as well 
+              maxlength = '50'
             />
           </div>
 

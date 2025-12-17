@@ -3,6 +3,8 @@
     height: 100%;
 }
 
+
+
 .filter-section input[type="text"],
 .filter-section input[type="date"],
 .filter-section input[type="time"] {
@@ -137,3 +139,34 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 /* checkbox{
     appearance: auto;
 } */
+
+
+
+/* added the  @media for smaller screens and scales in general */
+
+
+@media (max-width: 600px){
+  .event-list h1,
+  .card-history h1{
+    padding: 12px;
+    font-size: 18px;
+  }
+
+  .event-row{
+    max-width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  label{
+    padding: 8px;
+    flex-wrap: wrap;     /* prevents label content from overflowing */
+    gap: 8px;
+  }
+
+  .filter-section{
+    gap: 10px;
+  }
+}
+
+
