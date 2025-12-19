@@ -1,5 +1,5 @@
 // src/pages/landing.jsx
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../css/landing.css"; 
 
 function LogoutLandingPage() {
@@ -26,6 +26,27 @@ function LogoutLandingPage() {
 }
 
 export default function Landing() {
+  const navigate = useNavigate();
+
+  // Check if user is logged in
+  const isLoggedIn = () => {
+    const auth = localStorage.getItem('auth');
+    const user = localStorage.getItem('user');
+    return auth === 'true' && user !== null;
+  };
+
+  // Handle card click - navigate to target page if logged in, else to login
+  const handleCardClick = (e, targetPath) => {
+    e.preventDefault();
+    if (isLoggedIn()) {
+      navigate(targetPath);
+    } else {
+      // Store intended destination before redirecting to login
+      localStorage.setItem('intendedDestination', targetPath);
+      navigate('/login');
+    }
+  };
+
   return (
     <div className="landing-page">
       <LogoutLandingPage />
@@ -42,25 +63,25 @@ export default function Landing() {
         {/* 4 rectangles (2x2 grid) */}
         <section className="landing-section">
           <div className="landing-grid">
-            <Link to="/login" className="landing-card">
+            <a href="#" onClick={(e) => handleCardClick(e, '/schedule')} className="landing-card">
               <h3>Schedule Your Tasks</h3>
               <p>Start scheduling your tasks!</p>
-            </Link>
+            </a>
 
-            <Link to="/login" className="landing-card">
+            <a href="#" onClick={(e) => handleCardClick(e, '/history')} className="landing-card">
               <h3>View Your Past and Scheduled Tasks</h3>
               <p>Have access to your Agenda!</p>
-            </Link>
+            </a>
 
-            <Link to="/login" className="landing-card">
+            <a href="#" onClick={(e) => handleCardClick(e, '/cvGeneration')} className="landing-card">
               <h3>Create Your Unique CV</h3>
               <p>Allow us to help showcase Yourself!</p>
-            </Link>
+            </a>
 
-            <Link to="/login" className="landing-card">
+            <a href="#" onClick={(e) => handleCardClick(e, '/minigame')} className="landing-card">
               <h3>Play a fun Old-School Minigame!</h3>
               <p>Enjoy a time in between your checkings!</p>
-            </Link>
+            </a>
           </div>
 
         </section>

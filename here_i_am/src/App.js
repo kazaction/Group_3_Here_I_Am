@@ -66,9 +66,23 @@ function MainRoutes() {
 }
 
 function App() {
-  // Clear localStorage on app launch
   React.useEffect(() => {
-    localStorage.clear();
+    // Check if this is the first time the app is opened in this session
+    const hasLaunched = sessionStorage.getItem('hasLaunched');
+    
+    if (!hasLaunched) {
+      // First launch - clear localStorage
+      localStorage.clear();
+      sessionStorage.setItem('hasLaunched', 'true');
+    } else {
+      // Not first launch - only clear if authentication is incomplete/invalid
+      const auth = localStorage.getItem('auth');
+      const user = localStorage.getItem('user');
+      
+      if ((auth && !user) || (!auth && user)) {
+        localStorage.clear();
+      }
+    }
   }, []);
 
   return (

@@ -42,7 +42,15 @@ function Login() {
           localStorage.setItem('user', JSON.stringify({ user_id: body.user_id, username: body.username, email: body.email }));
           localStorage.setItem('auth', 'true');
         }
-        navigate('/home');
+        
+        // Check if there's an intended destination from landing page
+        const intendedDestination = localStorage.getItem('intendedDestination');
+        if (intendedDestination) {
+          localStorage.removeItem('intendedDestination');
+          navigate(intendedDestination);
+        } else {
+          navigate('/home');
+        }
       })
       .catch((err) => {
         console.error('Login error', err);
