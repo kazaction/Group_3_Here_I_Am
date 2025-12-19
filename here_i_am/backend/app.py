@@ -101,6 +101,30 @@ def register():
 
     return jsonify({"message": "Registered"}), 201
 
+#GIANNI DO NOT TOUCH. STAY BACK
+@app.route("/forgot", methods=["POST"])
+def reset_password():
+    data = request.get_json() or {}
+    email = (data.get("email") or "").strip().lower()
+
+    # basic email format validation
+    if not email or not re.match(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+        return jsonify({"success": False, "error": "Invalid email format"}), 400
+
+    conn = get_db_connection()
+    try:
+        user = conn.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
+        # If user exists, generate and send new password and update DB
+        if user:
+            new_password = forgot_password(email)
+            conn.execute("UPDATE users SET password = ? WHERE email = ?", (new_password, email))
+            conn.commit()
+    finally:
+        conn.close()
+
+    # Always return a generic success message when format is valid
+    return jsonify({"success": True, "message": "If the email is correct, a new password was sent to your email."})
+
 # Get user info by id
 @app.route("/users/<int:user_id>", methods=["GET"])
 def get_user(user_id):
